@@ -1,0 +1,7 @@
+{
+  "name": "cmodule",
+  "version": "1.0.0",
+  "description": "My cmake-js module",
+  "main": "index.js",
+  "license": "MIT"
+}
