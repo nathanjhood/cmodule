@@ -158,6 +158,31 @@ function(project_defaults)
 	join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
 	join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
 
+	include(InstallRequiredSystemLibraries)
+
+	# set(CPACK_PACKAGE_VENDOR ${CMAKE_PROJECT_VENDOR})
+	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
+	set(CPACK_PACKAGE_VERSION_MAJOR ${LOCAL_VERSION_MAJOR})
+	set(CPACK_PACKAGE_VERSION_MINOR ${LOCAL_VERSION_MINOR})
+	set(CPACK_PACKAGE_VERSION_PATCH ${LOCAL_VERSION_PATCH})
+	set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE)
+	set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.rst)
+	set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+	set(CPACK_SOURCE_IGNORE_FILES
+		/.git/*
+		/.github
+		/.vs
+		/.vscode
+		/build
+		/downloads
+		/installed
+		/node_modules
+		/vcpkg
+		/.*build.*
+		/\\\\.DS_Store
+	)
+	include(CPack)
+
 endfunction()
 
 
