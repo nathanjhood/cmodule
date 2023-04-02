@@ -93,10 +93,10 @@ function(project_defaults)
 
 	# Determine if built as a subproject (using add_subdirectory)
 	# or if it is the master project.
-	if (NOT DEFINED ${PROJECT_NAME}_MASTER_PROJECT)
-		set(${PROJECT_NAME}_MASTER_PROJECT OFF)
+	if (NOT DEFINED ${PROJECT_NAME_UPPER}_MASTER_PROJECT)
+		set(${PROJECT_NAME_UPPER}_MASTER_PROJECT OFF)
 		if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-			set(${PROJECT_NAME}_MASTER_PROJECT ON)
+			set(${PROJECT_NAME_UPPER}_MASTER_PROJECT ON)
 			message(STATUS "${PROJECT_NAME} is a top-level project\n")
 		else ()
 			message(STATUS "${PROJECT_NAME} is a sub-project of ${CMAKE_PROJECT_NAME}\n")
@@ -104,32 +104,34 @@ function(project_defaults)
 	endif ()
 
 	# Options that control generation of various targets.
-	option(${PROJECT_NAME}_DOC "Generate the doc target." ${${PROJECT_NAME}_MASTER_PROJECT})
-	option(${PROJECT_NAME}_INSTALL "Generate the install target." ON)
-	option(${PROJECT_NAME}_TEST "Generate the test target." ${${PROJECT_NAME}_MASTER_PROJECT})
-	option(${PROJECT_NAME}_FUZZ "Generate the fuzz target." OFF)
-	option(${PROJECT_NAME}_OS "Include core requiring OS (Windows/Posix) " ON)
-	option(${PROJECT_NAME}_MODULE "Build a module instead of a traditional library." OFF)
-	option(${PROJECT_NAME}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
+	option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
+	option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
+	option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
+	option(${PROJECT_NAME_UPPER}_FUZZ "Generate the fuzz target." OFF)
+	option(${PROJECT_NAME_UPPER}_OS "Include core requiring OS (Windows/Posix) " ON)
+	option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
+	option(${PROJECT_NAME_UPPER}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
 
 	# Generate CMAKE_INSTALL_<DIR> etc...
 	include(GNUInstallDirs)
+	# get access to helper functions for creating config files
+	include(CMakePackageConfigHelpers)
 
 	# Configure folder structure.
-	set(${PROJECT_NAME}_INC_DIR         	   ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-	set(${PROJECT_NAME}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-	set(${PROJECT_NAME}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-	set(${PROJECT_NAME}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+	set(${PROJECT_NAME_UPPER}_INC_DIR         	   ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+	set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+	set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+	set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 
 	# Configure files.
-	set(${PROJECT_NAME}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake CACHE PATH "Location of generated <project_name>ConfigVersion.cmake file")
-	set(${PROJECT_NAME}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake CACHE PATH "Location of generated <project_name>Config.cmake file")
-	set(${PROJECT_NAME}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.h CACHE PATH "Location of generated <project_name>Config.h file")
-	set(${PROJECT_NAME}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}.pc)
-	set(${PROJECT_NAME}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json)
-	set(${PROJECT_NAME}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json)
-	set(${PROJECT_NAME}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake)
-	set(${PROJECT_NAME}_TARGETS_EXPORT_NAME  ${PROJECT_NAME}Targets)
+	set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake CACHE PATH "Location of generated <project_name>ConfigVersion.cmake file")
+	set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake CACHE PATH "Location of generated <project_name>Config.cmake file")
+	set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.h CACHE PATH "Location of generated <project_name>Config.h file")
+	set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}.pc CACHE PATH "Location of generated <project_name>.pc file")
+	set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE PATH "Location of generated vcpkg.json file")
+	set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE PATH "Location of generated vcpkg-configuration.json file")
+	set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE PATH "Location of generated <project_name>-portfile.cmake file")
+	set(${PROJECT_NAME_UPPER}_TARGETS_EXPORT_NAME  ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
 
 	if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
 		set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols")
@@ -194,7 +196,3 @@ foreach (header ${ARGN})
 endforeach()
 set(${VAR} ${headers} PARENT_SCOPE)
 endfunction()
-
-
-	# get access to helper functions for creating config files
-	include(CMakePackageConfigHelpers)
