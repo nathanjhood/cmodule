@@ -30,9 +30,9 @@ jobs:
     - run: npm install -g npm@latest
     - run: npm install -g yarn@latest
     - run: yarn global add cmake-js@latest
-    - run: cmake-js -v
+    # - run: cmake-js -v
     - run: yarn global add typescript@latest
-    - run: tsc -v
+    # - run: tsc -v
 
     - name: Configure
       working-directory: ${{github.workspace}}
