@@ -3,5 +3,33 @@
   "version": "1.0.0",
   "description": "My cmake-js module",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "author": "StoneyDSP <nathanjhood@googlemail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/StoneyDSP/cmodule"
+  },
+  "scripts": {
+    "configure": "cmake-js configure",
+    "reconfigure": "cmake-js reconfigure",
+    "build": "cmake-js build",
+    "rebuild": "cmake-js rebuild ",
+    "compile": "cmake-js compile",
+    "install": "cmake-js compile",
+    "clean": "cmake-js clean && rm -rvf ./build",
+    "wipe": "yarn clean && rm -rvf ./node_modules",
+    "help": "cmake-js --help"
+  },
+  "preferGlobal": true,
+  "packageManager": "yarn@1.22.19",
+  "dependencies": {
+    "cmake-js": "^7.2.1",
+    "typescript": "^5.0.3"
+  },
+  "devDependencies": {},
+  "cmake-js": {
+    "runtime": "node",
+    "runtimeVersion": "19.8.1",
+    "arch": "x64"
+  }
 }
