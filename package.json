@@ -2,7 +2,7 @@
   "name": "cmodule",
   "version": "1.0.0",
   "description": "My cmake-js module",
-  "main": "index.js",
+  "main": "index.ts",
   "license": "MIT",
   "author": "StoneyDSP <nathanjhood@googlemail.com>",
   "repository": {
@@ -23,10 +23,13 @@
   "preferGlobal": true,
   "packageManager": "yarn@1.22.19",
   "dependencies": {
+    "bindings": "^1.5.0",
     "cmake-js": "^7.2.1",
     "typescript": "^5.0.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/node": "^18.15.11"
+  },
   "cmake-js": {
     "runtime": "node",
     "runtimeVersion": "19.8.1",
