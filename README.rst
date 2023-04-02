@@ -16,3 +16,11 @@ Requirements:
 * NodeJS
 * Yarn
 * CMake
+
+
+For development of CModules:
+
+```
+yarn global add cmake-js@latest
+yarn
+```
