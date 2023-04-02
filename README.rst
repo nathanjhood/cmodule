@@ -1,6 +1,8 @@
 CModule
 -------
 
+Multi-platform, multi-architecture C/C++ modules that compile into '<*>.node' files, which run in the NodeJS runtime environment as NPM packages.
+
 .. image:: https://github.com/StoneyDSP/cmodule/workflows/linux/badge.svg
    :target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3Alinux
 
@@ -10,7 +12,6 @@ CModule
 .. image:: https://github.com/StoneyDSP/cmodule/workflows/windows/badge.svg
    :target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3Awindows
 
-C/C++ modules that compile into '<*>.node' files, which run in the NodeJS runtime environment as NPM packages.
 
 Requirements:
 -------------
@@ -23,10 +24,10 @@ Requirements:
 
 For development of CModules:
 
-``
+```
 yarn global add cmake-js@latest
 yarn install
-``
+```
 
 Supports "Release", "Debug", "MinSizeRel", and "RelwithDebInfo" build modes (for C++ debugging with, e.g., gdb).
 
