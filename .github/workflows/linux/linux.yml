@@ -1,0 +1,61 @@
+name: linux
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
+  BUILD_TYPE: Debug
+  VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - run: npm install -g npm@latest
+    - run: npm install -g yarn@latest
+    - run: yarn global add cmake-js@latest
+    - run: cmake-js -v
+    - run: yarn global add typescript@latest
+    - run: tsc -v
+
+    - name: Configure
+      working-directory: ${{github.workspace}}
+      # Configure CMake in a 'bin' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build/x64-linux -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build/x64-linux --config ${{env.BUILD_TYPE}} --target all
+
+    - name: Install
+      # Build your program with the given configuration
+      working-directory: ${{github.workspace}}/build/x64-linux
+      run: cpack --config CPackSourceConfig.cmake
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build/x64-linux
+      # Execute tests defined by the CMake configuration.
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+    - name: Zip
+      working-directory: ${{github.workspace}}/build/x64-linux
+      run: cpack -G ZIP -C ${{env.BUILD_TYPE}}
+
+    - name: Tar
+      working-directory: ${{github.workspace}}/build/x64-linux
+      run: cpack -G TGZ -C ${{env.BUILD_TYPE}}
