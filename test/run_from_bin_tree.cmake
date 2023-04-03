@@ -10,4 +10,4 @@ cmake_minimum_required(VERSION 3.7...3.26.1)
 # ============================================================================ #
 
 # does the application run
-add_test(NAME Runs COMMAND node ${PROJECT_NAME})
+add_test(NAME Runs COMMAND "./run.js")
