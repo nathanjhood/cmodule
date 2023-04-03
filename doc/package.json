@@ -5,5 +5,13 @@
   "repository": "https://github.com/StoneyDSP/cmodule",
   "author": "StoneyDSP",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "scripts": {
+    "dev": "serve ./index.html"
+  },
+  "preferGlobal": true,
+  "packageManager": "yarn@1.22.19",
+  "devDependencies": {
+    "eslint": "^8.37.0"
+  }
 }
