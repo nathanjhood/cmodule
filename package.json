@@ -16,7 +16,7 @@
     "rebuild": "cmake-js rebuild ",
     "compile": "cmake-js compile",
     "install": "cmake-js compile",
-    "clean": "cmake-js clean && rm -rvf ./build",
+    "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin",
     "wipe": "yarn clean && rm -rvf ./node_modules",
     "help": "cmake-js --help"
   },

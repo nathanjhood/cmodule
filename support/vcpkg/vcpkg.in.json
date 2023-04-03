@@ -1,0 +1,26 @@
+{
+	"name": "@PROJECT_NAME_LOWER@",
+	"version": "@PROJECT_VERSION@",
+	"maintainers": [
+		"@PROJECT_VENDOR@"
+	],
+	"description": [
+		"@PROJECT_DESCRIPTION@"
+	],
+	"documentation": "@PROJECT_HOMEPAGE_URL@/README.md",
+	"homepage": "@PROJECT_HOMEPAGE_URL@",
+	"dependencies": [
+		{
+			"name": "vcpkg-cmake",
+			"host": true
+		},
+		{
+			"name": "vcpkg-cmake-config",
+			"host": true
+		},
+		{
+			"name": "vcpkg-cmake-get-vars",
+			"host": true
+		}
+	]
+}
