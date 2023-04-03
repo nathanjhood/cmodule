@@ -225,21 +225,21 @@ endif ()
 include(InstallRequiredSystemLibraries)
 
 
-# include_directories(${CMAKE_JS_INC})
+include_directories(${CMAKE_JS_INC} include/${PROJECT_NAME})
 
 # Define the library, its includes and the needed defines.
-function(add_headers VAR)
-	set(headers ${${VAR}})
-	foreach (header ${ARGN})
-		set(headers ${headers} include/${PROJECT_NAME}/${header})
-	endforeach()
-	set(${VAR} ${headers} PARENT_SCOPE)
-endfunction()
-add_headers(${PROJECT_NAME}_HEADERS "cmodule.h")
+# function(add_headers VAR)
+# 	set(headers ${${VAR}})
+# 	foreach (header ${ARGN})
+# 		set(headers ${headers} include/${PROJECT_NAME}/${header})
+# 	endforeach()
+# 	set(${VAR} ${headers} PARENT_SCOPE)
+# endfunction()
+# add_headers(${PROJECT_NAME}_HEADERS "cmodule.h")
 # Add source files
-file(GLOB ${PROJECT_NAME}_SOURCES "./src/cmodule.cc")
+file(GLOB ${PROJECT_NAME}_SOURCES ${CMAKE_JS_SRC} "./src/cmodule.cc")
 
-add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} ${CMAKE_JS_INC} README.rst LICENSE VERSION.txt index.js .gitignore)
+add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} README.rst LICENSE VERSION.txt index.js .gitignore)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
@@ -258,7 +258,15 @@ PUBLIC
   $<INSTALL_INTERFACE:${PROJECT_NAME_UPPER}_INC_DIR>
 )
 
-
+# Include Node-API wrappers
+execute_process(COMMAND node -p "require('node-addon-api').include"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE NODE_ADDON_API_DIR
+        )
+string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
+# define NAPI_VERSION
+add_definitions(-DNAPI_VERSION=3)
 
 if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
   # Generate node.lib

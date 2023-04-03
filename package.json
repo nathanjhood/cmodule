@@ -26,14 +26,13 @@
     "help": "cmake-js --help",
     "test": "node ./test/run.js"
   },
-  "preferGlobal": true,
   "packageManager": "yarn@1.22.19",
   "dependencies": {
-    "cmake-js": "^7.2.1"
+    "bindings": "^1.5.0",
+    "cmake-js": "^7.2.1",
+    "node-addon-api": "^6.0.0"
   },
-  "devDependencies": {
-    "bindings": "^1.5.0"
-  },
+  "devDependencies": {},
   "cmake-js": {
     "runtime": "node",
     "runtimeVersion": "19.8.1",
