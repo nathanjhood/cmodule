@@ -1,0 +1,9 @@
+{
+  "name": "cmodule-doc",
+  "version": "1.0.0",
+  "main": "index.html",
+  "repository": "https://github.com/StoneyDSP/cmodule",
+  "author": "StoneyDSP",
+  "license": "MIT",
+  "private": true
+}
