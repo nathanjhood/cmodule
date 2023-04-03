@@ -18,8 +18,7 @@ endif ()
 
 # Set the binary output dir, if not set
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-#  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Executable/dll output dir.")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_SOURCE_DIR}/bin" CACHE PATH "Executable/dll output dir.")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Executable/dll output dir.")
 endif ()
 # Set the archive output dir, if not set
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
@@ -27,13 +26,25 @@ if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
 endif ()
 # Set the library output dir, if not set
 if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-#  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/lib" CACHE PATH "Library output dir.")
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  "${CMAKE_SOURCE_DIR}/lib" CACHE PATH "Library output dir.")
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/lib" CACHE PATH "Library output dir.")
 endif ()
 # Set the MSVC debug symbol output dir, if not set
 if (NOT CMAKE_PDB_OUTPUT_DIRECTORY)
   set(CMAKE_PDB_OUTPUT_DIRECTORY      "${CMAKE_BINARY_DIR}/bin" CACHE PATH "PDB (MSVC debug symbol)output dir.")
 endif ()
+set(CMAKE_CFG_INTDIR                  "${CMAKE_BINARY_DIR}"     CACHE PATH "CMake build artefacts directory.")
+
+
+# Build using shared libraries. if this is set to ON, then all libraries are built as shared libraries by default.
+option(BUILD_SHARED_LIBS "Build using shared libraries." OFF)
+# option for outputting compiler information at runtime
+option(OUTPUT_COMPILER_INFO "Output compiler information when launching the main executable." ON)
+# Build with Address Sanitizer
+option(ASAN_ENABLED "Build with Address Sanitizer" OFF)
+# Use the target 'FOLDER' property to organize targets into folders
+set(USE_FOLDERS OFF)
+# https://stackoverflow.com/questions/48580399/how-to-ensure-a-generated-config-h-file-is-in-the-include-path
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # export symbols on Windows for shared libraries to work
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
@@ -71,10 +82,11 @@ set(CMAKE_MODULE_PATH
 )
 
 ## Configure files.
-set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
-set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
+set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_SOURCE_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
+set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_SOURCE_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
 set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
-set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
+# set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
+set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_SOURCE_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
 set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
 set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
 set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
@@ -123,7 +135,7 @@ option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." ${${PROJECT_NAME_UPP
 option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
 option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
 option(${PROJECT_NAME_UPPER}_FUZZ "Generate the fuzz target." OFF)
-option(${PROJECT_NAME_UPPER}_OS "Include core requiring OS (Windows/Posix) " ON)
+option(${PROJECT_NAME_UPPER}_OS "Include core requiring OS (Windows/Posix) " OFF)
 option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
 option(${PROJECT_NAME_UPPER}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
 
@@ -189,44 +201,49 @@ message(STATUS "Created package config file at ${${PROJECT_NAME_UPPER}_PACKAGE_C
 message("Creating vcpkg manifest...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
-  ${${PROJECT_NAME_UPPER}_VCPKG_MNFST})
-message("Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
+  ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}
+)
+message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
 
-message("Creating vcpkg configuration...")
+message(STATUS "Creating vcpkg configuration...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg-configuration.in.json
-  ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG})
-message("Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
+  ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}
+)
+message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
 
-message("Creating portfile...")
+message(STATUS "Creating portfile...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/portfile.in.cmake
-  ${${PROJECT_NAME_UPPER}_PORT_FILE})
-message("Created portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
+  ${${PROJECT_NAME_UPPER}_PORT_FILE}
+)
+message(STATUS "Created portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
 
-# if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-#   set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
-# endif ()
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
+endif ()
 include(InstallRequiredSystemLibraries)
 
-include(ModuleInit)
-# get_version()
-# cmake_defaults()
-# project_defaults()
 
-
-
-include_directories(${CMAKE_JS_INC})
+# include_directories(${CMAKE_JS_INC})
 
 # Define the library, its includes and the needed defines.
+function(add_headers VAR)
+	set(headers ${${VAR}})
+	foreach (header ${ARGN})
+		set(headers ${headers} include/${PROJECT_NAME}/${header})
+	endforeach()
+	set(${VAR} ${headers} PARENT_SCOPE)
+endfunction()
 add_headers(${PROJECT_NAME}_HEADERS "cmodule.h")
 # Add source files
 file(GLOB ${PROJECT_NAME}_SOURCES "./src/cmodule.cc")
 
-add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} README.rst)
+add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} ${CMAKE_JS_INC} README.rst LICENSE VERSION.txt index.js .gitignore)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+target_compile_definitions(${PROJECT_NAME} PUBLIC no-pie)
 
 # Add source files and headers to target.
 target_sources(${PROJECT_NAME}
@@ -245,17 +262,20 @@ PUBLIC
 
 
 if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-# Generate node.lib
-execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+  # Generate node.lib
+  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
 endif()
-
-
 
 # Set target version and properties.
 set_target_properties(${PROJECT_NAME}
 PROPERTIES
-  VERSION ${PROJECT_NAME}_VERSION
-  PUBLIC_HEADER ${${PROJECT_NAME}_HEADERS}
+  VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
+  SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}"
+  RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
+  ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
+  PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+  PUBLIC_HEADER ${PROJECT_NAME}_HEADERS
   DEBUG_POSTFIX ${${PROJECT_NAME}_DEBUG_POSTFIX}
 )
 
@@ -311,7 +331,7 @@ install(
 export(
   TARGETS ${PROJECT_NAME}
   NAMESPACE ${PROJECT_NAME}::
-  FILE ${PROJECT_BINARY_DIR}/${TARGETS_EXPORT_NAME}.cmake
+  FILE ${PROJECT_SOURCE_DIR}/share/${TARGETS_EXPORT_NAME}.cmake
 )
 
 # Install version, config and target files.
