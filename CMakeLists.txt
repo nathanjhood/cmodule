@@ -19,6 +19,44 @@ else ()
 endif ()
 set(CMAKE_INSTALL_MODE SYMLINK)
 
+# Joins arguments and places the results in ${result_var}.
+function(join result_var)
+  set(result "")
+  foreach (arg ${ARGN})
+    set(result "${result}${arg}")
+  endforeach ()
+  set(${result_var} "${result}" PARENT_SCOPE)
+endfunction()
+
+function(enable_module target)
+  if (MSVC)
+    set(BMI ${CMAKE_CURRENT_BINARY_DIR}/${target}.ifc)
+    target_compile_options(${target}
+      PRIVATE /interface /ifcOutput ${BMI}
+      INTERFACE /reference fmt=${BMI})
+  endif ()
+  set_target_properties(${target} PROPERTIES ADDITIONAL_CLEAN_FILES ${BMI})
+  set_source_files_properties(${BMI} PROPERTIES GENERATED ON)
+endfunction()
+
+# Sets a cache variable with a docstring joined from multiple arguments:
+#   set(<variable> <value>... CACHE <type> <docstring>...)
+# This allows splitting a long docstring for readability.
+function(set_verbose)
+  # cmake_parse_arguments is broken in CMake 3.4 (cannot parse CACHE) so use
+  # list instead.
+  list(GET ARGN 0 var)
+  list(REMOVE_AT ARGN 0)
+  list(GET ARGN 0 val)
+  list(REMOVE_AT ARGN 0)
+  list(REMOVE_AT ARGN 0)
+  list(GET ARGN 0 type)
+  list(REMOVE_AT ARGN 0)
+  join(doc ${ARGN})
+  set(${var} ${val} CACHE ${type} ${doc})
+endfunction()
+
+
 # Set the binary output dir, if not set
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Executable/dll output dir.")
@@ -363,6 +401,18 @@ set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING 
 # They cause symlinks to be generated that node cannot parse
 # VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
 # SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}"
+
+# Set LIB_NAME for pkg-config fmt.pc. We cannot use the OUTPUT_NAME target
+# property because it's not set by default.
+set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(${PROJECT_NAME_UPPER}_LIB_NAME ${${PROJECT_NAME_UPPER}_LIB_NAME}${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX})
+endif ()
+
+# Configure CTest
+enable_testing()
+add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
+
 
 # Configure CPack
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
