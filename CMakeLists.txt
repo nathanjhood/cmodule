@@ -390,7 +390,7 @@ function(add_headers VAR)
 endfunction()
 add_headers(${PROJECT_NAME_UPPER}_HEADERS "cmodule.h")
 # Collect source files
-file(GLOB ${PROJECT_NAME}_SOURCES ${CMAKE_JS_SRC} "./src/cmodule.cc")
+file(GLOB ${PROJECT_NAME_UPPER}_SOURCES ${CMAKE_JS_SRC} "./src/cmodule.cc")
 # Add the library as an output target
 add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} README.rst LICENSE VERSION.txt index.js .gitignore)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -405,8 +405,8 @@ endif()
 # Add source files and headers to target.
 target_sources(${PROJECT_NAME}
   PRIVATE
-    ${${PROJECT_NAME}_HEADERS}
-    ${${PROJECT_NAME}_SOURCES}
+    ${${PROJECT_NAME_UPPER}_HEADERS}
+    ${${PROJECT_NAME_UPPER}_SOURCES}
 )
 
 # Include Node-API wrappers
