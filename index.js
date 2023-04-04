@@ -1,4 +1,3 @@
-// import * as cmodule from "./build/Release/cmodule";
+#!/usr/bin/env node
 
-
-module.exports = require("bindings")("addon");
+module.exports = require("./support/node/js/bindings")("cmodule");

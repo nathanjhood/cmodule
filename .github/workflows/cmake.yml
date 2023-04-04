@@ -20,12 +20,21 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        build: [Debug, Release, RelWithDebInfo, MinSizeRel]
+        build: [Debug, Release]
     runs-on: ${{ matrix.os }}
     
     steps:
     - name: Checkout Project
       uses: actions/checkout@v3
+      
+    - name: Node Setup
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - run: npm install -g npm@latest
+    - run: npm install -g yarn@latest
+    - run: yarn add cmake-js@latest
       
     - name: CMake Setup
       uses: jwlawson/actions-setup-cmake@v1.13
@@ -54,10 +63,10 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: cpack --config CPackSourceConfig.cmake
       
-    - name: CPack Zip
-      working-directory: ${{github.workspace}}/build
-      run: cpack -G ZIP -C ${{matrix.build}}
+#    - name: CPack Zip
+#      working-directory: ${{github.workspace}}/build
+#      run: cpack -G ZIP -C ${{matrix.build}}
 
-    - name: CPack
-      working-directory: ${{github.workspace}}/build
-      run: cpack -G TGZ -C ${{matrix.build}}
+#    - name: CPack Tar
+#      working-directory: ${{github.workspace}}/build
+#      run: cpack -G TGZ -C ${{matrix.build}}
