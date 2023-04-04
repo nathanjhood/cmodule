@@ -109,12 +109,58 @@ set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
 # Generate CMAKE_INSTALL_<DIR> etc...
 include(GNUInstallDirs)
+if (NOT CMAKE_INSTALL_BINDIR)
+  set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
+endif ()
+if (NOT CMAKE_INSTALL_DATADIR)
+  set(CMAKE_INSTALL_DATADIR "." CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
+endif ()
+if (NOT CMAKE_INSTALL_DATAROOTDIR)
+  set(CMAKE_INSTALL_DATAROOTDIR share CACHE PATH "Read-only architecture-independent data root (share)")
+endif ()
+if (NOT CMAKE_INSTALL_DOCDIR)
+  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
+endif ()
+if (NOT CMAKE_INSTALL_INCLUDEDIR)
+  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
+endif ()
+if (NOT CMAKE_INSTALL_INFODIR)
+  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
+endif ()
+if (NOT CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
+endif ()
+if (NOT CMAKE_INSTALL_LIBEXECDIR)
+  set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
+endif ()
+if (NOT CMAKE_INSTALL_LOCALEDIR)
+  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
+endif ()
+if (NOT CMAKE_INSTALL_LOCALSTATEDIR)
+  set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
+endif ()
+if (NOT CMAKE_INSTALL_MANDIR)
+  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
+endif ()
+if (NOT CMAKE_INSTALL_RUNSTATEDIR)
+  set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
+endif ()
+if (NOT CMAKE_INSTALL_SBINDIR)
+  set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
+endif ()
+if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
+  set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
+endif ()
+if (NOT CMAKE_INSTALL_SYSCONFDIR)
+  set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
+endif ()
+
 # get access to helper functions for creating config files
 include(CMakePackageConfigHelpers)
 
 ## Configure folder structure.
-set(${PROJECT_NAME_UPPER}_INC_DIR         	   ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_INC_DIR         	   ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(CMAKE_MODULE_PATH
@@ -220,7 +266,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(PEDANTIC_COMPILE_FLAGS -Wall -Wextra -pedantic -Wconversion -Wundef
       -Wdeprecated -Wweak-vtables -Wshadow
       -Wno-gnu-zero-variadic-macro-arguments)
-  check_cxx_compiler_flag(-Wzero-as-null-pointer-constant HAS_NULLPTR_WARNING)
+  # check_cxx_compiler_flag(-Wzero-as-null-pointer-constant HAS_NULLPTR_WARNING) // Crashing github workflows...
   if (HAS_NULLPTR_WARNING)
     set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS}
         -Wzero-as-null-pointer-constant)
@@ -238,7 +284,11 @@ if (${PROJECT_NAME_UPPER}_MASTER_PROJECT AND CMAKE_GENERATOR MATCHES "Visual Stu
   # calls SetEnv.cmd to set up build environment and runs msbuild.
   # It is useful when building Visual Studio projects with the SDK
   # toolchain rather than Visual Studio.
-  include(FindSetEnv)
+  find_program(WINSDK_SETENV NAMES SetEnv.cmd
+    PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]/bin")
+  if (WINSDK_SETENV AND PRINT_PATH)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E echo "${WINSDK_SETENV}")
+  endif ()
   if (WINSDK_SETENV)
     set(MSBUILD_SETUP "call \"${WINSDK_SETENV}\"")
   endif ()
@@ -360,10 +410,11 @@ target_sources(${PROJECT_NAME}
 )
 
 # Include Node-API wrappers
-execute_process(COMMAND node -p "require('node-addon-api').include"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE NODE_ADDON_API_DIR
-        )
+execute_process(
+  COMMAND node -p "require('node-addon-api').include"
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE NODE_ADDON_API_DIR
+)
 string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 # define NAPI_VERSION
