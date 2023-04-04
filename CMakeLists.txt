@@ -133,13 +133,14 @@ else ()
   message(STATUS "Generated CMake config types: ${CMAKE_CONFIGURATION_TYPES}")
 endif ()
 
+option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
+option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
 # Options that control generation of various targets.
 option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
 option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
 option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
-option(${PROJECT_NAME_UPPER}_FUZZ "Generate the fuzz target." OFF)
-option(${PROJECT_NAME_UPPER}_OS "Include core requiring OS (Windows/Posix) " OFF)
-option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
+# option(${PROJECT_NAME_UPPER}_FUZZ "Generate the fuzz target." OFF)
+# option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
 option(${PROJECT_NAME_UPPER}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
 
 if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
@@ -149,6 +150,67 @@ endif ()
 
 if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
+endif ()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  set(PEDANTIC_COMPILE_FLAGS -pedantic-errors -Wall -Wextra -pedantic
+      -Wold-style-cast -Wundef
+      -Wredundant-decls -Wwrite-strings -Wpointer-arith
+      -Wcast-qual -Wformat=2 -Wmissing-include-dirs
+      -Wcast-align
+      -Wctor-dtor-privacy -Wdisabled-optimization
+      -Winvalid-pch -Woverloaded-virtual
+      -Wconversion -Wundef
+      -Wno-ctor-dtor-privacy -Wno-format-nonliteral)
+  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.6)
+      set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS}
+         -Wno-dangling-else -Wno-unused-local-typedefs)
+  endif ()
+  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+      set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS} -Wdouble-promotion
+          -Wtrampolines -Wzero-as-null-pointer-constant -Wuseless-cast
+          -Wvector-operation-performance -Wsized-deallocation -Wshadow)
+  endif ()
+  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0)
+      set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS} -Wshift-overflow=2
+          -Wnull-dereference -Wduplicated-cond)
+  endif ()
+  set(WERROR_FLAG -Werror)
+endif ()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(PEDANTIC_COMPILE_FLAGS -Wall -Wextra -pedantic -Wconversion -Wundef
+      -Wdeprecated -Wweak-vtables -Wshadow
+      -Wno-gnu-zero-variadic-macro-arguments)
+  check_cxx_compiler_flag(-Wzero-as-null-pointer-constant HAS_NULLPTR_WARNING)
+  if (HAS_NULLPTR_WARNING)
+    set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS}
+        -Wzero-as-null-pointer-constant)
+  endif ()
+  set(WERROR_FLAG -Werror)
+endif ()
+
+if (MSVC)
+  set(PEDANTIC_COMPILE_FLAGS /W3)
+  set(WERROR_FLAG /WX)
+endif ()
+
+if (${PROJECT_NAME_UPPER}_MASTER_PROJECT AND CMAKE_GENERATOR MATCHES "Visual Studio")
+  # If Microsoft SDK is installed create script run-msbuild.bat that
+  # calls SetEnv.cmd to set up build environment and runs msbuild.
+  # It is useful when building Visual Studio projects with the SDK
+  # toolchain rather than Visual Studio.
+  include(FindSetEnv)
+  if (WINSDK_SETENV)
+    set(MSBUILD_SETUP "call \"${WINSDK_SETENV}\"")
+  endif ()
+  # Set FrameworkPathOverride to get rid of MSB3644 warnings.
+  join(netfxpath
+       "C:\\Program Files\\Reference Assemblies\\Microsoft\\Framework\\"
+       ".NETFramework\\v4.0")
+  file(WRITE run-msbuild.bat "
+    ${MSBUILD_SETUP}
+    ${CMAKE_MAKE_PROGRAM} -p:FrameworkPathOverride=\"${netfxpath}\" %*")
 endif ()
 
 # Copyright 2020 Jan Tojnar (MIT)
@@ -230,7 +292,7 @@ include(InstallRequiredSystemLibraries)
 
 include_directories(${CMAKE_JS_INC} include/${PROJECT_NAME})
 
-# Define the library, its includes and the needed defines.
+# Collect header include files
 function(add_headers VAR)
 	set(headers ${${VAR}})
 	foreach (header ${ARGN})
@@ -239,9 +301,9 @@ function(add_headers VAR)
 	set(${VAR} ${headers} PARENT_SCOPE)
 endfunction()
 add_headers(${PROJECT_NAME}_HEADERS "cmodule.h")
-# Add source files
+# Collect source files
 file(GLOB ${PROJECT_NAME}_SOURCES ${CMAKE_JS_SRC} "./src/cmodule.cc")
-
+# Add the library as an output target
 add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} README.rst LICENSE VERSION.txt index.js .gitignore)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
@@ -259,13 +321,6 @@ target_sources(${PROJECT_NAME}
     ${${PROJECT_NAME}_SOURCES}
 )
 
-# add include directories
-target_include_directories(${PROJECT_NAME}
-PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-  $<INSTALL_INTERFACE:${PROJECT_NAME_UPPER}_INC_DIR>
-)
-
 # Include Node-API wrappers
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -275,13 +330,23 @@ string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 # define NAPI_VERSION
 add_definitions(-DNAPI_VERSION=4)
-
-#enable CMake-style tests
-enable_testing()
-include(CTest)
-add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
-
-
+# add include directories
+target_include_directories(${PROJECT_NAME}
+PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+  $<INSTALL_INTERFACE:${PROJECT_NAME_UPPER}_INC_DIR>
+)
+# Set compiler flags
+if (${PROJECT_NAME_UPPER}_WERROR)
+  target_compile_options(${PROJECT_NAME} PRIVATE ${WERROR_FLAG})
+endif ()
+if (${PROJECT_NAME_UPPER}_PEDANTIC)
+  target_compile_options(${PROJECT_NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS})
+endif ()
+# if (${PROJECT_NAME}_MODULE)
+#   enable_module(fmt)
+# endif ()
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 # Set target version and properties.
 set_target_properties(${PROJECT_NAME}
 PROPERTIES
