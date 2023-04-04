@@ -228,14 +228,14 @@ include(InstallRequiredSystemLibraries)
 include_directories(${CMAKE_JS_INC} include/${PROJECT_NAME})
 
 # Define the library, its includes and the needed defines.
-# function(add_headers VAR)
-# 	set(headers ${${VAR}})
-# 	foreach (header ${ARGN})
-# 		set(headers ${headers} include/${PROJECT_NAME}/${header})
-# 	endforeach()
-# 	set(${VAR} ${headers} PARENT_SCOPE)
-# endfunction()
-# add_headers(${PROJECT_NAME}_HEADERS "cmodule.h")
+function(add_headers VAR)
+	set(headers ${${VAR}})
+	foreach (header ${ARGN})
+		set(headers ${headers} include/${PROJECT_NAME}/${header})
+	endforeach()
+	set(${VAR} ${headers} PARENT_SCOPE)
+endfunction()
+add_headers(${PROJECT_NAME}_HEADERS "cmodule.h")
 # Add source files
 file(GLOB ${PROJECT_NAME}_SOURCES ${CMAKE_JS_SRC} "./src/cmodule.cc")
 
@@ -284,7 +284,9 @@ PROPERTIES
   PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
   PUBLIC_HEADER ${PROJECT_NAME}_HEADERS
   DEBUG_POSTFIX ${${PROJECT_NAME}_DEBUG_POSTFIX}
+  INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
 )
+set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR)
 
 
 # Configure CPack

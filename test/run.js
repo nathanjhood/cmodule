@@ -2,4 +2,4 @@
 
 var cmodule = require("../");
 
-console.log(cmodule.getNumber());
+console.log(cmodule.hello());
