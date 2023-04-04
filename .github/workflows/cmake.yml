@@ -76,10 +76,10 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: cpack --config CPackSourceConfig.cmake
       
-    - name: CPack Zip
-      working-directory: ${{github.workspace}}/build
-      run: cpack -G ZIP -C ${{matrix.build}}
+#    - name: CPack Zip
+#      working-directory: ${{github.workspace}}/build
+#      run: cpack -G ZIP -C ${{matrix.build}}
 
-    - name: CPack
-      working-directory: ${{github.workspace}}/build
-      run: cpack -G TGZ -C ${{matrix.build}}
+#    - name: CPack Tar
+#      working-directory: ${{github.workspace}}/build
+#      run: cpack -G TGZ -C ${{matrix.build}}
