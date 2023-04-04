@@ -9,12 +9,15 @@ cmake_policy(SET CMP0042 NEW)
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
+# Single-threaded build-runs only for compatible behaviour
+set(CMAKE_BUILD_PARALLEL_LEVEL 1)
 # Set the host architecture to build with
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(USE_X64 TRUE)
 else ()
   set(USE_X64 FALSE)
 endif ()
+set(CMAKE_INSTALL_MODE SYMLINK)
 
 # Set the binary output dir, if not set
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
@@ -63,7 +66,7 @@ message(STATUS "Detected ${PROJECT_NAME} version: v${${PROJECT_NAME}_VERSION_MAJ
 # Parse the project name into vars
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
-set(${PROJECT_NAME}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
+set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
 
 # Generate CMAKE_INSTALL_<DIR> etc...
@@ -167,11 +170,11 @@ join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
 join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
 
 # create config header
-message("Creating config header file...")
+message(STATUS "Creating config header file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/${PROJECT_NAME}Config.h.in
   ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG})
-message("Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
+message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
 
 # create config file
 message(STATUS "Creating project config file...")
@@ -198,7 +201,7 @@ configure_file(
 )
 message(STATUS "Created package config file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
 
-message("Creating vcpkg manifest...")
+message(STATUS "Creating vcpkg manifest...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
   ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}
@@ -244,6 +247,11 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
+if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
+  # Generate node.lib
+  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+endif()
+
 # Add source files and headers to target.
 target_sources(${PROJECT_NAME}
   PRIVATE
@@ -266,38 +274,39 @@ execute_process(COMMAND node -p "require('node-addon-api').include"
 string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 # define NAPI_VERSION
-add_definitions(-DNAPI_VERSION=3)
+add_definitions(-DNAPI_VERSION=4)
 
-if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-  # Generate node.lib
-  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
-endif()
+#enable CMake-style tests
+enable_testing()
+include(CTest)
+add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
+
 
 # Set target version and properties.
 set_target_properties(${PROJECT_NAME}
 PROPERTIES
-  VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
-  SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}"
   RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
   LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
   PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
   PUBLIC_HEADER ${PROJECT_NAME}_HEADERS
-  DEBUG_POSTFIX ${${PROJECT_NAME}_DEBUG_POSTFIX}
+  DEBUG_POSTFIX ${PROJECT_NAME_UPPER}_DEBUG_POSTFIX
   INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
 )
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR)
-
+# Dont define these two props on your targets!!
+# They cause symlinks to be generated that node cannot parse
+# VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
+# SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}"
 
 # Configure CPack
-# set(CPACK_PACKAGE_VENDOR ${CMAKE_PROJECT_VENDOR})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${${PROJECT_NAME}_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${${PROJECT_NAME}_VERSION_PATCH})
 set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE)
 set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.rst)
-set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP;DEB")
 set(CPACK_SOURCE_IGNORE_FILES
   /.git/*
   /.github
