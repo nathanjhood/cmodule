@@ -338,21 +338,25 @@ configure_package_config_file(
 )
 message(STATUS "Created project config file at ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}\n")
 
-# generate the version file for the config file
+# create version config file
+message(STATUS "Creating the version file for the config file...")
 write_basic_package_version_file(
   ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
   VERSION ${${PROJECT_NAME}_VERSION}
   COMPATIBILITY AnyNewerVersion
 )
+message(STATUS "Created version file for the config file at ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}\n")
 
-message(STATUS "Creating package config file...")
+# create pkgconfig file
+message(STATUS "Creating pkgconfig file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/${PROJECT_NAME}.pc.in
   ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
   @ONLY
 )
-message(STATUS "Created package config file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
+message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
 
+# create vcpkg manifest file
 message(STATUS "Creating vcpkg manifest...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
@@ -360,6 +364,7 @@ configure_file(
 )
 message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
 
+# create vcpkg configuration file
 message(STATUS "Creating vcpkg configuration...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg-configuration.in.json
@@ -367,17 +372,14 @@ configure_file(
 )
 message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
 
-message(STATUS "Creating portfile...")
+# create vcpkg portfile
+message(STATUS "Creating vcpkg portfile...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/vcpkg/portfile.in.cmake
   ${${PROJECT_NAME_UPPER}_PORT_FILE}
 )
-message(STATUS "Created portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
+message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
-endif ()
-include(InstallRequiredSystemLibraries)
 
 
 include_directories(${CMAKE_JS_INC} include/${PROJECT_NAME})
