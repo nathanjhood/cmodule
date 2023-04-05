@@ -35,7 +35,6 @@
   "devDependencies": {},
   "cmake-js": {
     "runtime": "node",
-    "runtimeVersion": "19.8.1",
     "arch": "x64"
   }
 }
