@@ -18,6 +18,29 @@ else ()
   set(USE_X64 FALSE)
 endif ()
 set(CMAKE_INSTALL_MODE SYMLINK)
+set(CMAKE_INSTALL_MESSAGE ALWAYS)
+
+# Check for cmake-js
+message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+if (NOT CMAKE_JS_INC)
+  execute_process(
+    COMMAND npm install
+    WORKING_DIRECTORY CMAKE_CURRENT_LIST_DIR
+  )
+  execute_process(
+    COMMAND npm run clean
+    WORKING_DIRECTORY CMAKE_CURRENT_LIST_DIR
+  )
+endif ()
+message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+
+# Collect Node Addon-API headers into NODE_ADDON_API_DIR
+execute_process(
+  COMMAND node -p "require('node-addon-api').include"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  OUTPUT_VARIABLE NODE_ADDON_API_DIR
+)
+string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 
 # Joins arguments and places the results in ${result_var}.
 function(join result_var)
@@ -109,59 +132,61 @@ set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
 
 # Generate CMAKE_INSTALL_<DIR> etc...
-if (NOT CMAKE_INSTALL_BINDIR)
-  set(CMAKE_INSTALL_BINDIR /bin CACHE PATH "User executables (bin)")
-endif ()
-if (NOT CMAKE_INSTALL_DATADIR)
-  set(CMAKE_INSTALL_DATADIR /share CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
-endif ()
-if (NOT CMAKE_INSTALL_DATAROOTDIR)
-  set(CMAKE_INSTALL_DATAROOTDIR "/" CACHE PATH "Read-only architecture-independent data root (share)")
-endif ()
-if (NOT CMAKE_INSTALL_DOCDIR)
-  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
-endif ()
 if (NOT CMAKE_INSTALL_INCLUDEDIR)
-  set(CMAKE_INSTALL_INCLUDEDIR /include CACHE PATH "C/C++ header files (include)")
+  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
 endif ()
-if (NOT CMAKE_INSTALL_INFODIR)
-  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
+if (NOT CMAKE_INSTALL_BINDIR)
+  set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
+endif ()
+if (NOT CMAKE_INSTALL_SBINDIR)
+  set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
 endif ()
 if (NOT CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR /lib CACHE PATH "Object code libraries (lib)")
+  set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
 endif ()
 if (NOT CMAKE_INSTALL_LIBEXECDIR)
-  set(CMAKE_INSTALL_LIBEXECDIR /libexec CACHE PATH "Program executables (libexec)")
+  set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
 endif ()
-if (NOT CMAKE_INSTALL_LOCALEDIR)
-  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
+if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
+  set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
+endif ()
+if (NOT CMAKE_INSTALL_DATADIR)
+  set(CMAKE_INSTALL_DATADIR share CACHE PATH "Read-only architecture-independent data (share)")
 endif ()
 if (NOT CMAKE_INSTALL_LOCALSTATEDIR)
-  set(CMAKE_INSTALL_LOCALSTATEDIR /var CACHE PATH "Modifiable single-machine data (var)")
+  set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
 endif ()
-if (NOT CMAKE_INSTALL_MANDIR)
-  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
+if (NOT CMAKE_INSTALL_SYSCONFDIR)
+  set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
 endif ()
 if (NOT CMAKE_INSTALL_RUNSTATEDIR)
   set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
 endif ()
-if (NOT CMAKE_INSTALL_SBINDIR)
-  set(CMAKE_INSTALL_SBINDIR /sbin CACHE PATH "System admin executables (sbin)")
+if (NOT CMAKE_INSTALL_LOCALEDIR)
+  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
 endif ()
-if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
-  set(CMAKE_INSTALL_SHAREDSTATEDIR /com CACHE PATH "Modifiable architecture-independent data (com)")
+if (NOT CMAKE_INSTALL_DOCDIR)
+  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
 endif ()
-if (NOT CMAKE_INSTALL_SYSCONFDIR)
-  set(CMAKE_INSTALL_SYSCONFDIR /etc CACHE PATH "Read-only single-machine data (etc)")
+if (NOT CMAKE_INSTALL_INFODIR)
+  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
 endif ()
+if (NOT CMAKE_INSTALL_MANDIR)
+  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
+endif ()
+# Don't set this var! https://cmake.org/cmake/help/latest/command/install.html#installing-files
+# if (NOT CMAKE_INSTALL_DATAROOTDIR)
+#   set(CMAKE_INSTALL_DATAROOTDIR "/" CACHE PATH "Read-only architecture-independent data root (DATAROOT)")
+# endif ()
 include(GNUInstallDirs)
 
 # get access to helper functions for creating config files
 include(CMakePackageConfigHelpers)
 
 ## Configure folder structure.
+set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_INSTALL_BINDIR}                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_INC_DIR         	   ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_INC_DIR              include/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 
 set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
@@ -212,12 +237,19 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif ()
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
+endif ()
+include(InstallRequiredSystemLibraries)
+
+
 # Print the flags for the user
 if (DEFINED CMAKE_BUILD_TYPE)
   message(STATUS "Generated CMake build type: ${CMAKE_BUILD_TYPE}")
 else ()
   message(STATUS "Generated CMake config types: ${CMAKE_CONFIGURATION_TYPES}")
 endif ()
+
 
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
 option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
@@ -226,7 +258,7 @@ option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." ${${PROJECT_NAME_UPP
 option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
 option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
 # option(${PROJECT_NAME_UPPER}_FUZZ "Generate the fuzz target." OFF)
-# option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
+option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
 option(${PROJECT_NAME_UPPER}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
 
 if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
@@ -238,10 +270,6 @@ if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDD
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
 endif ()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
-endif ()
-include(InstallRequiredSystemLibraries)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(PEDANTIC_COMPILE_FLAGS -pedantic-errors -Wall -Wextra -pedantic
@@ -387,78 +415,68 @@ message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
 
 
 #---------------
-# OUTPUT TARGETS
+# GET FILES
 #---------------
 
-
-# Add the library as an output target
-add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} package.json README.rst LICENSE VERSION.txt index.js .gitignore .gitattributes)
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-# Include Node-API wrappers
-execute_process(
-  COMMAND node -p "require('node-addon-api').include"
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE NODE_ADDON_API_DIR
-)
-string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-# target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
-# define NAPI_VERSION
-add_definitions(-DNAPI_VERSION=4)
-# add include directories
-include_directories(${CMAKE_JS_INC})
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
-if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-# Generate node.lib
-  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
-endif()
-
-# Collect included header files
+# Collect included header files into ${PROJECT_NAME_UPPER}_HEADERS
 function(add_headers VAR)
 	set(headers ${${VAR}})
 	foreach (header ${ARGN})
-		set(headers ${headers} ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${header})
+		set(headers ${headers} include/${PROJECT_NAME}/${header})
 	endforeach()
 	set(${VAR} ${headers} PARENT_SCOPE)
 endfunction()
 add_headers(${PROJECT_NAME_UPPER}_HEADERS "cmodule.h")
-# Add included headers to target.
-target_include_directories(${PROJECT_NAME}
-PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-  $<INSTALL_INTERFACE:${PROJECT_NAME_UPPER}_INC_DIR>
-PRIVATE
-  ${NODE_ADDON_API_DIR}
-)
-# Collect source files
+
+# Collect source files into ${PROJECT_NAME_UPPER}_SOURCES
 function(add_sources VAR)
 	set(sources ${${VAR}})
 	foreach (source ${ARGN})
-		set(sources ${sources} ${PROJECT_SOURCE_DIR}/src/${source})
+		set(sources ${sources} src/${source})
 	endforeach()
 	set(${VAR} ${sources} PARENT_SCOPE)
 endfunction()
 add_sources(${PROJECT_NAME_UPPER}_SOURCES "cmodule.cc")
+include_directories(${PROJECT_BINARY_DIR})
+include_directories(${CMAKE_JS_INC})
+set(${PROJECT_NAME_UPPER}_PRIVATE_HEADERS ${NODE_ADDON_API_DIR})
+file(GLOB ${PROJECT_NAME_UPPER}_SRC_FILES "src/*")
+file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "include/${PROJECT_NAME}/*")
+
+
+#---------------
+# OUTPUT TARGETS
+#---------------
+
+# Add the library as an output target
+add_library(${PROJECT_NAME} SHARED)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
+
+# Add included headers to target.
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:${${PROJECT_NAME_UPPER}_INC_DIR}>
+  PRIVATE
+    ${NODE_ADDON_API_DIR}
+)
 # Add source files to target.
 target_sources(${PROJECT_NAME}
   PRIVATE
-    ${${PROJECT_NAME_UPPER}_HEADERS}
-    ${${PROJECT_NAME_UPPER}_SOURCES}
+    ${${PROJECT_NAME_UPPER}_INC_FILES}
+    ${${PROJECT_NAME_UPPER}_SRC_FILES}
+    ${CMAKE_JS_SRC}
+    package.json
+    README.rst
+    LICENSE
+    VERSION.txt
+    index.js
+    .gitignore
+    .gitattributes
 )
 
-
-
-# Set target compiler flags
-if (${PROJECT_NAME_UPPER}_WERROR)
-  target_compile_options(${PROJECT_NAME} PRIVATE ${WERROR_FLAG})
-endif ()
-if (${PROJECT_NAME_UPPER}_PEDANTIC)
-  target_compile_options(${PROJECT_NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS})
-endif ()
-# if (${PROJECT_NAME}_MODULE)
-#   enable_module(${PROJECT_NAME})
-# endif ()
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 # Set target version and properties.
 set_target_properties(${PROJECT_NAME}
 PROPERTIES
@@ -466,22 +484,48 @@ PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
   ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
   PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
-  PUBLIC_HEADER ${PROJECT_NAME_UPPER}_HEADERS
+  PUBLIC_HEADER ${${PROJECT_NAME_UPPER}_HEADERS}
+  PRIVATE_HEADER ${PROJECT_NAME_UPPER}_PRIVATE_HEADERS
   DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
   INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
 )
+# Add a compatibility interface string to check linkage with
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR)
+# Set LIB_NAME for pkg-config .pc file.
+set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
+endif ()
+# define NAPI_VERSION
+add_definitions(-DNAPI_VERSION=4)
+if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
+# Generate node.lib
+  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+endif()
+# Set target compiler flags
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+if (${PROJECT_NAME_UPPER}_WERROR)
+  target_compile_options(${PROJECT_NAME} PRIVATE ${WERROR_FLAG})
+endif ()
+if (${PROJECT_NAME_UPPER}_PEDANTIC)
+  target_compile_options(${PROJECT_NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS})
+endif ()
+if (${PROJECT_NAME_UPPER}_MODULE)
+  enable_module(${PROJECT_NAME})
+endif ()
+# Create a namespaced exported target.
+export(
+  TARGETS ${PROJECT_NAME}
+  NAMESPACE ${PROJECT_NAME}::
+  FILE ${PROJECT_SOURCE_DIR}/share/${TARGETS_EXPORT_NAME}.cmake
+)
+
 # Dont define these two props on your targets!!
 # They cause symlinks to be generated that node cannot parse
 # VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
 # SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}"
 
-# Set LIB_NAME for pkg-config .pc file. We cannot use the OUTPUT_NAME target
-# property because it's not set by default.
-set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
-endif ()
+
 
 
 
@@ -545,16 +589,10 @@ install(
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
   FRAMEWORK DESTINATION "."
 )
 
-# Use a namespace because CMake provides better diagnostics for namespaced
-# imported targets.
-export(
-  TARGETS ${PROJECT_NAME}
-  NAMESPACE ${PROJECT_NAME}::
-  FILE ${PROJECT_SOURCE_DIR}/share/${TARGETS_EXPORT_NAME}.cmake
-)
 install(
   EXPORT ${TARGETS_EXPORT_NAME}
   DESTINATION share/${PROJECT_NAME}
