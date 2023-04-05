@@ -390,12 +390,29 @@ message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
 # OUTPUT TARGETS
 #---------------
 
+
 # Add the library as an output target
 add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} package.json README.rst LICENSE VERSION.txt index.js .gitignore .gitattributes)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+# Include Node-API wrappers
+execute_process(
+  COMMAND node -p "require('node-addon-api').include"
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE NODE_ADDON_API_DIR
+)
+string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
+# define NAPI_VERSION
+add_definitions(-DNAPI_VERSION=4)
+if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
+  # Generate node.lib
+  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
+endif()
+# add include directories
 include_directories(${CMAKE_JS_INC})
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+
 # Collect included header files
 function(add_headers VAR)
 	set(headers ${${VAR}})
@@ -404,7 +421,7 @@ function(add_headers VAR)
 	endforeach()
 	set(${VAR} ${headers} PARENT_SCOPE)
 endfunction()
-add_headers(${PROJECT_NAME_UPPER}_HEADERS "cmodule.h" ${CMAKE_JS_INC})
+add_headers(${PROJECT_NAME_UPPER}_HEADERS "cmodule.h")
 # Add included headers to target.
 target_include_directories(${PROJECT_NAME}
 PUBLIC
@@ -428,21 +445,6 @@ target_sources(${PROJECT_NAME}
 )
 
 
-# Include Node-API wrappers
-execute_process(
-  COMMAND node -p "require('node-addon-api').include"
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE NODE_ADDON_API_DIR
-)
-string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
-# define NAPI_VERSION
-add_definitions(-DNAPI_VERSION=4)
-if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-  # Generate node.lib
-  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
-endif()
-# add include directories
 
 # Set target compiler flags
 if (${PROJECT_NAME_UPPER}_WERROR)
