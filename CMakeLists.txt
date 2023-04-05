@@ -57,6 +57,7 @@ function(set_verbose)
 endfunction()
 
 
+
 # Set the binary output dir, if not set
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Executable/dll output dir.")
@@ -108,14 +109,14 @@ set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
 
 # Generate CMAKE_INSTALL_<DIR> etc...
-if (NOT ${CMAKE_INSTALL_BINDIR})
+if (NOT CMAKE_INSTALL_BINDIR)
   set(CMAKE_INSTALL_BINDIR /bin CACHE PATH "User executables (bin)")
 endif ()
 if (NOT CMAKE_INSTALL_DATADIR)
   set(CMAKE_INSTALL_DATADIR /share CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
 endif ()
 if (NOT CMAKE_INSTALL_DATAROOTDIR)
-  set(CMAKE_INSTALL_DATAROOTDIR "" CACHE PATH "Read-only architecture-independent data root (share)")
+  set(CMAKE_INSTALL_DATAROOTDIR "/" CACHE PATH "Read-only architecture-independent data root (share)")
 endif ()
 if (NOT CMAKE_INSTALL_DOCDIR)
   set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
@@ -150,7 +151,7 @@ endif ()
 if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
   set(CMAKE_INSTALL_SHAREDSTATEDIR /com CACHE PATH "Modifiable architecture-independent data (com)")
 endif ()
-if (NOT ${CMAKE_INSTALL_SYSCONFDIR})
+if (NOT CMAKE_INSTALL_SYSCONFDIR)
   set(CMAKE_INSTALL_SYSCONFDIR /etc CACHE PATH "Read-only single-machine data (etc)")
 endif ()
 include(GNUInstallDirs)
