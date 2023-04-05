@@ -21,25 +21,26 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         build: [Debug, Release]
+        nodev: [ latest, lts/* ]
     runs-on: ${{ matrix.os }}
     
     steps:
-    - name: Checkout Project
-      uses: actions/checkout@v3
-      
-    - name: Node Setup
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        
-    - run: npm install -g npm@latest
-    - run: npm install -g yarn@latest
-    - run: yarn add cmake-js@latest
-      
     - name: CMake Setup
       uses: jwlawson/actions-setup-cmake@v1.13
       with:
         cmake-version: 'latest'
+      
+    - name: Node Setup
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.nodev }}
+    
+    - name: Checkout Project
+      uses: actions/checkout@v3
+        
+    - run: npm install -g npm@latest
+    - run: npm install -g yarn@latest
+    - run: yarn add cmake-js@latest
 
     - name: CMake Configure
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
