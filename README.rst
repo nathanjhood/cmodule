@@ -119,12 +119,11 @@ Regarding CMake (which compiles, builds, links etc. the C++ development files in
     121   LANGUAGES CXX
     122 )
 
-If you stay with the provided paradigm of placing your to-be-linked public header files ('*.h', '*.hpp', etc) in './include/<project_name>', and your to-be-compiled source files ('*.cc', '*.cpp', etc) in './src', then CMake will know what to do make your C++ tools do with them, and shouldn't require further configuration, straight from the box.
-
 The CMake configuration is set to follow the convention that all 'header' files, such as '*.h', '*.hpp' and so forth (usually containing the public-wide 'declarations' of your code), shall live in the "./include/<project_name>" directory, as depicted in the default project files in this repo.
 
 The CMake configuration is also set to follow the convention that all 'source' files, such as '*.cc', '*.cpp' and so forth (usually containing the 'definitions' of your code - note that the contents of this folder shall be compiled into a binary '*.node' file that only NodeJS can read), shall live in the "./src/" directory, as depicted in the default project files in this repo.
 
+If you stay with the provided paradigm of placing your to-be-linked public header files ('*.h', '*.hpp', etc) in './include/<project_name>', and your to-be-compiled source files ('*.cc', '*.cpp', etc) in './src', then CMake will know what to make your C++ tools do with them, and shouldn't require any further configuration, straight from the box.
 
 
 How to publish and consume your C++ package for NodeJS;
