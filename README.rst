@@ -29,7 +29,7 @@ For development of CModules (npm):
 .. code::
 
     npm -g install cmake-js@latest
-    // ...will install the required Node API header files for C++ development 
+    // ...will install the required Node API header files for C++ development (only needed once)
     
     npm install 
     // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
@@ -49,7 +49,7 @@ For development of CModules (yarn):
 .. code::
 
     yarn global add cmake-js@latest
-    // ...will install the required Node API header files for C++ development
+    // ...will install the required Node API header files for C++ development (only needed once)
     
     yarn
     // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
@@ -125,6 +125,7 @@ The CMake configuration is also set to follow the convention that all 'source' f
 
 If you stay with the provided paradigm of placing your to-be-linked public header files ('*.h', '*.hpp', etc) in './include/<project_name>', and your to-be-compiled source files ('*.cc', '*.cpp', etc) in './src', then CMake will know what to make your C++ tools do with them, and shouldn't require any further configuration, straight from the box.
 
+This means you can just focus on the C++ and Javascript development files contained therein, and should have a working, multi-platform, multi-arch, multi-OS library for NodeJs (please see the 'tests' tab of this repo for more info).
 
 How to publish and consume your C++ package for NodeJS;
 -------------------------------------------------------
