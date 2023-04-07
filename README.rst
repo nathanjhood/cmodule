@@ -16,7 +16,7 @@ Multi-platform, multi-architecture C/C++ modules that compile into '<*>.node' fi
    :target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3CMake
 
 
-Requirements:
+Development Requirements:
 -------------
 
 * NodeJS
@@ -62,6 +62,38 @@ After tinkering with your project source files, just rebuild them!
 Completely remove all build files, directories, and artefacts... does not destroy any source files :)
 
 Supports "Release", "Debug", "MinSizeRel", and "RelwithDebInfo" build modes (for C++ debugging with, e.g., gdb).
+
+How to publish and consume your C++ package for NodeJS;
+-------------------------------------------------------
+* Set a valid name and version number in package.json!
+You should probably change these fields to;
+"name": "@<team_name>/<project_name>"
+"version": "0.0.1"
+
+Replacing the team and project names accordingly. Using the "@<team_name>" part of the name entry helps to avoid naming collisions with the rest of the existing npm registry. PLEASE NOTE that once you publish a package under a certain version number, you are able to "unpublish" and remove this package from npm; however, there appears to be no way to ever reclaim the same combination of <package name> with <version number> ever again, even if the package itself has been unpublished and removed from the registry.
+
+* yarn wipe
+To clean the directory before publishing to the npm registry
+
+* npm publish --access=public
+
+Then, you can cd into your existing npm-(or yarn-)based project, or create a new one with the usual "init" command. Assuming this environment meets the system requirements (CMake and a C++ build tool installed), then this simple command;
+
+* npm install '@<team_name>/<package_name>'
+
+...Will make your 'cmodule' available in the receiving project's Javascript (and Typescript!) files, via the usual means;
+
+* const <package_name> = require ("@<team_name>/<project_name>");
+For 'CommonJs'-style syntax, or;
+
+* import <package_name> from "@<team_name>/<project_name>";
+For 'ES6/Module'-style syntax.
+
+Then, we make an instance of our module;
+* const myImportedModule = <package_name>;
+
+Now you can go ahead and call whatever functions, classes, objects etc you have created in your C++ files, for example;
+* console.log(myImportedModule.hello());
 
 Support
 -------
