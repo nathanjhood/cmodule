@@ -22,7 +22,7 @@ Development Requirements:
 * NodeJS
 * NPM or Yarn
 * CMake
-* A C/C++ compiler
+* A C/C++ compiler (supports GNU, MSVC, CLang...)
 
 For development of CModules (npm):
 ----------------------------------
@@ -108,9 +108,15 @@ The same as the above, but also removes the "node_modules" folder. Useful mostly
 Where to place your C++ development files for CMake to correctly compile, build, and link them to the output '*.node' file;
 ---------------------------------------------------------------------------------------------------------------------------
 
-We have two project-local directories of key importance in C++ project development; the "./src" directory, and "./include/<project_name>" directory - both specified from the project's root folder.
+We have two project-local directories of key importance in C++ project development; 
 
-Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file well alone, with the exception of lines 116 - 122, where you can specify a name, version number, homepage, and description for your node module (defaults below);
+* the "./src" directory, and,
+
+* the "./include/<project_name>" directory 
+
+- both specified from the project's root folder.
+
+Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 116 - 122, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
 
 .. code::
     
@@ -122,6 +128,8 @@ Regarding CMake (which compiles, builds, links etc. the C++ development files in
     121   LANGUAGES CXX
     122 )
 
+*Note* - I will possibly abstract the above CMake interaction away, and have everything defined centrally in the root package.json file. CMake has good tools for parsing JSON with, but I haven't much experience with these just yet. Stay tuned!
+
 The CMake configuration is set to follow the convention that all 'header' files, such as '*.h', '*.hpp' and so forth (usually containing the public-wide 'declarations' of your code), shall live in the "./include/<project_name>" directory, as depicted in the default project files in this repo.
 
 The CMake configuration is also set to follow the convention that all 'source' files, such as '*.cc', '*.cpp' and so forth (usually containing the 'definitions' of your code - note that the contents of this folder shall be compiled into a binary '*.node' file that only NodeJS can read), shall live in the "./src/" directory, as depicted in the default project files in this repo.
@@ -132,15 +140,15 @@ This means you can just focus on the C++ and Javascript development files contai
 
 How to publish and consume your C++ package for NodeJS;
 -------------------------------------------------------
-* Set a valid name and version number in package.json!
-You should probably change these fields to;
+
+Set a valid name and version number in package.json! You should probably change these fields;
 
 .. code::
     
     "name": "@<team_name>/<project_name>"
     "version": "0.0.1"
 
-Replacing the team and project names accordingly. Using the "@<team_name>" part of the name entry helps to avoid naming collisions with the rest of the existing npm registry. PLEASE NOTE that once you publish a package under a certain version number, you are able to "unpublish" and remove this package from npm; however, there appears to be no way to ever reclaim the same combination of <package name> with <version number> ever again, even if the package itself has been unpublished and removed from the registry.
+Replace the team and project names accordingly. Using the "@<team_name>" part of the name entry helps to avoid naming collisions with the rest of the existing npm registry. PLEASE NOTE that once you publish a package under a certain version number, you are able to "unpublish" and remove this package from npm; however, there appears to be no way to ever reclaim the same combination of <package name> with <version number> ever again, even if the package itself has been unpublished and removed from the registry.
 
 To clean the directory before publishing to the npm registry, run;
 
@@ -148,7 +156,7 @@ To clean the directory before publishing to the npm registry, run;
     
     yarn wipe
 
-And to publish it, making it consunable in other npm-based projects publically;
+And to publish it, making it consumable in other npm-based projects publically;
 
 .. code::
     
@@ -248,11 +256,12 @@ Please kindly note that the project template is compatible with CMake build pipe
 
 References
 ----------
-I have specified the excellent npm binary package 'bindings' as a dependency, but also investigating possible other more localized approaches to "exporting" the final module. The 'node-addon-api' is probably self-evident in it's inclusion as a package dependency at this moment.
 
-Your libs will appear in './lib', your binaries in './bin' and so on (all relative to the project root folder); and by the same convention, your project's header files should *always remain* in './include/<project_name>/', and source files in './src'. These input and output paths are *never* mixed, just like an out-of-source build. The C/C++ compiler step will generate several of these new ("dirty") outputs in your root folder ('bin', 'lib', 'share', etc...), and will place these in a directory named 'build' which your built module is using, specifically at runtime. Aside from during realtime use, these generated directories can *all* be safely removed using the package.json 'clean' script command - or manually - and your project's sources and header files shall never be over-written, written to, or modified ever, by CMake. 
+I have specified the excellent npm binary package 'bindings' as a dependency, but also investigating possible other more localized approaches to "exporting" the final module. The 'node-addon-api' is probably self-evident in it's inclusion as a package dependency at this moment. CMake-JS does the wonderful work of linking CMake's potentially seamless build process into the generic npm package commands one would typically use everyday in NodeJS development. Thanks to these three dependencies in our project template, and the routines I've defined in CMakeLists.txt, your 'cmodule'-based projects should integrate into a NodeJS workflow with nothing but a little additional time spent waiting for the compiler to finish it's run :)
 
-Since node has issues running symlinks with long and unusual extensions ('cmodule.node.1.0.0.0', for example, doesn't fly), it is crucial that 'bindings.js' is searching in the correct places for our compiled '.node' file(s) - namely, they will appear in those safely-destructible './bin' and './lib' directories, which is where they typically *would* be for an npm module, of course. Thus, for now, I've modified the included 'bindings.js' to point at these output directories, so it succesfully locates your outputted <project>.node file(s). This is a sore-point as we do not wish to be packaging other developers' code in un-intended ways into our template codebase. Our most likely solution is to rake CMake *even further* over the coals - perhaps just by copying the builds back into the './build' directory :p who knows? But this will be fixed imminently.
+Your libs will appear in './build/lib', your binaries in './build/bin', and so on (all relative to the project root folder); and by the same convention, your project's header files should *always remain* in './include/<project_name>/', and source files in './src'. These input and output directory paths are *never* mixed, just like an out-of-source build. The C/C++ compiler step will generate several of these new ("dirty") outputs in your root folder ('bin', 'lib', 'share', etc...), and will place these in a directory named 'build/' which your built module is using, specifically at runtime. Aside from during realtime use, these generated directories can *all* be safely removed using the package.json 'clean' script command - or manually, by simply deleting the generated 'build' directory and all it's contents - and your project's sources and header files shall never be over-written, written to, or modified ever, by CMake. 
+
+
 
 Thanks for reading!
 -------------------
