@@ -12,6 +12,9 @@ Multi-platform, multi-architecture C/C++ modules that compile into '<*>.node' fi
 .. image:: https://github.com/StoneyDSP/cmodule/workflows/windows/badge.svg
    :target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3Awindows
 
+.. image:: https://github.com/StoneyDSP/cmodule/workflows/CMake/badge.svg
+   :target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3CMake
+
 
 Requirements:
 -------------
