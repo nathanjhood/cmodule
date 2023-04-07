@@ -17,22 +17,39 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 else ()
   set(USE_X64 FALSE)
 endif ()
-set(CMAKE_INSTALL_MODE SYMLINK)
+set(CMAKE_INSTALL_MODE SYMLINK_OR_COPY)
 set(CMAKE_INSTALL_MESSAGE ALWAYS)
 
 # Check for cmake-js
 message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
-if (NOT CMAKE_JS_INC)
-  execute_process(
-    COMMAND npm install
-    WORKING_DIRECTORY CMAKE_CURRENT_LIST_DIR
-  )
-  execute_process(
-    COMMAND npm run clean
-    WORKING_DIRECTORY CMAKE_CURRENT_LIST_DIR
-  )
-endif ()
-message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+# if (NOT CMAKE_JS_INC)
+#   execute_process(
+#     COMMAND yarn add cmake-js@latest
+#     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#   )
+#   execute_process(
+#     COMMAND yarn clean
+#     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#   )
+# endif ()
+# message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+
+# add_custom_command(
+#   OUTPUT out.c
+#   COMMAND someTool -i ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
+#                    -o out.c
+#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
+#   VERBATIM)
+# add_library(myLib out.c)
+
+# add_custom_command(
+#   OUTPUT out.c
+#   COMMAND someTool -i ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
+#                    -o out.c
+#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
+#   VERBATIM)
+# add_library(myLib out.c)
+
 
 # Collect Node Addon-API headers into NODE_ADDON_API_DIR
 execute_process(
@@ -62,24 +79,6 @@ function(enable_module target)
   set_source_files_properties(${BMI} PROPERTIES GENERATED ON)
 endfunction()
 
-# Sets a cache variable with a docstring joined from multiple arguments:
-#   set(<variable> <value>... CACHE <type> <docstring>...)
-# This allows splitting a long docstring for readability.
-function(set_verbose)
-  # cmake_parse_arguments is broken in CMake 3.4 (cannot parse CACHE) so use
-  # list instead.
-  list(GET ARGN 0 var)
-  list(REMOVE_AT ARGN 0)
-  list(GET ARGN 0 val)
-  list(REMOVE_AT ARGN 0)
-  list(REMOVE_AT ARGN 0)
-  list(GET ARGN 0 type)
-  list(REMOVE_AT ARGN 0)
-  join(doc ${ARGN})
-  set(${var} ${val} CACHE ${type} ${doc})
-endfunction()
-
-
 
 # Set the binary output dir, if not set
 if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
@@ -97,7 +96,7 @@ endif ()
 if (NOT CMAKE_PDB_OUTPUT_DIRECTORY)
   set(CMAKE_PDB_OUTPUT_DIRECTORY      "${CMAKE_BINARY_DIR}/bin" CACHE PATH "PDB (MSVC debug symbol)output dir.")
 endif ()
-set(CMAKE_CFG_INTDIR                  "${CMAKE_BINARY_DIR}"     CACHE PATH "CMake build artefacts directory.")
+set(CMAKE_CFG_INTDIR                  "${CMAKE_CURRENT_BINARY_DIR}/out"     CACHE PATH "CMake build artefacts directory.")
 
 
 # Build using shared libraries. if this is set to ON, then all libraries are built as shared libraries by default.
@@ -109,7 +108,7 @@ option(ASAN_ENABLED "Build with Address Sanitizer" OFF)
 # Use the target 'FOLDER' property to organize targets into folders
 set(USE_FOLDERS OFF)
 # https://stackoverflow.com/questions/48580399/how-to-ensure-a-generated-config-h-file-is-in-the-include-path
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 # export symbols on Windows for shared libraries to work
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
@@ -130,50 +129,101 @@ string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 
+# Determine if built as a subproject (using add_subdirectory), or if it is the master project.
+if (NOT DEFINED ${PROJECT_NAME_UPPER}_MASTER_PROJECT)
+  set(${PROJECT_NAME_UPPER}_MASTER_PROJECT OFF)
+  if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    # ... this is a top-level project, then;
+    set(PROJECT_IS_TOP_LEVEL TRUE)
+    set(${PROJECT_NAME_UPPER}_MASTER_PROJECT ON)
+    set(MASTER_PROJECT_NAME ${PROJECT_NAME} CACHE STRING "Name of master project")
+    set(MASTER_PROJECT_NAME_UPPER ${PROJECT_NAME_UPPER} CACHE STRING "Name of master project (uppercase)")
+    set(MASTER_PROJECT_NAME_LOWER ${PROJECT_NAME_LOWER} CACHE STRING "Name of master project (lowercase)")
+    message(STATUS "${PROJECT_NAME} is a top-level CMake project\n")
+  else ()
+    # ... this is not a top-level project, so;
+    set(PROJECT_IS_TOP_LEVEL FALSE)
+    message(STATUS "${PROJECT_NAME} is a sub-project of ${CMAKE_PROJECT_NAME}\n")
+  endif ()
+endif ()
+if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C++)")
+  set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
+endif ()
+if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_C_VISIBILITY_PRESET)
+  set(CMAKE_C_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C)")
+  set_property(CACHE CMAKE_C_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
+endif ()
+if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
+endif ()
+
+# Ensure a valid build type is set
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  if (${PROJECT_NAME_UPPER}_MASTER_PROJECT)
+    set(DEFAULT_BUILD_TYPE Debug)
+  else ()
+    message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
+  endif ()
+  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
+  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif ()
+# Add System Libraries as needed
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
+endif ()
+include(InstallRequiredSystemLibraries)
+# Print the build flags for the user
+if (DEFINED CMAKE_BUILD_TYPE)
+  message(STATUS "Generated CMake build type: ${CMAKE_BUILD_TYPE}")
+else ()
+  message(STATUS "Generated CMake config types: ${CMAKE_CONFIGURATION_TYPES}")
+endif ()
 
 # Generate CMAKE_INSTALL_<DIR> etc...
-if (NOT CMAKE_INSTALL_INCLUDEDIR)
-  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
-endif ()
-if (NOT CMAKE_INSTALL_BINDIR)
-  set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
-endif ()
-if (NOT CMAKE_INSTALL_SBINDIR)
-  set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
-endif ()
-if (NOT CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
-endif ()
-if (NOT CMAKE_INSTALL_LIBEXECDIR)
-  set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
-endif ()
-if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
-  set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
-endif ()
-if (NOT CMAKE_INSTALL_DATADIR)
-  set(CMAKE_INSTALL_DATADIR share CACHE PATH "Read-only architecture-independent data (share)")
-endif ()
-if (NOT CMAKE_INSTALL_LOCALSTATEDIR)
-  set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
-endif ()
-if (NOT CMAKE_INSTALL_SYSCONFDIR)
-  set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
-endif ()
-if (NOT CMAKE_INSTALL_RUNSTATEDIR)
-  set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
-endif ()
-if (NOT CMAKE_INSTALL_LOCALEDIR)
-  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
-endif ()
-if (NOT CMAKE_INSTALL_DOCDIR)
-  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
-endif ()
-if (NOT CMAKE_INSTALL_INFODIR)
-  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
-endif ()
-if (NOT CMAKE_INSTALL_MANDIR)
-  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
-endif ()
+# if (NOT CMAKE_INSTALL_INCLUDEDIR)
+#   set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
+# endif ()
+# if (NOT CMAKE_INSTALL_BINDIR)
+#   set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
+# endif ()
+# if (NOT CMAKE_INSTALL_SBINDIR)
+#   set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
+# endif ()
+# if (NOT CMAKE_INSTALL_LIBDIR)
+#   set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
+# endif ()
+# if (NOT CMAKE_INSTALL_LIBEXECDIR)
+#   set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
+# endif ()
+# if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
+#   set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
+# endif ()
+# if (NOT CMAKE_INSTALL_DATADIR)
+#   set(CMAKE_INSTALL_DATADIR share CACHE PATH "Read-only architecture-independent data (share)")
+# endif ()
+# if (NOT CMAKE_INSTALL_LOCALSTATEDIR)
+#   set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
+# endif ()
+# if (NOT CMAKE_INSTALL_SYSCONFDIR)
+#   set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
+# endif ()
+# if (NOT CMAKE_INSTALL_RUNSTATEDIR)
+#   set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
+# endif ()
+# if (NOT CMAKE_INSTALL_LOCALEDIR)
+#   set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
+# endif ()
+# if (NOT CMAKE_INSTALL_DOCDIR)
+#   set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
+# endif ()
+# if (NOT CMAKE_INSTALL_INFODIR)
+#   set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
+# endif ()
+# if (NOT CMAKE_INSTALL_MANDIR)
+#   set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
+# endif ()
 # Don't set this var! https://cmake.org/cmake/help/latest/command/install.html#installing-files
 # if (NOT CMAKE_INSTALL_DATAROOTDIR)
 #   set(CMAKE_INSTALL_DATAROOTDIR "/" CACHE PATH "Read-only architecture-independent data root (DATAROOT)")
@@ -196,59 +246,14 @@ set(CMAKE_MODULE_PATH
 )
 
 ## Configure files.
-set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_SOURCE_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
-set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_SOURCE_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
+set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
+set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
 set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
-# set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
-set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_SOURCE_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
+set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
 set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
 set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
 set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
 set(TARGETS_EXPORT_NAME  											 ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
-# Read the .gitignore file, if found
-if (${CMAKE_CURRENT_SOURCE_DIR}/.gitignore)
-  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/.gitignore ${PROJECT_NAME}_GITIGNORE_FILE)
-endif()
-# Read the .gitattributes file, if found
-if (${CMAKE_CURRENT_SOURCE_DIR}/.gitattributes)
-  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/.gitattributes ${PROJECT_NAME}_GITATTRIBUTES_FILE)
-endif()
-
-# Determine if built as a subproject (using add_subdirectory), or if it is the master project.
-if (NOT DEFINED ${PROJECT_NAME_UPPER}_MASTER_PROJECT)
-  set(${PROJECT_NAME_UPPER}_MASTER_PROJECT OFF)
-  if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    set(${PROJECT_NAME_UPPER}_MASTER_PROJECT ON)
-    message(STATUS "${PROJECT_NAME} is a top-level CMake project\n")
-  else ()
-    message(STATUS "${PROJECT_NAME} is a sub-project of ${CMAKE_PROJECT_NAME}\n")
-  endif ()
-endif ()
-
-# Ensure a valid build type is set
-if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  if (${PROJECT_NAME_UPPER}_MASTER_PROJECT)
-    set(DEFAULT_BUILD_TYPE Debug)
-  else ()
-    message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
-  endif ()
-  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
-  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif ()
-
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
-endif ()
-include(InstallRequiredSystemLibraries)
-
-
-# Print the flags for the user
-if (DEFINED CMAKE_BUILD_TYPE)
-  message(STATUS "Generated CMake build type: ${CMAKE_BUILD_TYPE}")
-else ()
-  message(STATUS "Generated CMake config types: ${CMAKE_CONFIGURATION_TYPES}")
-endif ()
 
 
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
@@ -261,16 +266,8 @@ option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ${${PROJECT_NAME_U
 option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
 option(${PROJECT_NAME_UPPER}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
 
-if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
-  set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols")
-  set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
-endif ()
 
-if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
-  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
-endif ()
-
-
+# Set Compiler flags as needed
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(PEDANTIC_COMPILE_FLAGS -pedantic-errors -Wall -Wextra -pedantic
       -Wold-style-cast -Wundef
@@ -351,8 +348,8 @@ function(join_paths joined_path first_path_segment)
   endforeach()
   set(${joined_path} "${temp_path}" PARENT_SCOPE)
 endfunction()
-join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
-join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
+join_paths(libdir_for_pc_file "\${exec_prefix}" "${${PROJECT_NAME_UPPER}_LIB_DIR}")
+join_paths(includedir_for_pc_file "\${prefix}" "${${PROJECT_NAME_UPPER}_INC_DIR}")
 
 # create config header
 message(STATUS "Creating config header file...")
@@ -440,19 +437,32 @@ add_sources(${PROJECT_NAME_UPPER}_SOURCES "cmodule.cc")
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(${CMAKE_JS_INC})
 set(${PROJECT_NAME_UPPER}_PRIVATE_HEADERS ${NODE_ADDON_API_DIR})
+# Glob all files with all extensions in 'src/' and pass them to ${PROJECT_NAME_UPPER}_SRC_FILES
 file(GLOB ${PROJECT_NAME_UPPER}_SRC_FILES "src/*")
+# Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
 file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "include/${PROJECT_NAME}/*")
+# Read the .gitignore file, if found
+if (${CMAKE_CURRENT_SOURCE_DIR}/.gitignore)
+  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/.gitignore ${PROJECT_NAME}_GITIGNORE_FILE)
+endif()
+# Read the .gitattributes file, if found
+if (${CMAKE_CURRENT_SOURCE_DIR}/.gitattributes)
+  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/.gitattributes ${PROJECT_NAME}_GITATTRIBUTES_FILE)
+endif()
 
 
 #---------------
 # OUTPUT TARGETS
 #---------------
 
+
+# add_custom_target(npm COMMAND npm install && npm run clean WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+# add_custom_target(yarn COMMAND yarn && yarn clean WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Add the library as an output target
 add_library(${PROJECT_NAME} SHARED)
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(${MASTER_PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
 # Add included headers to target.
 target_include_directories(${PROJECT_NAME}
@@ -477,19 +487,21 @@ target_sources(${PROJECT_NAME}
     .gitattributes
 )
 
-# Set target version and properties.
+# Set target output file properties.
 set_target_properties(${PROJECT_NAME}
 PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
-  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
-  ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
-  PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+  RUNTIME_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_BIN_DIR}
+  LIBRARY_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_LIB_DIR}
+  ARCHIVE_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_LIB_DIR}
+  PDB_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_BIN_DIR}
   PUBLIC_HEADER ${${PROJECT_NAME_UPPER}_HEADERS}
   PRIVATE_HEADER ${PROJECT_NAME_UPPER}_PRIVATE_HEADERS
+  PREFIX ""
+  SUFFIX ".node"
   DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
   INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
 )
-# Add a compatibility interface string to check linkage with
+# Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
 set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR)
 # Set LIB_NAME for pkg-config .pc file.
 set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
@@ -516,10 +528,9 @@ endif ()
 # Create a namespaced exported target.
 export(
   TARGETS ${PROJECT_NAME}
-  NAMESPACE ${PROJECT_NAME}::
-  FILE ${PROJECT_SOURCE_DIR}/share/${TARGETS_EXPORT_NAME}.cmake
+  FILE ${PROJECT_BINARY_DIR}/${TARGETS_EXPORT_NAME}.cmake
+  NAMESPACE ${MASTER_PROJECT_NAME}::
 )
-
 # Dont define these two props on your targets!!
 # They cause symlinks to be generated that node cannot parse
 # VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
@@ -536,13 +547,14 @@ export(
 # Configure CTest
 enable_testing()
 add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
-
+# include(CTest)
 
 #---------------
 # CPACK
 #---------------
 
 # Configure CPack
+set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${${PROJECT_NAME}_VERSION_MINOR})
@@ -567,6 +579,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 include(CPack)
 
 message("CPACK_PACKAGE_VENDOR = ${CPACK_PACKAGE_VENDOR}")
+message("CPACK_SOURCE_PACKAGE_FILE_NAME = ${CPACK_SOURCE_PACKAGE_FILE_NAME}")
 message("CPACK_PACKAGE_DESCRIPTION_SUMMARY = ${PROJECT_DESCRIPTION}")
 message("CPACK_PACKAGE_VERSION_MAJOR = ${${PROJECT_NAME}_VERSION_MAJOR}")
 message("CPACK_PACKAGE_VERSION_MINOR = ${${PROJECT_NAME}_VERSION_MINOR}")
@@ -595,8 +608,8 @@ install(
 
 install(
   EXPORT ${TARGETS_EXPORT_NAME}
-  DESTINATION share/${PROJECT_NAME}
-  NAMESPACE ${PROJECT_NAME}::
+  DESTINATION ${${PROJECT_NAME_UPPER}_CMAKE_DIR}
+  NAMESPACE ${MASTER_PROJECT_NAME}::
 )
 
 # Install version, config and target files.

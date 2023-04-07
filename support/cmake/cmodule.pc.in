@@ -7,4 +7,4 @@ Name: @PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 Libs: -L${libdir}
-Cflags: -I${includedir}
+CXXflags: -I${includedir}

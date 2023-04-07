@@ -7,6 +7,7 @@
   "license": "MIT",
   "author": "Nathan J. Hood <nathanjhood@googlemail.com> (http://stoneydsp.com)",
   "homepage": "https://github.io/StoneyDSP/cmodule",
+  "private": "true",
   "repository": {
     "type": "git",
     "url": "git://github.com/StoneyDSP/cmodule.git"
@@ -32,7 +33,6 @@
     "cmake-js": "^7.2.1",
     "node-addon-api": "^6.0.0"
   },
-  "devDependencies": {},
   "cmake-js": {
     "runtime": "node",
     "arch": "x64"
