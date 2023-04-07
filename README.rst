@@ -61,10 +61,10 @@ For development of CModules (yarn):
     yarn clean
     // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development on the project
     
-    yarn build
-    // ...will rebuild the files found in 'src/' and 'include/cmodule/'... etc
+    yarn rebuild
+    // ...will rebuild your development files found in 'src/' and 'include/cmodule/'... etc
 
-Your final module can be tested and packaged up using the built-in CTest and CPack commands, respectively, alongside your usual node-based debugging tools. Once packaged, you might publish a release of your module using GitHub Packages, which can then easily be consumed by using the typical "npm/yarn add yourmodule" routines.
+Your final module can be tested and packaged up using the built-in CTest and CPack commands, respectively, alongside your usual node-based debugging tools. Once packaged, you might publish a release of your module to the npm registry, which can then easily be consumed by using the typical "npm/yarn install" routines.
 
 A closer look at the development steps of CModules as above, using yarn:
 ------------------------------------------------------------------------
@@ -142,11 +142,13 @@ You should probably change these fields to;
 
 Replacing the team and project names accordingly. Using the "@<team_name>" part of the name entry helps to avoid naming collisions with the rest of the existing npm registry. PLEASE NOTE that once you publish a package under a certain version number, you are able to "unpublish" and remove this package from npm; however, there appears to be no way to ever reclaim the same combination of <package name> with <version number> ever again, even if the package itself has been unpublished and removed from the registry.
 
+To clean the directory before publishing to the npm registry, run;
+
 .. code::
     
     yarn wipe
 
-To clean the directory before publishing to the npm registry
+And to publish it, making it consunable in other npm-based projects publically;
 
 .. code::
     
@@ -168,15 +170,17 @@ Running one of the above will make your 'cmodule' available in the receiving pro
 
 .. code::
 
+For 'CommonJs'-style syntax;
+
     const <package_name> = require ("@<team_name>/<project_name>");
 
-For 'CommonJs'-style syntax, or;
+ *or*
+
+For 'ES6/Module'-style syntax;
 
 .. code::
 
     import <package_name> from "@<team_name>/<project_name>";
-
-For 'ES6/Module'-style syntax.
 
 Then, we make an instance of our module;
 
