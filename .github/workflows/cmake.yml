@@ -66,11 +66,11 @@ jobs:
       
     - name: CPack Zip
       working-directory: ${{github.workspace}}/build
-      run: cpack -G ZIP -C CPackSourceConfig.cmake
+      run: cpack -G ZIP
 
     - name: CPack Tar
       working-directory: ${{github.workspace}}/build
-      run: cpack -G TGZ -C CPackSourceConfig.cmake
+      run: cpack -G TGZ
       
 #    - name: CPack Zip
 #      working-directory: ${{github.workspace}}/build
