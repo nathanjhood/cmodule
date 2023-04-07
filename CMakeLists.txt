@@ -1,5 +1,7 @@
 #!/usr/bin/env cmake
 
+# StoneyDSP/cmodule - a public template for C++ modules for NodeJS (MIT 2023)
+
 # CMake requirements.
 cmake_minimum_required(VERSION 3.9...3.24.2)
 # Cmake-js requirements
