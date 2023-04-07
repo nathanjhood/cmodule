@@ -355,14 +355,14 @@ join_paths(includedir_for_pc_file "\${prefix}" "${${PROJECT_NAME_UPPER}_INC_DIR}
 # create config header
 message(STATUS "Creating config header file...")
 configure_file(
-  ${PROJECT_SOURCE_DIR}/support/cmake/${PROJECT_NAME}Config.h.in
+  ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.h.in
   ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG})
 message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
 
 # create config file
 message(STATUS "Creating project config file...")
 configure_package_config_file(
-    ${PROJECT_SOURCE_DIR}/support/cmake/${PROJECT_NAME}Config.cmake.in
+    ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.cmake.in
     ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
   INSTALL_DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
@@ -381,7 +381,7 @@ message(STATUS "Created version file for the config file at ${${PROJECT_NAME_UPP
 # create pkgconfig file
 message(STATUS "Creating pkgconfig file...")
 configure_file(
-  ${PROJECT_SOURCE_DIR}/support/cmake/${PROJECT_NAME}.pc.in
+  ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
   ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
   @ONLY
 )
