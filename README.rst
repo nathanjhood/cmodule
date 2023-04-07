@@ -114,7 +114,7 @@ We have two project-local directories of key importance in C++ project developme
 
 * the "./include/<project_name>" directory 
 
-- both specified from the project's root folder.
+Both specified relative to the project's root folder.
 
 Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 116 - 122, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
 
@@ -130,13 +130,13 @@ Regarding CMake (which compiles, builds, links etc. the C++ development files in
 
 *Note* - I will possibly abstract the above CMake interaction away, and have everything defined centrally in the root package.json file. CMake has good tools for parsing JSON with, but I haven't much experience with these just yet. Stay tuned!
 
-The CMake configuration is set to follow the convention that all 'header' files, such as '*.h', '*.hpp' and so forth (usually containing the public-wide 'declarations' of your code), shall live in the "./include/<project_name>" directory, as depicted in the default project files in this repo.
+The CMake configuration is set to follow the convention that all 'header' files, such as '*.h', '*.hpp' and so forth (usually containing the public-wide 'declarations' of your code), shall live in the "./include/<project_name>" directory, as depicted in the default project files in this repo. CMake will 'glob' *all* files that it finds in this directory, regardless of extension or type, and make these available for the end user(s) by directly copying these files into their project's './node_modules/' tree.
 
-The CMake configuration is also set to follow the convention that all 'source' files, such as '*.cc', '*.cpp' and so forth (usually containing the 'definitions' of your code - note that the contents of this folder shall be compiled into a binary '*.node' file that only NodeJS can read), shall live in the "./src/" directory, as depicted in the default project files in this repo.
+The CMake configuration is also set to follow the convention that all 'source' files, such as '*.cc', '*.cpp' and so forth (usually containing the 'definitions' of your code) shall live in the "./src/" directory, as depicted in the default project files in this repo. Note that CMake will 'glob' *all* files that it finds in this directory, regardless of extension or type. These contents shall be compiled into a binary '*.node' file that only NodeJS can read.
 
 If you stay with the provided paradigm of placing your to-be-linked public header files ('*.h', '*.hpp', etc) in './include/<project_name>', and your to-be-compiled source files ('*.cc', '*.cpp', etc) in './src', then CMake will know what to make your C++ tools do with them, and shouldn't require any further configuration, straight from the box.
 
-This means you can just focus on the C++ and Javascript development files contained therein, and should have a working, multi-platform, multi-arch, multi-OS library for NodeJs (please see the 'tests' tab of this repo for more info).
+This means you can just focus on the C++ and Javascript development files contained therein, and should have a working, multi-platform, multi-arch, multi-OS library for NodeJs straight from the box every time (please see the 'tests' tab of this repo for more info).
 
 How to publish and consume your C++ package for NodeJS;
 -------------------------------------------------------
