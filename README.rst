@@ -26,79 +26,144 @@ Development Requirements:
 
 For development of CModules (npm):
 ----------------------------------
+.. code::
 
-* npm -g install cmake-js@latest
-* npm install
-* npm test
-* npm clean
+    npm -g install cmake-js@latest
+    // ...will install the required Node API header files for C++ development 
+    
+    npm install 
+    // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
+    
+    npm run test 
+    // ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
+    
+    npm run clean 
+    // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development
+    
+    npm run build
+    // ...will rebuild the files found in 'src/' and 'include/cmodule/'... etc
 
 
 For development of CModules (yarn):
 -----------------------------------
+.. code::
 
-* yarn global add cmake-js@latest
-* yarn
-* yarn test
-* yarn clean
-
+    yarn global add cmake-js@latest
+    // ...will install the required Node API header files for C++ development
+    
+    yarn
+    // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
+    
+    yarn test
+    // ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
+    
+    yarn clean
+    // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development on the project
+    
+    yarn build
+    // ...will rebuild the files found in 'src/' and 'include/cmodule/'... etc
 
 Your final module can be tested and packaged up using the built-in CTest and CPack commands, respectively, alongside your usual node-based debugging tools. Once packaged, you might publish a release of your module using GitHub Packages, which can then easily be consumed by using the typical "npm/yarn add yourmodule" routines.
 
 A closer look at the development steps of CModules as above, using yarn:
+------------------------------------------------------------------------
+.. code::
+    
+    yarn global add cmake-js@latest
 
-* yarn global add cmake-js@latest
-Installs the required Node API header files to link with during development
+...installs the required Node API header files to link with during development
 
-* yarn install
-Run standard yarn command from project root folder to compile the current C/C++ source file(s)
+.. code::
 
-* yarn test
-Serves the compiled C/C++ files(s) using your system node executable, from the entry point of 'index.js'. Prints 'hello, world!' by default - see the 'cmodule.h/cc' source files to specify the behaviour of your module!
+    yarn install
 
-* yarn rebuild
+...the standard npm/yarn 'install' command from project root folder will compile the current C/C++ source file(s) as part of it's package installation routine
+
+.. code:: 
+    
+    yarn test
+
+...serves the compiled C/C++ files(s) using your system node executable, from the entry point of 'index.js'. Prints 'hello, world!' by default - see the 'cmodule.h/cc' source files to specify the behaviour of your module!
+
+.. code::
+
+    yarn rebuild
+
 After tinkering with your project source files, just rebuild them!
 
-* yarn clean
-Completely remove all build files, directories, and artefacts... does not destroy any source files :)
+.. code::
+    
+    yarn clean
 
-Supports "Release", "Debug", "MinSizeRel", and "RelwithDebInfo" build modes (for C++ debugging with, e.g., gdb).
+This completely remove all build files, directories, and artefacts... but does not destroy any source files :)
+
+.. code::
+    
+    yarn wipe
+
+The same as the above, but also removes the "node_modules" folder. Useful mostly just before packaging your project for distribution only.
 
 How to publish and consume your C++ package for NodeJS;
 -------------------------------------------------------
 * Set a valid name and version number in package.json!
 You should probably change these fields to;
-"name": "@<team_name>/<project_name>"
-"version": "0.0.1"
+.. code::
+    
+    "name": "@<team_name>/<project_name>"
+    "version": "0.0.1"
 
 Replacing the team and project names accordingly. Using the "@<team_name>" part of the name entry helps to avoid naming collisions with the rest of the existing npm registry. PLEASE NOTE that once you publish a package under a certain version number, you are able to "unpublish" and remove this package from npm; however, there appears to be no way to ever reclaim the same combination of <package name> with <version number> ever again, even if the package itself has been unpublished and removed from the registry.
 
-* yarn wipe
+.. code::
+    
+    yarn wipe
+
 To clean the directory before publishing to the npm registry
 
-* npm publish --access=public
+.. code::
+    
+    npm publish --access=public
 
 Then, you can cd into your existing npm-(or yarn-)based project, or create a new one with the usual "init" command. Assuming this environment meets the system requirements (CMake and a C++ build tool installed), then this simple command;
 
-* npm install '@<team_name>/<package_name>'
+.. code::
 
-...Will make your 'cmodule' available in the receiving project's Javascript (and Typescript!) files, via the usual means;
+    npm install '@<team_name>/<package_name>'
 
-* const <package_name> = require ("@<team_name>/<project_name>");
+Or if you prefer yarn;
+
+.. code::
+
+    yarn add '@<team_name>/<package_name>'
+
+Running one of the above will make your 'cmodule' available in the receiving project's Javascript (and Typescript!) files, via the usual means;
+
+.. code::
+
+    const <package_name> = require ("@<team_name>/<project_name>");
+
 For 'CommonJs'-style syntax, or;
 
-* import <package_name> from "@<team_name>/<project_name>";
+.. code::
+
+    import <package_name> from "@<team_name>/<project_name>";
+
 For 'ES6/Module'-style syntax.
 
 Then, we make an instance of our module;
-* const myImportedModule = <package_name>;
+.. code:: 
+    
+    const myImportedModule = <package_name>;
 
 Now you can go ahead and call whatever functions, classes, objects etc you have created in your C++ files, for example;
-* console.log(myImportedModule.hello());
+.. code::
+    
+    console.log(myImportedModule.hello());
 
 Support
 -------
 
-Written and tested with windows, linux, and macos ("latest") x64 architectures and a variety of compiler toochains (GNU, MSVC, CLang), as well as cross-compiling via CMake. Able to make use of all the native CMake tools (CMake, CTest, CPack) and full vcpkg integration.
+Written and tested with windows, linux, and macos ("latest") x64 architectures and a variety of compiler toochains (GNU, MSVC, CLang), as well as cross-compiling via CMake. Able to make use of all the native CMake tools (CMake, CTest, CPack) and full vcpkg integration. Supports "Release", "Debug", "MinSizeRel", and "RelwithDebInfo" build modes (for C++ debugging with, e.g., gdb).
 
 Support for CTest and CPack allows for shipping as C++ and/or CMake modules (via vcpkg in .tar or .zip format), local/global installations as an NPM module, and even packaging as a .deb file.
 
