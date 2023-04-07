@@ -69,41 +69,41 @@ Your final module can be tested and packaged up using the built-in CTest and CPa
 A closer look at the development steps of CModules as above, using yarn:
 ------------------------------------------------------------------------
 
+Install the required Node API header files to link with during development (run once only!);
+
 .. code::
     
     yarn global add cmake-js@latest
 
-...installs the required Node API header files to link with during development
+Running the standard npm/yarn 'install' command from project root folder will compile the current C/C++ source file(s) as part of it's package installation routine;
 
 .. code::
 
     yarn install
 
-...the standard npm/yarn 'install' command from project root folder will compile the current C/C++ source file(s) as part of it's package installation routine
+Serve the compiled C/C++ files(s) using your system node executable, from the entry point of 'index.js'. Prints 'hello, world!' by default - see the 'cmodule.h/cc' source files to specify the behaviour of your module!
 
 .. code:: 
     
     yarn test
 
-...serves the compiled C/C++ files(s) using your system node executable, from the entry point of 'index.js'. Prints 'hello, world!' by default - see the 'cmodule.h/cc' source files to specify the behaviour of your module!
+After tinkering with your project source files, just rebuild them;
 
 .. code::
 
     yarn rebuild
 
-After tinkering with your project source files, just rebuild them!
+Completely remove all build files, directories, and artefacts... but *does not destroy any header or source files*;
 
 .. code::
     
     yarn clean
 
-This completely remove all build files, directories, and artefacts... but does not destroy any source files :)
+The same as the above, but also removes the "node_modules" folder. Useful mostly just before packaging your project for distribution only;
 
 .. code::
     
     yarn wipe
-
-The same as the above, but also removes the "node_modules" folder. Useful mostly just before packaging your project for distribution only.
 
 Where to place your C++ development files for CMake to correctly compile, build, and link them to the output '*.node' file;
 ---------------------------------------------------------------------------------------------------------------------------
