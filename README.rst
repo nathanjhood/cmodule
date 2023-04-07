@@ -26,6 +26,7 @@ Development Requirements:
 
 For development of CModules (npm):
 ----------------------------------
+
 .. code::
 
     npm -g install cmake-js@latest
@@ -67,6 +68,7 @@ Your final module can be tested and packaged up using the built-in CTest and CPa
 
 A closer look at the development steps of CModules as above, using yarn:
 ------------------------------------------------------------------------
+
 .. code::
     
     yarn global add cmake-js@latest
@@ -109,6 +111,7 @@ Where to place your C++ development files for CMake to correctly compile, build,
 We have two project-local directories of key importance in C++ project development; the "./src" directory, and "./include/<project_name>" directory - both specified from the project's root folder.
 
 Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file well alone, with the exception of lines 116 - 122, where you can specify a name, version number, homepage, and description for your node module (defaults below);
+
 .. code::
     
     116 ## Create Project
@@ -131,6 +134,7 @@ How to publish and consume your C++ package for NodeJS;
 -------------------------------------------------------
 * Set a valid name and version number in package.json!
 You should probably change these fields to;
+
 .. code::
     
     "name": "@<team_name>/<project_name>"
@@ -175,14 +179,59 @@ For 'CommonJs'-style syntax, or;
 For 'ES6/Module'-style syntax.
 
 Then, we make an instance of our module;
+
 .. code:: 
     
     const myImportedModule = <package_name>;
 
 Now you can go ahead and call whatever functions, classes, objects etc you have created in your C++ files, for example;
+
 .. code::
     
     console.log(myImportedModule.hello());
+    
+Example;
+--------
+
+Start a new node-based project;
+
+.. code::
+
+    mdkir myProject && cd myProject
+    yarn init
+
+You can try it out by adding this package to your project the usual way;
+
+.. code::
+
+    yarn add @stoneydsp/cmodule
+    
+Make an 'index.js', and either 'require' (for CommonJs) or 'import' (for ES6/Module syntax) the module by placing the below code in the javascript file;
+
+.. code:: 
+
+    const cmodule = require("@stoneydsp/cmodule");
+    
+    const myImportedModule = cmodule;
+    
+    console.log(myImportedModule.hello());
+
+*or*
+
+.. code::
+
+    import * as cmodule from "@stoneydsp/cmodule"
+    
+    const myImportedModule = cmodule;
+    
+    console.log(myImportedModule.hello());
+
+Back on the command line, you can then ask node to execute the file;
+
+.. code::
+    
+    node ./index.js
+    // hello, world!
 
 Support
 -------
