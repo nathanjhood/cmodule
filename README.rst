@@ -168,13 +168,13 @@ Or if you prefer yarn;
 
 Running one of the above will make your 'cmodule' available in the receiving project's Javascript (and Typescript!) files, via the usual means;
 
-.. code::
-
 For 'CommonJs'-style syntax;
+
+.. code::
 
     const <package_name> = require ("@<team_name>/<project_name>");
 
- *or*
+*or*
 
 For 'ES6/Module'-style syntax;
 
