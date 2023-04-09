@@ -20,7 +20,7 @@ node_modules
 */RelWithDebInfo
 
 
-.cmake*
+# .cmake*
 # *CMakeFiles*
 # .ninja_deps
 # .ninja_log
