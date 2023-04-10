@@ -9,6 +9,12 @@ cmake_policy(SET CMP0042 NEW)
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
+# Import some custom helpers to set up CMake
+set(CMAKE_MODULE_PATH
+  ${CMAKE_MODULE_PATH}
+  ${CMAKE_CURRENT_SOURCE_DIR}/support/cmake
+)
+# include(node_helpers)
 # Single-threaded build-runs only for compatible behaviour
 set(CMAKE_BUILD_PARALLEL_LEVEL 1)
 # Set the host architecture to build with
@@ -19,144 +25,26 @@ else ()
 endif ()
 set(CMAKE_INSTALL_MODE SYMLINK_OR_COPY)
 set(CMAKE_INSTALL_MESSAGE ALWAYS)
-
-# Check for cmake-js
-message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
-# if (NOT CMAKE_JS_INC)
-#   execute_process(
-#     COMMAND yarn add cmake-js@latest
-#     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-#   )
-#   execute_process(
-#     COMMAND yarn clean
-#     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-#   )
-# endif ()
-# message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
-
-# add_custom_command(
-#   OUTPUT out.c
-#   COMMAND someTool -i ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
-#                    -o out.c
-#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
-#   VERBATIM)
-# add_library(myLib out.c)
-
-# add_custom_command(
-#   OUTPUT out.c
-#   COMMAND someTool -i ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
-#                    -o out.c
-#   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/in.txt
-#   VERBATIM)
-# add_library(myLib out.c)
-
-
-# Collect Node Addon-API headers into NODE_ADDON_API_DIR
-execute_process(
-  COMMAND node -p "require('node-addon-api').include"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-  OUTPUT_VARIABLE NODE_ADDON_API_DIR
-)
-string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-
-# Joins arguments and places the results in ${result_var}.
-function(join result_var)
-  set(result "")
-  foreach (arg ${ARGN})
-    set(result "${result}${arg}")
-  endforeach ()
-  set(${result_var} "${result}" PARENT_SCOPE)
-endfunction()
-
-function(enable_module target)
-  if (MSVC)
-    set(BMI ${CMAKE_CURRENT_BINARY_DIR}/${target}.ifc)
-    target_compile_options(${target}
-      PRIVATE /interface /ifcOutput ${BMI}
-      INTERFACE /reference fmt=${BMI})
-  endif ()
-  set_target_properties(${target} PROPERTIES ADDITIONAL_CLEAN_FILES ${BMI})
-  set_source_files_properties(${BMI} PROPERTIES GENERATED ON)
-endfunction()
-
-
-# Set the binary output dir, if not set
-if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Executable/dll output dir.")
-endif ()
-# Set the archive output dir, if not set
-if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/lib" CACHE PATH "Archive output dir.")
-endif ()
-# Set the library output dir, if not set
-if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  "${CMAKE_BINARY_DIR}/lib" CACHE PATH "Library output dir.")
-endif ()
-# Set the MSVC debug symbol output dir, if not set
-if (NOT CMAKE_PDB_OUTPUT_DIRECTORY)
-  set(CMAKE_PDB_OUTPUT_DIRECTORY      "${CMAKE_BINARY_DIR}/bin" CACHE PATH "PDB (MSVC debug symbol)output dir.")
-endif ()
-set(CMAKE_CFG_INTDIR                  "${CMAKE_CURRENT_BINARY_DIR}/out"     CACHE PATH "CMake build artefacts directory.")
-
-
-# Build using shared libraries. if this is set to ON, then all libraries are built as shared libraries by default.
-option(BUILD_SHARED_LIBS "Build using shared libraries." OFF)
-# option for outputting compiler information at runtime
-option(OUTPUT_COMPILER_INFO "Output compiler information when launching the main executable." ON)
-# Build with Address Sanitizer
-option(ASAN_ENABLED "Build with Address Sanitizer" OFF)
-# Use the target 'FOLDER' property to organize targets into folders
-set(USE_FOLDERS OFF)
-# https://stackoverflow.com/questions/48580399/how-to-ensure-a-generated-config-h-file-is-in-the-include-path
 set(CMAKE_INCLUDE_CURRENT_DIR OFF)
-# export symbols on Windows for shared libraries to work
+option(BUILD_SHARED_LIBS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+# Copyright 2020 Jan Tojnar (MIT)
+# https://github.com/jtojnar/cmake-snips
+function(join_paths joined_path first_path_segment)
+  set(temp_path "${first_path_segment}")
+  foreach(current_segment IN LISTS ARGN)
+    if (NOT ("${current_segment}" STREQUAL ""))
+      if (IS_ABSOLUTE "${current_segment}")
+        set(temp_path "${current_segment}")
+      else ()
+        set(temp_path "${temp_path}/${current_segment}")
+      endif ()
+    endif ()
+  endforeach()
+  set(${joined_path} "${temp_path}" PARENT_SCOPE)
+endfunction()
 
-## Create Project
-project("cmodule"
-  VERSION 1.0.0.0
-  DESCRIPTION "NodeJS module written in C++"
-  HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
-  LANGUAGES CXX
-)
-
-
-message(STATUS "Detected ${PROJECT_NAME} version: v${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}")
-
-# Parse the project name into vars
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
-set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
-
-# Determine if built as a subproject (using add_subdirectory), or if it is the master project.
-if (NOT DEFINED ${PROJECT_NAME_UPPER}_MASTER_PROJECT)
-  set(${PROJECT_NAME_UPPER}_MASTER_PROJECT OFF)
-  if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    # ... this is a top-level project, then;
-    set(PROJECT_IS_TOP_LEVEL TRUE)
-    set(${PROJECT_NAME_UPPER}_MASTER_PROJECT ON)
-    set(MASTER_PROJECT_NAME ${PROJECT_NAME} CACHE STRING "Name of master project")
-    set(MASTER_PROJECT_NAME_UPPER ${PROJECT_NAME_UPPER} CACHE STRING "Name of master project (uppercase)")
-    set(MASTER_PROJECT_NAME_LOWER ${PROJECT_NAME_LOWER} CACHE STRING "Name of master project (lowercase)")
-    message(STATUS "${PROJECT_NAME} is a top-level CMake project\n")
-  else ()
-    # ... this is not a top-level project, so;
-    set(PROJECT_IS_TOP_LEVEL FALSE)
-    message(STATUS "${PROJECT_NAME} is a sub-project of ${CMAKE_PROJECT_NAME}\n")
-  endif ()
-endif ()
-if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
-  set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C++)")
-  set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
-endif ()
-if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_C_VISIBILITY_PRESET)
-  set(CMAKE_C_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C)")
-  set_property(CACHE CMAKE_C_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
-endif ()
-if (${PROJECT_NAME}_MASTER_PROJECT AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
-  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
-endif ()
 
 # Ensure a valid build type is set
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -169,106 +57,294 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif ()
-# Add System Libraries as needed
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
-endif ()
-include(InstallRequiredSystemLibraries)
-# Print the build flags for the user
-if (DEFINED CMAKE_BUILD_TYPE)
-  message(STATUS "Generated CMake build type: ${CMAKE_BUILD_TYPE}")
-else ()
-  message(STATUS "Generated CMake config types: ${CMAKE_CONFIGURATION_TYPES}")
-endif ()
+# Collect Node Addon-API headers into NODE_ADDON_API_DIR
+execute_process(
+  COMMAND node -p "require('node-addon-api').include"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  OUTPUT_VARIABLE NODE_ADDON_API_DIR
+)
+string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+# Collect cmake-js library into CMAKE_JS_LIB
+unset(CMAKE_JS_LIB)
+execute_process(
+  COMMAND cmake-js "print-cmakejs-lib"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  OUTPUT_VARIABLE CMAKE_JS_LIB
+)
+string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
+unset(CMAKE_JS_INC)
+# Collect cmake-js includes into CMAKE_JS_INC
+execute_process(
+  COMMAND cmake-js "print-cmakejs-include"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  OUTPUT_VARIABLE CMAKE_JS_INC
+)
+string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
+unset(CMAKE_JS_SRC)
+# Collect cmake-js sources into CMAKE_JS_SRC
+execute_process(
+  COMMAND cmake-js "print-cmakejs-src"
+  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+  OUTPUT_VARIABLE CMAKE_JS_SRC
+)
+string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
 
-# Generate CMAKE_INSTALL_<DIR> etc...
-# Don't set this var! https://cmake.org/cmake/help/latest/command/install.html#installing-files
-if (NOT CMAKE_INSTALL_DATAROOTDIR)
-  set(CMAKE_INSTALL_DATAROOTDIR share CACHE PATH "Read-only architecture-independent data root (share)")
-endif ()
-if (NOT CMAKE_INSTALL_INCLUDEDIR)
-  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
-endif ()
-if (NOT CMAKE_INSTALL_BINDIR)
-  set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
-endif ()
-if (NOT CMAKE_INSTALL_SBINDIR)
-  set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
-endif ()
-if (NOT CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
-endif ()
-if (NOT CMAKE_INSTALL_LIBEXECDIR)
-  set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
-endif ()
-if (NOT CMAKE_INSTALL_SHAREDSTATEDIR)
-  set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
-endif ()
-if (NOT CMAKE_INSTALL_DATADIR)
-  set(CMAKE_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR} CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
-endif ()
-if (NOT CMAKE_INSTALL_LOCALSTATEDIR)
-  set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
-endif ()
-if (NOT CMAKE_INSTALL_SYSCONFDIR)
-  set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
-endif ()
-if (NOT CMAKE_INSTALL_RUNSTATEDIR)
-  set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
-endif ()
-if (NOT CMAKE_INSTALL_LOCALEDIR)
-  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
-endif ()
-if (NOT CMAKE_INSTALL_DOCDIR)
-  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
-endif ()
-if (NOT CMAKE_INSTALL_INFODIR)
-  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
-endif ()
-if (NOT CMAKE_INSTALL_MANDIR)
-  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
-endif ()
 
-include(GNUInstallDirs)
-
-# get access to helper functions for creating config files
-include(CMakePackageConfigHelpers)
-
-## Configure folder structure.
-set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_INSTALL_BINDIR}                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_INC_DIR              include/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-
-set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(CMAKE_MODULE_PATH
-  ${CMAKE_MODULE_PATH}
-  ${CMAKE_CURRENT_SOURCE_DIR}/support/cmake
+## Create Project
+project("cmodule"
+  VERSION "1.0.0.0"
+  DESCRIPTION "NodeJS module written in C++"
+  HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
+  LANGUAGES CXX
 )
 
-## Configure files.
-set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
-set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
-set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
-set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
-set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
-set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
-set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
-set(TARGETS_EXPORT_NAME  											 ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
+# specify the C standard
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED True)
+
+# specify the C++ standard
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set(CMAKE_CXX_STANDARD 20)
+else()
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Parse the project name into vars
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+# Set DEBUG_POSTFIX and LIB_NAME for output files.
+set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
+set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
+endif ()
+
+# get access to helper functions for creating config files
+include(GNUInstallDirs)
+# Generate CMAKE_INSTALL_<DIR> etc...
+# Don't set this var! https://cmake.org/cmake/help/latest/command/install.html#installing-files
+if (NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
+  set(CMAKE_INSTALL_DATAROOTDIR share CACHE PATH "Read-only architecture-independent data root (share)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
+  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_BINDIR)
+  set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_SBINDIR)
+  set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_LIBEXECDIR)
+  set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_SHAREDSTATEDIR)
+  set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_DATADIR)
+  set(CMAKE_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR} CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_LOCALSTATEDIR)
+  set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_SYSCONFDIR)
+  set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_RUNSTATEDIR)
+  set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_LOCALEDIR)
+  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_DOCDIR)
+  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_INFODIR)
+  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
+endif ()
+if (NOT DEFINED CMAKE_INSTALL_MANDIR)
+  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
+endif ()
 
 
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
 option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
 # Options that control generation of various targets.
-option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
+option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." OFF)
 option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
-option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ${${PROJECT_NAME_UPPER}_MASTER_PROJECT})
-# option(${PROJECT_NAME_UPPER}_FUZZ "Generate the fuzz target." OFF)
-option(${PROJECT_NAME_UPPER}_MODULE "Build a module instead of a traditional library." OFF)
-option(${PROJECT_NAME_UPPER}_SYSTEM_HEADERS "Expose headers with marking them as system." OFF)
+option(${PROJECT_NAME_UPPER}_VCPKG "Integrate vcpkg for c++ packages." OFF)
+option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ON)
+option(${PROJECT_NAME}_INC_NODE_HEADERS "Include Node API headers in build project" ON)
+option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS library." OFF)
 
 
-# Set Compiler flags as needed
+## Configure directories.
+set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_INSTALL_BINDIR}                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_INC_DIR              ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+
+## Configure files.
+set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
+set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
+set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
+set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
+set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
+set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
+set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
+set(TARGETS_EXPORT_NAME  							         ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
+
+
+# create config header
+message(STATUS "Creating config header file...")
+configure_file(
+  ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.h.in
+  ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}
+)
+message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
+
+# create config file
+message(STATUS "Creating project config file...")
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.cmake.in
+    ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
+  INSTALL_DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+message(STATUS "Created project config file at ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}\n")
+
+# create version config file
+message(STATUS "Creating the version file for the config file...")
+write_basic_package_version_file(
+  ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
+  VERSION ${${PROJECT_NAME}_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+message(STATUS "Created version file for the config file at ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}\n")
+
+# create pkgconfig file
+# message(STATUS "Creating pkgconfig file...")
+# configure_file(
+#   ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
+#   ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
+#   @ONLY
+# )
+# message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
+
+if (${${PROJECT_NAME_UPPER}_VCPKG})
+  # create vcpkg manifest file
+  message(STATUS "Creating vcpkg manifest...")
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
+    ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}
+  )
+  message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
+
+  # create vcpkg configuration file
+  message(STATUS "Creating vcpkg configuration...")
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg-configuration.in.json
+    ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}
+  )
+  message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
+
+  # create vcpkg portfile
+  message(STATUS "Creating vcpkg portfile...")
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/support/vcpkg/portfile.in.cmake
+    ${${PROJECT_NAME_UPPER}_PORT_FILE}
+  )
+  message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
+endif ()
+
+
+# Add the library as an output target
+add_library(${PROJECT_NAME} SHARED)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+
+target_sources(${PROJECT_NAME}
+  PRIVATE
+    package.json
+    README.rst
+    LICENSE
+    VERSION.txt
+    index.js
+)
+
+# Glob all files with all extensions in 'src/' and pass them to ${PROJECT_NAME_UPPER}_SRC_FILES
+file(GLOB ${PROJECT_NAME_UPPER}_SRC_FILES "${PROJECT_SOURCE_DIR}/src/*")
+target_sources(${PROJECT_NAME}
+  PRIVATE
+    ${${PROJECT_NAME_UPPER}_SRC_FILES}
+)
+
+# Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
+file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*")
+target_sources(${PROJECT_NAME}
+  PUBLIC
+    FILE_SET ${PROJECT_NAME_LOWER}_HEADERS
+    TYPE HEADERS
+    BASE_DIRS ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME} ${CMAKE_JS_INC}
+    FILES ${${PROJECT_NAME_UPPER}_INC_FILES}
+)
+
+if (${PROJECT_NAME}_INC_NODE_HEADERS)
+  # Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
+  file(GLOB ${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES "${CMAKE_JS_INC}/*.h" "${NODE_ADDON_API_DIR}/*.h")
+  target_sources(${PROJECT_NAME}
+    PUBLIC
+      FILE_SET ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
+      TYPE HEADERS
+      BASE_DIRS ${CMAKE_JS_INC} ${NODE_ADDON_API_DIR}
+      FILES
+        ${${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES}
+  )
+endif ()
+# target_include_directories(${PROJECT_NAME}
+#   PUBLIC
+#     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+#     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}>
+#   PRIVATE
+#     ${PROJECT_BINARY_DIR}
+#     ${CMAKE_JS_INC}
+#     ${NODE_ADDON_API_DIR}
+# )
+# Set target output file properties.
+set_target_properties(${PROJECT_NAME}
+PROPERTIES
+  CXX_STANDARD 11
+  CXX_STANDARD_REQUIRED TRUE
+  RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
+  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+  ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+  PDB_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
+  # RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/Debug/bin
+  # LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/Debug/lib
+  # ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/Debug/lib
+  # PDB_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/Debug/bin
+  PREFIX ""
+  SUFFIX ".node"
+  DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
+  # Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
+  COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR
+  INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
+  PUBLIC_HEADER ${${PROJECT_NAME_LOWER}_HEADERS}
+  PRIVATE_HEADER ${${PROJECT_NAME_LOWER}_PRIVATE_HEADERS}
+  # COMPILE_DEFINITIONS
+  # COMPILE_FEATURES
+)
+
+source_group("${PROJECT_NAME}" FILES ${${PROJECT_NAME_UPPER}_INC_FILES} ${${PROJECT_NAME_UPPER}_SRC_FILES} ${${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES})
+source_group("Node API" FILES ${${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES})
+
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(PEDANTIC_COMPILE_FLAGS -pedantic-errors -Wall -Wextra -pedantic
       -Wold-style-cast -Wundef
@@ -300,329 +376,152 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       -Wdeprecated -Wweak-vtables -Wshadow
       -Wno-gnu-zero-variadic-macro-arguments)
   # check_cxx_compiler_flag(-Wzero-as-null-pointer-constant HAS_NULLPTR_WARNING) // Crashing github workflows...
-  if (HAS_NULLPTR_WARNING)
-    set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS}
-        -Wzero-as-null-pointer-constant)
-  endif ()
+  # if (HAS_NULLPTR_WARNING)
+  #   set(PEDANTIC_COMPILE_FLAGS ${PEDANTIC_COMPILE_FLAGS}
+  #       -Wzero-as-null-pointer-constant)
+  # endif ()
   set(WERROR_FLAG -Werror)
 endif ()
 
 if (MSVC)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   set(PEDANTIC_COMPILE_FLAGS /W3)
   set(WERROR_FLAG /WX)
-endif ()
-
-if (${PROJECT_NAME_UPPER}_MASTER_PROJECT AND CMAKE_GENERATOR MATCHES "Visual Studio")
-  # If Microsoft SDK is installed create script run-msbuild.bat that
-  # calls SetEnv.cmd to set up build environment and runs msbuild.
-  # It is useful when building Visual Studio projects with the SDK
-  # toolchain rather than Visual Studio.
-  find_program(WINSDK_SETENV NAMES SetEnv.cmd
-    PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]/bin")
-  if (WINSDK_SETENV AND PRINT_PATH)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E echo "${WINSDK_SETENV}")
+  if (CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
+  # Generate node.lib
+    execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
   endif ()
-  if (WINSDK_SETENV)
-    set(MSBUILD_SETUP "call \"${WINSDK_SETENV}\"")
+  if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
   endif ()
-  # Set FrameworkPathOverride to get rid of MSB3644 warnings.
-  join(netfxpath
-       "C:\\Program Files\\Reference Assemblies\\Microsoft\\Framework\\"
-       ".NETFramework\\v4.0")
-  file(WRITE run-msbuild.bat "
-    ${MSBUILD_SETUP}
-    ${CMAKE_MAKE_PROGRAM} -p:FrameworkPathOverride=\"${netfxpath}\" %*")
 endif ()
-
-# Copyright 2020 Jan Tojnar (MIT)
-# https://github.com/jtojnar/cmake-snips
-function(join_paths joined_path first_path_segment)
-  set(temp_path "${first_path_segment}")
-  foreach(current_segment IN LISTS ARGN)
-    if (NOT ("${current_segment}" STREQUAL ""))
-      if (IS_ABSOLUTE "${current_segment}")
-        set(temp_path "${current_segment}")
-      else ()
-        set(temp_path "${temp_path}/${current_segment}")
-      endif ()
-    endif ()
-  endforeach()
-  set(${joined_path} "${temp_path}" PARENT_SCOPE)
-endfunction()
-join_paths(libdir_for_pc_file "\${exec_prefix}" "${${PROJECT_NAME_UPPER}_LIB_DIR}")
-join_paths(includedir_for_pc_file "\${prefix}" "${${PROJECT_NAME_UPPER}_INC_DIR}")
-
-# create config header
-message(STATUS "Creating config header file...")
-configure_file(
-  ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.h.in
-  ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG})
-message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
-
-# create config file
-message(STATUS "Creating project config file...")
-configure_package_config_file(
-    ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.cmake.in
-    ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
-  INSTALL_DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
-message(STATUS "Created project config file at ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}\n")
-
-# create version config file
-message(STATUS "Creating the version file for the config file...")
-write_basic_package_version_file(
-  ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
-  VERSION ${${PROJECT_NAME}_VERSION}
-  COMPATIBILITY AnyNewerVersion
-)
-message(STATUS "Created version file for the config file at ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}\n")
-
-# create pkgconfig file
-message(STATUS "Creating pkgconfig file...")
-configure_file(
-  ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
-  ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
-  @ONLY
-)
-message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
-
-# create vcpkg manifest file
-message(STATUS "Creating vcpkg manifest...")
-configure_file(
-  ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
-  ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}
-)
-message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
-
-# create vcpkg configuration file
-message(STATUS "Creating vcpkg configuration...")
-configure_file(
-  ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg-configuration.in.json
-  ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}
-)
-message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
-
-# create vcpkg portfile
-message(STATUS "Creating vcpkg portfile...")
-configure_file(
-  ${PROJECT_SOURCE_DIR}/support/vcpkg/portfile.in.cmake
-  ${${PROJECT_NAME_UPPER}_PORT_FILE}
-)
-message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
-
-
-#---------------
-# GET FILES
-#---------------
-
-# Collect included header files into ${PROJECT_NAME_UPPER}_HEADERS
-function(add_headers VAR)
-	set(headers ${${VAR}})
-	foreach (header ${ARGN})
-		set(headers ${headers} include/${PROJECT_NAME}/${header})
-	endforeach()
-	set(${VAR} ${headers} PARENT_SCOPE)
-endfunction()
-add_headers(${PROJECT_NAME_UPPER}_HEADERS "cmodule.h")
-
-# Collect source files into ${PROJECT_NAME_UPPER}_SOURCES
-function(add_sources VAR)
-	set(sources ${${VAR}})
-	foreach (source ${ARGN})
-		set(sources ${sources} src/${source})
-	endforeach()
-	set(${VAR} ${sources} PARENT_SCOPE)
-endfunction()
-add_sources(${PROJECT_NAME_UPPER}_SOURCES "cmodule.cc")
-include_directories(${PROJECT_BINARY_DIR})
-include_directories(${CMAKE_JS_INC})
-set(${PROJECT_NAME_UPPER}_PRIVATE_HEADERS ${NODE_ADDON_API_DIR})
-# Glob all files with all extensions in 'src/' and pass them to ${PROJECT_NAME_UPPER}_SRC_FILES
-file(GLOB ${PROJECT_NAME_UPPER}_SRC_FILES "src/*")
-# Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
-file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "include/${PROJECT_NAME}/*")
-# Read the .gitignore file, if found
-if (${CMAKE_CURRENT_SOURCE_DIR}/.gitignore)
-  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/.gitignore ${PROJECT_NAME}_GITIGNORE_FILE)
-endif()
-# Read the .gitattributes file, if found
-if (${CMAKE_CURRENT_SOURCE_DIR}/.gitattributes)
-  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/.gitattributes ${PROJECT_NAME}_GITATTRIBUTES_FILE)
-endif()
-
-
-#---------------
-# OUTPUT TARGETS
-#---------------
-
-
-# add_custom_target(npm COMMAND npm install && npm run clean WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-# add_custom_target(yarn COMMAND yarn && yarn clean WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Add the library as an output target
-add_library(${PROJECT_NAME} SHARED)
-add_library(${MASTER_PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
-
-# Add included headers to target.
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:${${PROJECT_NAME_UPPER}_INC_DIR}>
-  PRIVATE
-    ${NODE_ADDON_API_DIR}
-)
-# Add source files to target.
-target_sources(${PROJECT_NAME}
-  PRIVATE
-    ${${PROJECT_NAME_UPPER}_INC_FILES}
-    ${${PROJECT_NAME_UPPER}_SRC_FILES}
-    ${CMAKE_JS_SRC}
-    package.json
-    README.rst
-    LICENSE
-    VERSION.txt
-    index.js
-    .gitignore
-    .gitattributes
-)
-
-# Set target output file properties.
-set_target_properties(${PROJECT_NAME}
-PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_BIN_DIR}
-  LIBRARY_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_LIB_DIR}
-  ARCHIVE_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_LIB_DIR}
-  PDB_OUTPUT_DIRECTORY ${${PROJECT_NAME_UPPER}_BIN_DIR}
-  PUBLIC_HEADER ${${PROJECT_NAME_UPPER}_HEADERS}
-  PRIVATE_HEADER ${PROJECT_NAME_UPPER}_PRIVATE_HEADERS
-  PREFIX ""
-  SUFFIX ".node"
-  DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
-  INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
-)
-# Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
-set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR)
-# Set LIB_NAME for pkg-config .pc file.
-set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
+include(InstallRequiredSystemLibraries)
+if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C++)")
+  set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
 endif ()
-# define NAPI_VERSION
-add_definitions(-DNAPI_VERSION=4)
-if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
-# Generate node.lib
-  execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
-endif()
-# Set target compiler flags
+if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
+endif ()
+# Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+# Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
+set(NODE_MODULE_FLAGS -DNAPI_VERSION=4 -DBUILDING_NODE_EXTENSION)
+# Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
+target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
+# If ERROR option is set, apply the globbed ERROR compile options
 if (${PROJECT_NAME_UPPER}_WERROR)
-  target_compile_options(${PROJECT_NAME} PRIVATE ${WERROR_FLAG})
+  target_compile_options(${PROJECT_NAME} PUBLIC ${WERROR_FLAG})
 endif ()
+# If PEDANTIC option is set, apply the globbed PEDANTIC compile options
 if (${PROJECT_NAME_UPPER}_PEDANTIC)
-  target_compile_options(${PROJECT_NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS})
+  target_compile_options(${PROJECT_NAME} PUBLIC ${PEDANTIC_COMPILE_FLAGS})
 endif ()
 if (${PROJECT_NAME_UPPER}_MODULE)
   enable_module(${PROJECT_NAME})
 endif ()
-# Create a namespaced exported target.
+
+# target_compile_definitions(${PROJECT_NAME} PRIVATE -DNAPI_VERSION=4)
+# set(CMAKE_CXX_FLAGS -DBUILDING_NODE_EXTENSION)
+# add_definitions(-DNAPI_VERSION=4)
+
 export(
   TARGETS ${PROJECT_NAME}
-  FILE ${PROJECT_BINARY_DIR}/${TARGETS_EXPORT_NAME}.cmake
-  NAMESPACE ${MASTER_PROJECT_NAME}::
-)
-# Dont define these two props on your targets!!
-# They cause symlinks to be generated that node cannot parse
-# VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}.${${PROJECT_NAME}_VERSION_TWEAK}"
-# SOVERSION "${${PROJECT_NAME}_VERSION_MAJOR}"
-
-
-
-
-
-#---------------
-# CTEST
-#---------------
-
-# Configure CTest
-enable_testing()
-add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
-# include(CTest)
-
-#---------------
-# CPACK
-#---------------
-
-# Configure CPack
-set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
-set(CPACK_PACKAGE_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${${PROJECT_NAME}_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${${PROJECT_NAME}_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION_TWEAK ${${PROJECT_NAME}_VERSION_TWEAK})
-set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE)
-set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.rst)
-set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
-set(CPACK_SOURCE_IGNORE_FILES
-  /.git/*
-  /.github
-  /.vs
-  /.vscode
-  /build
-  /downloads
-  /installed
-  /node_modules
-  /vcpkg
-  /.*build.*
-  /\\\\.DS_Store
-)
-include(CPack)
-
-message("CPACK_PACKAGE_VENDOR = ${CPACK_PACKAGE_VENDOR}")
-message("CPACK_SOURCE_PACKAGE_FILE_NAME = ${CPACK_SOURCE_PACKAGE_FILE_NAME}")
-message("CPACK_PACKAGE_DESCRIPTION_SUMMARY = ${PROJECT_DESCRIPTION}")
-message("CPACK_PACKAGE_VERSION_MAJOR = ${${PROJECT_NAME}_VERSION_MAJOR}")
-message("CPACK_PACKAGE_VERSION_MINOR = ${${PROJECT_NAME}_VERSION_MINOR}")
-message("CPACK_PACKAGE_VERSION_PATCH = ${${PROJECT_NAME}_VERSION_PATCH}")
-message("CPACK_RESOURCE_FILE_LICENSE = ${CMAKE_CURRENT_LIST_DIR}/LICENCE")
-message("CPACK_RESOURCE_FILE_README = ${CMAKE_CURRENT_LIST_DIR}/README.md")
-message("CPACK_SOURCE_GENERATOR = ${CPACK_SOURCE_GENERATOR}")
-message("CPack ignores: ${CPACK_SOURCE_IGNORE_FILES}\n")
-
-#---------------
-# INSTALL TARGETS
-#---------------
-
-# Install the library and headers.
-install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${TARGETS_EXPORT_NAME}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  FRAMEWORK DESTINATION "."
+  FILE ${PROJECT_BINARY_DIR}/share/${TARGETS_EXPORT_NAME}.cmake
+  NAMESPACE ${PROJECT_NAME}::
 )
 
-install(
-  EXPORT ${TARGETS_EXPORT_NAME}
-  DESTINATION ${${PROJECT_NAME_UPPER}_CMAKE_DIR}
-  NAMESPACE ${MASTER_PROJECT_NAME}::
-)
 
-# Install version, config and target files.
-install(
-  FILES
-    ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
-    ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
-  DESTINATION
-    share/${PROJECT_NAME}
-)
+if ({${PROJECT_NAME_UPPER}_TEST})
+  #---------------
+  # CTEST
+  #---------------
+  # Configure CTest
+  enable_testing()
+  add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
+  # include(CTest)
+endif ()
 
-install(
-  FILES ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
-  DESTINATION ${${PROJECT_NAME_UPPER}_PKGCONFIG_DIR}
-)
+
+if (${${PROJECT_NAME_UPPER}_INSTALL})
+  #---------------
+  # CPACK
+  #---------------
+
+
+  join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
+  join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+  message(STATUS "Creating pkgconfig file...")
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
+    ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
+    @ONLY
+  )
+  message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
+  # Configure CPack
+  set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
+  set(CPACK_PACKAGE_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR})
+  set(CPACK_PACKAGE_VERSION_MINOR ${${PROJECT_NAME}_VERSION_MINOR})
+  set(CPACK_PACKAGE_VERSION_PATCH ${${PROJECT_NAME}_VERSION_PATCH})
+  set(CPACK_PACKAGE_VERSION_TWEAK ${${PROJECT_NAME}_VERSION_TWEAK})
+  set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE)
+  set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.rst)
+  set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+  set(CPACK_SOURCE_IGNORE_FILES
+    /.git/*
+    /.github
+    /.vs
+    /.vscode
+    /build
+    /downloads
+    /installed
+    /node_modules
+    /vcpkg
+    /.*build.*
+    /\\\\.DS_Store
+  )
+  include(CPack)
+
+
+  #---------------
+  # INSTALL TARGETS
+  #---------------
+
+  # Install the library and headers.
+  install(
+    TARGETS ${PROJECT_NAME}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    FRAMEWORK DESTINATION "."
+    FILE_SET ${PROJECT_NAME_LOWER}_HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    FILE_SET ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  )
+
+  install(
+    EXPORT ${TARGETS_EXPORT_NAME}
+    DESTINATION ${${PROJECT_NAME_UPPER}_CMAKE_DIR}
+    NAMESPACE ${PROJECT_NAME}::
+  )
+
+  install(
+    FILES
+      ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
+      ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
+    DESTINATION
+      ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}
+  )
+
+  install(
+    FILES
+      ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
+    DESTINATION
+      ${${PROJECT_NAME_UPPER}_PKGCONFIG_DIR}
+  )
+
+endif ()

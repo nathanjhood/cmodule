@@ -19,6 +19,7 @@ node_modules
 */MinSizeRel
 */RelWithDebInfo
 
+*/.cmake-js/*
 
 # .cmake*
 # *CMakeFiles*
