@@ -302,7 +302,7 @@ if (${PROJECT_NAME}_INC_NODE_HEADERS)
   # Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
   file(GLOB ${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES "${CMAKE_JS_INC}/*.h" "${NODE_ADDON_API_DIR}/*.h")
   target_sources(${PROJECT_NAME}
-    PUBLIC
+    PRIVATE
       FILE_SET ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
       TYPE HEADERS
       BASE_DIRS ${CMAKE_JS_INC} ${NODE_ADDON_API_DIR}
