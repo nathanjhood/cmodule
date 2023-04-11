@@ -13,5 +13,7 @@
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
     "eslint": "^8.37.0"
+  "dependencies": {
+    "@stoneydsp/cmodule": "^1.0.1"
   }
 }

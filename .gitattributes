@@ -1,3 +1,27 @@
+# This sets the default behaviour, overriding core.autocrlf
 * text=auto eol=lf
+
+# All source files should have unix line-endings in the repository,
+# but convert to native line-endings on checkout
+*.cc text
+*.cpp text
+*.h text
+*.hpp text
+
+# Windows specific files should retain windows line-endings
+*.{sln,[sS][lL][nN]} text eol=crlf
 *.{cmd,[cC][mM][dD]} text eol=crlf
 *.{bat,[bB][aA][tT]} text eol=crlf
+
+# Keep executable scripts with LFs so they can be run after being
+# checked out on Windows
+*.py text eol=lf
+
+# Keep the include header(s) with LFs to make sure it is uploaded,
+# hashed etc with LF
+include/**/*.h eol=lf
+include/**/*.hpp eol=lf
+
+# Keep the LICENCE file with LFs to make sure it is uploaded,
+# hashed etc with LF
+LICENCE.txt eol=lf

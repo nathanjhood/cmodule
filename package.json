@@ -1,13 +1,18 @@
 {
-  "name": "cmodule",
-  "version": "1.0.0",
+  "name": "@stoneydsp/cmodule",
+  "version": "1.0.1",
   "description": "My cmake-js module",
-  "main": "index.ts",
+  "main": "index.js",
+  "type": "commonjs",
   "license": "MIT",
-  "author": "StoneyDSP <nathanjhood@googlemail.com>",
+  "author": "Nathan J. Hood <nathanjhood@googlemail.com> (http://stoneydsp.com)",
+  "homepage": "https://github.io/StoneyDSP/cmodule",
   "repository": {
     "type": "git",
-    "url": "https://github.com/StoneyDSP/cmodule"
+    "url": "git://github.com/StoneyDSP/cmodule.git"
+  },
+  "bugs": {
+    "url": "https://github.com/StoneyDSP/cmodule/issues"
   },
   "scripts": {
     "configure": "cmake-js configure",
@@ -16,23 +21,19 @@
     "rebuild": "cmake-js rebuild ",
     "compile": "cmake-js compile",
     "install": "cmake-js compile",
-    "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin",
+    "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin && rm -rvf ./share",
     "wipe": "yarn clean && rm -rvf ./node_modules",
-    "help": "cmake-js --help"
+    "help": "cmake-js --help",
+    "test": "node ./test/run.js"
   },
-  "preferGlobal": true,
   "packageManager": "yarn@1.22.19",
   "dependencies": {
     "bindings": "^1.5.0",
     "cmake-js": "^7.2.1",
-    "typescript": "^5.0.3"
-  },
-  "devDependencies": {
-    "@types/node": "^18.15.11"
+    "node-addon-api": "^6.0.0"
   },
   "cmake-js": {
     "runtime": "node",
-    "runtimeVersion": "19.8.1",
     "arch": "x64"
   }
 }
