@@ -8,51 +8,45 @@
 	<title>cmodule</title>
 </head>
 <body>
-	<article>
-		<p>CModule</p>
+	<main>
+		<article>
+			<p>CModule</p>
 
-		<p>Multi-platform, multi-architecture C/C++ modules that compile into '*.node' files, which can be imported as JS modules, for example to run in the NodeJS runtime environment as NPM packages.</p>
+			<p>Multi-platform, multi-architecture C/C++ modules that compile into '*.node' files, which can be imported as JS modules, for example to run in the NodeJS runtime environment as NPM packages.</p>
 
-		<img src="https://github.com/StoneyDSP/cmodule/workflows/linux/badge.svg" title="linux-workflow">
-		<img src="https://github.com/StoneyDSP/cmodule/workflows/macos/badge.svg" title="macos-workflow">
-		<img src="https://github.com/StoneyDSP/cmodule/workflows/windows/badge.svg" title="windows-workflow">
-	<!-- .. image:: https://github.com/StoneyDSP/cmodule/workflows/linux/badge.svg
-		:target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3Alinux
+			<img src="https://github.com/StoneyDSP/cmodule/workflows/linux/badge.svg" title="linux-workflow">
+			<img src="https://github.com/StoneyDSP/cmodule/workflows/macos/badge.svg" title="macos-workflow">
+			<img src="https://github.com/StoneyDSP/cmodule/workflows/windows/badge.svg" title="windows-workflow">
 
-	.. image:: https://github.com/StoneyDSP/cmodule/workflows/macos/badge.svg
-		:target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3macos
+			<p>Requirements:</p>
+			<ul>
+				<li>NodeJS</li>
+				<li>NPM or Yarn</li>
+				<li>CMake</li>
+				<li>A C/C++ compiler</li>
+			</ul>
 
-	.. image:: https://github.com/StoneyDSP/cmodule/workflows/windows/badge.svg
-		:target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3Awindows -->
+			<p>For development of CModules (npm):</p>
+
+			<code>
+			<p>npm -g install cmake-js@latest</p>
+			<p># cd into root folder</p>
+			<p>npm install</p>
+			</code>
+
+			<p>For development of CModules (yarn):</p>
+
+			<code>
+			<p>yarn global add cmake-js@latest</p>
+			<p># cd into root folder</p>
+			<p>yarn install</p>
+			</code>
 
 
-		<p>Requirements:</p>
-		<ul>
-			<li>NodeJS</li>
-			<li>NPM or Yarn</li>
-			<li>CMake</li>
-			<li>A C/C++ compiler</li>
-		</ul>
+			<p>Supports "Release", "Debug", "MinSizeRel", and "RelwithDebInfo" build modes (for C++ debugging with, e.g., gdb).</p>
 
-		<p>For development of CModules (npm):</p>
-
-		<p><code>
-		npm -g install cmake-js@latest
-		# cd into root folder
-		npm install
-		</code></p>
-
-		<p>For development of CModules (yarn):</p>
-
-		<p><code>
-		yarn global add cmake-js@latest
-		# cd into root folder
-		yarn install
-		</code></p>
-
-		<p>Supports "Release", "Debug", "MinSizeRel", and "RelwithDebInfo" build modes (for C++ debugging with, e.g., gdb).</p>
-
-		<p>Supports CTest and CPack, for shipping as C++ and/or CMake modules (via vcpkg in .tar or .zip format), and local/global installations as an NPM module.</p>
-	</article>
+			<p>Supports CTest and CPack, for shipping as C++ and/or CMake modules (via vcpkg in .tar or .zip format), and local/global installations as an NPM module.</p>
+		</article>
+	</main>
 </body>
 </html>
