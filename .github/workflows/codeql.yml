@@ -49,10 +49,6 @@ jobs:
       
     - name: Get node
       uses: actions/setup-node@v3
-    
-    - run: npm install -g npm@latest
-    - run: npm install -g yarn@latest
-    - run: yarn add cmake-js@latest
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -69,7 +65,15 @@ jobs:
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, Go, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
+      
+    - if: matrix.language == 'cpp'
+      name: Build C++
+    - run: npm install -g npm@latest
+    - run: npm install -g yarn@latest
+    - run: yarn add cmake-js@latest
+
+    - if: matrix.language != 'cpp'
+      name: Autobuild
       uses: github/codeql-action/autobuild@v2
 
     # ℹ️ Command-line programs to run using the OS shell.
