@@ -64,31 +64,32 @@ execute_process(
   OUTPUT_VARIABLE NODE_ADDON_API_DIR
 )
 string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-# Collect cmake-js library into CMAKE_JS_LIB
-unset(CMAKE_JS_LIB)
-execute_process(
-  COMMAND cmake-js "print-cmakejs-lib"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-  OUTPUT_VARIABLE CMAKE_JS_LIB
-)
-string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
-unset(CMAKE_JS_INC)
-# Collect cmake-js includes into CMAKE_JS_INC
-execute_process(
-  COMMAND cmake-js "print-cmakejs-include"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-  OUTPUT_VARIABLE CMAKE_JS_INC
-)
-string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
-unset(CMAKE_JS_SRC)
-# Collect cmake-js sources into CMAKE_JS_SRC
-execute_process(
-  COMMAND cmake-js "print-cmakejs-src"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-  OUTPUT_VARIABLE CMAKE_JS_SRC
-)
-string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
-
+if (NOT DEFINED CMAKE_JS_INC)
+  # Collect cmake-js library into CMAKE_JS_LIB
+  unset(CMAKE_JS_LIB)
+  execute_process(
+    COMMAND cmake-js "print-cmakejs-lib"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE CMAKE_JS_LIB
+  )
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
+  unset(CMAKE_JS_INC)
+  # Collect cmake-js includes into CMAKE_JS_INC
+  execute_process(
+    COMMAND cmake-js "print-cmakejs-include"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE CMAKE_JS_INC
+  )
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
+  unset(CMAKE_JS_SRC)
+  # Collect cmake-js sources into CMAKE_JS_SRC
+  execute_process(
+    COMMAND cmake-js "print-cmakejs-src"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE CMAKE_JS_SRC
+  )
+  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
+endif ()
 
 ## Create Project
 project("cmodule"
@@ -406,7 +407,7 @@ endif ()
 # Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
-set(NODE_MODULE_FLAGS -DNAPI_VERSION=4 -DBUILDING_NODE_EXTENSION)
+set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
 # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
 # If ERROR option is set, apply the globbed ERROR compile options
@@ -432,7 +433,7 @@ export(
 )
 
 
-if ({${PROJECT_NAME_UPPER}_TEST})
+if (${PROJECT_NAME_UPPER}_TEST)
   #---------------
   # CTEST
   #---------------
