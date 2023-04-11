@@ -5,5 +5,8 @@
   "repository": "https://github.com/StoneyDSP/cmodule",
   "author": "StoneyDSP",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@stoneydsp/cmodule": "^1.0.1"
+  }
 }
