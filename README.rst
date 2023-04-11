@@ -22,7 +22,7 @@ Development Requirements:
 * NodeJS
 * NPM or Yarn
 * CMake
-* A C/C++ compiler (supports GNU, MSVC, CLang...)
+* A C/C++ compiler toolchain (supports Ninja, GNU, MSVC, CLang...)
 
 For development of CModules (npm):
 ----------------------------------
