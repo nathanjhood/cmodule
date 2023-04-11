@@ -49,6 +49,10 @@ jobs:
       
     - name: Get node
       uses: actions/setup-node@v3
+    
+    - run: npm install -g npm@latest
+    - run: npm install -g yarn@latest
+    - run: yarn add cmake-js@latest
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -78,9 +82,6 @@ jobs:
     #     echo "Run, Build Application using script"
     #     ./location_of_script_within_repo/buildscript.sh
     
-    - run: |
-        echo "Using CMakeLists.txt in root folder"
-        ./CMakeLists.txt
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
