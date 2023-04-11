@@ -439,9 +439,9 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   # CPACK
   #---------------
 
-
   join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
   join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+
   message(STATUS "Creating pkgconfig file...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
@@ -449,6 +449,7 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     @ONLY
   )
   message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
+
   # Configure CPack
   set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
   set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
