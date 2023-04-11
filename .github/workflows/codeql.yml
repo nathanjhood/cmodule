@@ -41,6 +41,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    
+    - name: CMake Setup
+      uses: jwlawson/actions-setup-cmake@v1.13
+      with:
+        cmake-version: 'latest'
+      
+    - name: Get node
+      uses: actions/setup-node@v3
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
