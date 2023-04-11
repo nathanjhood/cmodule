@@ -1,13 +1,12 @@
 {
-  "name": "cmodule",
-  "version": "1.0.0",
+  "name": "@stoneydsp/cmodule",
+  "version": "1.0.1",
   "description": "My cmake-js module",
   "main": "index.js",
   "type": "commonjs",
   "license": "MIT",
   "author": "Nathan J. Hood <nathanjhood@googlemail.com> (http://stoneydsp.com)",
   "homepage": "https://github.io/StoneyDSP/cmodule",
-  "private": "false",
   "repository": {
     "type": "git",
     "url": "git://github.com/StoneyDSP/cmodule.git"

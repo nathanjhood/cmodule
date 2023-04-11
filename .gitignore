@@ -19,8 +19,9 @@ node_modules
 */MinSizeRel
 */RelWithDebInfo
 
+*/.cmake-js/*
 
-.cmake*
+# .cmake*
 # *CMakeFiles*
 # .ninja_deps
 # .ninja_log
