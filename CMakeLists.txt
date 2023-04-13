@@ -443,7 +443,7 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   message(STATUS "Creating pkgconfig file...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
-    ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
+    ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc
     @ONLY
   )
   message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
