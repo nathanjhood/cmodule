@@ -19,6 +19,7 @@ node_modules
 */MinSizeRel
 */RelWithDebInfo
 
+.cmake/
 */.cmake-js/*
 
 # .cmake*
@@ -30,7 +31,8 @@ cmake_install.cmake
 CMakeCache.txt
 CPackConfig.cmake
 CPackSourceConfig.cmake
-# compile_commands.json
+compile_commands.json
+CTestTestfile.cmake
 
 
 
