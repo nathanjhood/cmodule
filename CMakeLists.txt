@@ -16,7 +16,7 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   ${CMAKE_CURRENT_SOURCE_DIR}/support/cmake
 )
-# include(node_helpers)
+include("support/cmake/ModuleInit.cmake")
 # Single-threaded build-runs only for compatible behaviour
 set(CMAKE_BUILD_PARALLEL_LEVEL 1)
 # Set the host architecture to build with
@@ -406,10 +406,11 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 #     set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
 #   endif ()
 # endif ()
-set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-# Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
-target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
+# set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
+# # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
+# target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
 # If ERROR option is set, apply the globbed ERROR compile options
+add_node_defines()
 if (${PROJECT_NAME_UPPER}_WERROR)
   target_compile_options(${PROJECT_NAME} PUBLIC ${WERROR_FLAG})
 endif ()
