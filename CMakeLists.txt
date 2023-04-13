@@ -93,25 +93,16 @@ if (NOT DEFINED CMAKE_JS_INC)
   string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
 endif ()
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 ## Create Project
 project("cmodule"
-  VERSION "1.0.0.0"
+  VERSION "1.0.0.1"
   DESCRIPTION "NodeJS module written in C++"
   HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
   LANGUAGES CXX
 )
-
-# specify the C standard
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED True)
-
-# specify the C++ standard
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set(CMAKE_CXX_STANDARD 20)
-else()
-  set(CMAKE_CXX_STANDARD 17)
-endif()
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Parse the project name into vars
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
