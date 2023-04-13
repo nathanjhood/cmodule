@@ -395,11 +395,17 @@ endif ()
 # Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
-# if (DARWIN)
-#  set(CMAKE_CXX_FLAGS _DARWIN_USE_64_BIT_INODE=1 _LARGEFILE_SOURCE _FILE_OFFSET_BITS=64 BUILDING_NODE_EXTENSION)
-#  set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
-# endif ()
+if (WIN32)
+  set(CMAKE_SHARED_LINKER_FLAGS /DELAYLOAD:NODE.EXE)
 set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
+endif ()
+if (UNIX)
+  set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
+  if (APPLE)
+    set(NODE_MODULE_FLAGS ${NODE_MODULE_FLAGS} -D_DARWIN_USE_64_BIT_INODE=1 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 ${CMAKE_CXX_FLAGS})
+    set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
+  endif ()
+endif ()
 # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
 # If ERROR option is set, apply the globbed ERROR compile options
