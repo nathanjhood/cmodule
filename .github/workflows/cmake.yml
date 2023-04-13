@@ -9,7 +9,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   CMAKE_CONFIGURATION_TYPES: Debug;Release;RelWithDebInfo;MinSizeRel
-  BUILD_TYPE: Debug
+  BUILD_TYPE: Release
   VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
 
 jobs:
@@ -20,9 +20,10 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
+        arch: [x64, x86]
         build: [Debug, Release]
         nodev: [ latest, lts/* ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }} ${{ matrix.arch }}
     
     steps:
     - name: CMake Setup
