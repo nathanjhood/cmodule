@@ -114,8 +114,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
 endif ()
 
-# get access to helper functions for creating config files
-include(GNUInstallDirs)
+
 # Generate CMAKE_INSTALL_<DIR> etc...
 # Don't set this var! https://cmake.org/cmake/help/latest/command/install.html#installing-files
 if (NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
@@ -163,6 +162,9 @@ endif ()
 if (NOT DEFINED CMAKE_INSTALL_MANDIR)
   set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
 endif ()
+# get access to helper functions for creating config files
+include(GNUInstallDirs)
+
 
 
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
