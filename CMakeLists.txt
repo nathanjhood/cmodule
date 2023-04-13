@@ -167,7 +167,7 @@ include(GNUInstallDirs)
 
 
 
-option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
+option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." ON)
 option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
 # Options that control generation of various targets.
 option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." OFF)
