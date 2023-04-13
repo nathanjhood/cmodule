@@ -22,7 +22,7 @@ Development Requirements:
 * NodeJS
 * NPM or Yarn
 * CMake
-* A C/C++ compiler (supports GNU, MSVC, CLang...)
+* A C/C++ compiler/build toolchain (supports Ninja, GNU, MSVC, CLang...)
 
 For development of CModules (npm):
 ----------------------------------
@@ -31,16 +31,16 @@ For development of CModules (npm):
 
     npm -g install cmake-js@latest
     // ...will install the required Node API header files for C++ development (only needed once)
-    
-    npm install 
+
+    npm install
     // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
-    
-    npm run test 
+
+    npm run test
     // ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
-    
-    npm run clean 
+
+    npm run clean
     // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development
-    
+
     npm run build
     // ...will rebuild the files found in 'src/' and 'include/cmodule/'... etc
 
@@ -51,16 +51,16 @@ For development of CModules (yarn):
 
     yarn global add cmake-js@latest
     // ...will install the required Node API header files for C++ development (only needed once)
-    
+
     yarn
     // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
-    
+
     yarn test
     // ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
-    
+
     yarn clean
     // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development on the project
-    
+
     yarn rebuild
     // ...will rebuild your development files found in 'src/' and 'include/cmodule/'... etc
 
@@ -72,7 +72,7 @@ A closer look at the development steps of CModules as above, using yarn:
 Install the required Node API header files to link with during development (run once only!);
 
 .. code::
-    
+
     yarn global add cmake-js@latest
 
 Running the standard npm/yarn 'install' command from project root folder will compile the current C/C++ source file(s) as part of it's package installation routine;
@@ -83,8 +83,8 @@ Running the standard npm/yarn 'install' command from project root folder will co
 
 Serve the compiled C/C++ files(s) using your system node executable, from the entry point of 'index.js'. Prints 'hello, world!' by default - see the 'cmodule.h/cc' source files to specify the behaviour of your module!
 
-.. code:: 
-    
+.. code::
+
     yarn test
 
 After tinkering with your project source files, just rebuild them;
@@ -96,37 +96,37 @@ After tinkering with your project source files, just rebuild them;
 Completely remove all build files, directories, and artefacts... but *does not destroy any header or source files*;
 
 .. code::
-    
+
     yarn clean
 
 The same as the above, but also removes the "node_modules" folder. Useful mostly just before packaging your project for distribution only;
 
 .. code::
-    
+
     yarn wipe
 
 Where to place your C++ development files for CMake to correctly compile, build, and link them to the output '*.node' file;
 ---------------------------------------------------------------------------------------------------------------------------
 
-We have two project-local directories of key importance in C++ project development; 
+We have two project-local directories of key importance in C++ project development;
 
 * the "./src" directory, and,
 
-* the "./include/<project_name>" directory 
+* the "./include/<project_name>" directory
 
 Both specified relative to the project's root folder.
 
-Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 116 - 122, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
+Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 96 - 102, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
 
 .. code::
-    
-    116 ## Create Project
-    117 project("cmodule"
-    118   VERSION 1.0.0.0
-    119   DESCRIPTION "NodeJS module written in C++"
-    120   HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
-    121   LANGUAGES CXX
-    122 )
+
+    96  ## Create Project
+    97  project("cmodule"
+    98    VERSION 1.0.0.0
+    99    DESCRIPTION "NodeJS module written in C++"
+    100   HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
+    101   LANGUAGES CXX
+    102 )
 
 *Note* - I will possibly abstract the above CMake interaction away, and have everything defined centrally in the root package.json file. CMake has good tools for parsing JSON with, but I haven't much experience with these just yet. Stay tuned!
 
@@ -144,7 +144,7 @@ How to publish and consume your C++ package for NodeJS;
 Set a valid name and version number in package.json! You should probably change these fields;
 
 .. code::
-    
+
     "name": "@<team_name>/<project_name>"
     "version": "0.0.1"
 
@@ -153,13 +153,13 @@ Replace the team and project names accordingly. Using the "@<team_name>" part of
 To clean the directory before publishing to the npm registry, run;
 
 .. code::
-    
+
     yarn wipe
 
 And to publish it, making it consumable in other npm-based projects publically;
 
 .. code::
-    
+
     npm publish --access=public
 
 Then, you can cd into your existing npm-(or yarn-)based project, or create a new one with the usual "init" command. Assuming this environment meets the system requirements (CMake and a C++ build tool installed), then this simple command;
@@ -192,16 +192,16 @@ For 'ES6/Module'-style syntax;
 
 Then, we make an instance of our module;
 
-.. code:: 
-    
+.. code::
+
     const myImportedModule = <package_name>;
 
 Now you can go ahead and call whatever functions, classes, objects etc you have created in your C++ files, for example;
 
 .. code::
-    
+
     console.log(myImportedModule.hello());
-    
+
 Example;
 --------
 
@@ -217,15 +217,15 @@ You can try it out by adding this package to your project the usual way;
 .. code::
 
     yarn add @stoneydsp/cmodule
-    
+
 Make an 'index.js', and either 'require' (for CommonJs) or 'import' (for ES6/Module syntax) the module by placing the below code in the javascript file;
 
-.. code:: 
+.. code::
 
     const cmodule = require("@stoneydsp/cmodule");
-    
+
     const myImportedModule = cmodule;
-    
+
     console.log(myImportedModule.hello());
 
 *or*
@@ -233,17 +233,29 @@ Make an 'index.js', and either 'require' (for CommonJs) or 'import' (for ES6/Mod
 .. code::
 
     import * as cmodule from "@stoneydsp/cmodule"
-    
+
     const myImportedModule = cmodule;
-    
+
     console.log(myImportedModule.hello());
 
 Back on the command line, you can then ask node to execute the file;
 
 .. code::
-    
+
     node ./index.js
     // hello, world!
+
+You can find everything you need to know about using the Node C/C++ Addon API to create your own modules by checking the official docs;
+
+* https://nodejs.org/dist/latest-v19.x/docs/api/n-api.html
+
+* https://github.com/nodejs/node-addon-api
+
+You will also find many excellent examples and tutorials if you know where to look;
+
+* https://github.com/nodejs/node-addon-examples
+
+* https://github.com/cmake-js/cmake-js#tutorials
 
 Support
 -------
@@ -259,9 +271,15 @@ References
 
 I have specified the excellent npm binary package 'bindings' as a dependency, but also investigating possible other more localized approaches to "exporting" the final module. The 'node-addon-api' is probably self-evident in it's inclusion as a package dependency at this moment. CMake-JS does the wonderful work of linking CMake's potentially seamless build process into the generic npm package commands one would typically use everyday in NodeJS development. Thanks to these three dependencies in our project template, and the routines I've defined in CMakeLists.txt, your 'cmodule'-based projects should integrate into a NodeJS workflow with nothing but a little additional time spent waiting for the compiler to finish it's run :)
 
-Your libs will appear in './build/lib', your binaries in './build/bin', and so on (all relative to the project root folder); and by the same convention, your project's header files should *always remain* in './include/<project_name>/', and source files in './src'. These input and output directory paths are *never* mixed, just like an out-of-source build. The C/C++ compiler step will generate several of these new ("dirty") outputs in your root folder ('bin', 'lib', 'share', etc...), and will place these in a directory named 'build/' which your built module is using, specifically at runtime. Aside from during realtime use, these generated directories can *all* be safely removed using the package.json 'clean' script command - or manually, by simply deleting the generated 'build' directory and all it's contents - and your project's sources and header files shall never be over-written, written to, or modified ever, by CMake. 
+Your libs will appear in './build/lib', your binaries in './build/bin', and so on (all relative to the project root folder); and by the same convention, your project's header files should *always remain* in './include/<project_name>/', and source files in './src'. These input and output directory paths are *never* mixed, just like an out-of-source build. The C/C++ compiler step will generate several of these new ("dirty") outputs in your root folder ('bin', 'lib', 'share', etc...), and will place these in a directory named 'build/' which your built module is using, specifically at runtime. Aside from during realtime use, these generated directories can *all* be safely removed using the package.json 'clean' script command - or manually, by simply deleting the generated 'build' directory and all it's contents - and your project's sources and header files shall never be over-written, written to, or modified ever, by CMake.
 
+Check out the projects that help make cmodule happen;
 
+* https://github.com/cmake-js/cmake-js
+
+* https://github.com/TooTallNate/node-bindings
+
+* https://github.com/nodejs/node-addon-api
 
 Thanks for reading!
 -------------------

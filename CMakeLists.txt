@@ -401,6 +401,10 @@ endif ()
 # Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
+# if (DARWIN)
+#  set(CMAKE_CXX_FLAGS _DARWIN_USE_64_BIT_INODE=1 _LARGEFILE_SOURCE _FILE_OFFSET_BITS=64 BUILDING_NODE_EXTENSION)
+#  set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
+# endif ()
 set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
 # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
@@ -422,7 +426,7 @@ export(
   NAMESPACE ${PROJECT_NAME}::
 )
 
-
+if (PROJECT_IS_TOP_LEVEL)
 # if (${PROJECT_NAME_UPPER}_TEST)
   #---------------
   # CTEST
@@ -432,16 +436,16 @@ export(
   add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
   # include(CTest)
 # endif ()
-
+endif ()
 
 if (${${PROJECT_NAME_UPPER}_INSTALL})
   #---------------
   # CPACK
   #---------------
 
-
   join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
   join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+
   message(STATUS "Creating pkgconfig file...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
@@ -449,6 +453,7 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     @ONLY
   )
   message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
+
   # Configure CPack
   set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
   set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
@@ -514,5 +519,14 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     DESTINATION
       ${${PROJECT_NAME_UPPER}_PKGCONFIG_DIR}
   )
+
+  # # To install other/non-system 3rd party required libraries:
+  # configure_file(
+  #   ${PROJECT_SOURCE_DIR}/support/cmake/FixBundle.cmake.in
+  #   ${PROJECT_BINARY_DIR}/FixBundle.cmake
+  #   @ONLY
+  # )
+
+  # install(SCRIPT ${CMAKE_BINARY_DIR}/FixBundle.cmake)
 
 endif ()
