@@ -51,7 +51,7 @@ endfunction()
 # Ensure a valid build type is set
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   if (${PROJECT_NAME_UPPER}_MASTER_PROJECT)
-    set(DEFAULT_BUILD_TYPE Debug)
+    set(DEFAULT_BUILD_TYPE Release)
   else ()
     message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
   endif ()
