@@ -179,9 +179,10 @@ option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS libr
 
 
 ## Configure directories.
-set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_INSTALL_BINDIR}                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_INSTALL_LIBDIR}                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_INC_DIR              ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_DIR                  ${CMAKE_BINARY_DIR}                           CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_BINARY_DIR}/bin                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_BINARY_DIR}/lib                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+set(${PROJECT_NAME_UPPER}_INC_DIR              ${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 
@@ -189,7 +190,7 @@ set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig  
 set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
 set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
 set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
-set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
+set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
 set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
 set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
 set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
@@ -200,7 +201,7 @@ set(TARGETS_EXPORT_NAME  							         ${PROJECT_NAME}Targets CACHE STRING "Na
 message(STATUS "Creating config header file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.h.in
-  ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}
+  ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}Config.h
 )
 message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
 
@@ -209,7 +210,7 @@ message(STATUS "Creating project config file...")
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.cmake.in
-    ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
+    ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake
   INSTALL_DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
@@ -218,7 +219,7 @@ message(STATUS "Created project config file at ${${PROJECT_NAME_UPPER}_PROJECT_C
 # create version config file
 message(STATUS "Creating the version file for the config file...")
 write_basic_package_version_file(
-  ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
+  ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake
   VERSION ${${PROJECT_NAME}_VERSION}
   COMPATIBILITY AnyNewerVersion
 )
@@ -230,7 +231,7 @@ if (${${PROJECT_NAME_UPPER}_VCPKG})
   message(STATUS "Creating vcpkg manifest...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
-    ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}
+    ${PROJECT_BINARY_DIR}/vcpkg.json
   )
   message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
 
@@ -238,7 +239,7 @@ if (${${PROJECT_NAME_UPPER}_VCPKG})
   message(STATUS "Creating vcpkg configuration...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg-configuration.in.json
-    ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}
+    ${PROJECT_BINARY_DIR}/vcpkg-configuration.json
   )
   message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
 
@@ -246,7 +247,7 @@ if (${${PROJECT_NAME_UPPER}_VCPKG})
   message(STATUS "Creating vcpkg portfile...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/vcpkg/portfile.in.cmake
-    ${${PROJECT_NAME_UPPER}_PORT_FILE}
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake
   )
   message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
 endif ()
@@ -272,39 +273,39 @@ target_sources(${PROJECT_NAME}
   PRIVATE
     ${${PROJECT_NAME_UPPER}_SRC_FILES}
 )
-# Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
-file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*")
-target_sources(${PROJECT_NAME}
-  PRIVATE
-    ${${PROJECT_NAME_UPPER}_INC_FILES}
-)
-
 # # Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
 # file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*")
 # target_sources(${PROJECT_NAME}
-#   PUBLIC
-#     FILE_SET ${PROJECT_NAME_LOWER}_HEADERS
-#     TYPE HEADERS
-#     BASE_DIRS ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
-#     FILES ${${PROJECT_NAME_UPPER}_INC_FILES}
+#   PRIVATE
+#     ${${PROJECT_NAME_UPPER}_INC_FILES}
 # )
 
-# if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
-#   # Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
-#   file(GLOB ${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES "${CMAKE_JS_INC}/*.h" "${NODE_ADDON_API_DIR}/*.h")
-#   target_sources(${PROJECT_NAME}
-#     PRIVATE
-#       FILE_SET ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
-#       TYPE HEADERS
-#       BASE_DIRS ${CMAKE_JS_INC} ${NODE_ADDON_API_DIR}
-#       FILES
-#         ${${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES}
-#   )
-# endif ()
-target_include_directories(${PROJECT_NAME}
+# Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
+file(GLOB ${PROJECT_NAME_UPPER}_INC_FILES "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*")
+target_sources(${PROJECT_NAME}
   PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDE_DIR}/${PROJECT_NAME}>
+    FILE_SET ${PROJECT_NAME_LOWER}_HEADERS
+    TYPE HEADERS
+    BASE_DIRS ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
+    FILES ${${PROJECT_NAME_UPPER}_INC_FILES}
+)
+
+if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
+  # Glob all files with all extensions in 'include/${PROJECT_NAME}' and pass them to ${PROJECT_NAME_UPPER}_INC_FILES
+  file(GLOB ${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES "${CMAKE_JS_INC}/*.h" "${NODE_ADDON_API_DIR}/*.h")
+  target_sources(${PROJECT_NAME}
+    PRIVATE
+      FILE_SET ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
+      TYPE HEADERS
+      BASE_DIRS ${CMAKE_JS_INC} ${NODE_ADDON_API_DIR}
+      FILES
+        ${${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES}
+  )
+endif ()
+target_include_directories(${PROJECT_NAME}
+  # PUBLIC
+  #   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   PRIVATE
     ${PROJECT_BINARY_DIR}
     ${CMAKE_JS_INC}
@@ -315,10 +316,10 @@ set_target_properties(${PROJECT_NAME}
 PROPERTIES
   CXX_STANDARD 11
   CXX_STANDARD_REQUIRED TRUE
-  RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
-  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
-  ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
-  PDB_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
+  RUNTIME_OUTPUT_DIRECTORY bin
+  LIBRARY_OUTPUT_DIRECTORY lib
+  ARCHIVE_OUTPUT_DIRECTORY lib
+  PDB_OUTPUT_DIRECTORY bin
   PREFIX ""
   SUFFIX ".node"
   DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
