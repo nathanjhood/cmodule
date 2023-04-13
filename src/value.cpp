@@ -6,6 +6,10 @@ Val::Val() :
 {
 
 };
+Val::~Val()
+{
+
+};
 
 Napi::Number Val::getPi()
 {

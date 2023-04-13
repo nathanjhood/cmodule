@@ -10,7 +10,8 @@
 class Val
 {
 public:
-	Val() {};
+	Val();
+	~Val();
 
 	Napi::Number getPi();
 
