@@ -22,6 +22,8 @@ function(init_module)
   # Single-threaded build-runs only for compatible behaviour
   set(CMAKE_BUILD_PARALLEL_LEVEL 1)
   set(CMAKE_INCLUDE_CURRENT_DIR OFF)
+  # Use the target 'FOLDER' property to organize targets into folders
+  set(USE_FOLDERS ON)
   set(BUILD_SHARED_LIBS ON)
   set(CMAKE_ENABLE_EXPORTS ON)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -29,6 +31,7 @@ function(init_module)
   set(CMAKE_INSTALL_MESSAGE ALWAYS)
   set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
   set(CPACK_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
+
 endfunction()
 
 
@@ -115,6 +118,16 @@ function(set_install_dirs)
   include(GNUInstallDirs)
 endfunction()
 
+function(enable_module target)
+  if (MSVC)
+    set(BMI ${CMAKE_CURRENT_BINARY_DIR}/${target}.ifc)
+    target_compile_options(${target}
+      PRIVATE /interface /ifcOutput ${BMI}
+      INTERFACE /reference fmt=${BMI})
+  endif ()
+  set_target_properties(${target} PROPERTIES ADDITIONAL_CLEAN_FILES ${BMI})
+  set_source_files_properties(${BMI} PROPERTIES GENERATED ON)
+endfunction()
 
 function(add_node_defines)
   add_compile_definitions(UNICODE)
