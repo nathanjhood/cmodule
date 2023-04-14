@@ -5,6 +5,8 @@ node_modules
 /lib
 /share
 
+*-back.*
+
 */bin
 */lib
 */share
