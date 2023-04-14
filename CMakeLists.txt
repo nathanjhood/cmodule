@@ -54,16 +54,17 @@ if (NOT DEFINED CMAKE_JS_INC)
   string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
 endif ()
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 
 ## Create Project
 project("cmodule"
-  VERSION "1.0.0.1"
+  VERSION "1.0.0.0"
   DESCRIPTION "NodeJS module written in C++"
   HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
   LANGUAGES CXX
 )
+
+# set(PROJECT_BINARY_DIR ${PROJECT_SOURCE_DIR})
 
 # Parse the project name into vars
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
@@ -76,56 +77,19 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 
-# Generate CMAKE_INSTALL_<DIR> etc...
-# Don't set this var! https://cmake.org/cmake/help/latest/command/install.html#installing-files
-if (NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
-  set(CMAKE_INSTALL_DATAROOTDIR share CACHE PATH "Read-only architecture-independent data root (share)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
-  set(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "C/C++ header files (include)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_BINDIR)
-  set(CMAKE_INSTALL_BINDIR bin CACHE PATH "User executables (bin)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_SBINDIR)
-  set(CMAKE_INSTALL_SBINDIR sbin CACHE PATH "System admin executables (sbin)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR lib CACHE PATH "Object code libraries (lib)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_LIBEXECDIR)
-  set(CMAKE_INSTALL_LIBEXECDIR libexec CACHE PATH "Program executables (libexec)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_SHAREDSTATEDIR)
-  set(CMAKE_INSTALL_SHAREDSTATEDIR com CACHE PATH "Modifiable architecture-independent data (com)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_DATADIR)
-  set(CMAKE_INSTALL_DATADIR ${CMAKE_INSTALL_DATAROOTDIR} CACHE PATH "Read-only architecture-independent data (DATAROOTDIR)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_LOCALSTATEDIR)
-  set(CMAKE_INSTALL_LOCALSTATEDIR var CACHE PATH "Modifiable single-machine data (var)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_SYSCONFDIR)
-  set(CMAKE_INSTALL_SYSCONFDIR etc CACHE PATH "Read-only single-machine data (etc)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_RUNSTATEDIR)
-  set(CMAKE_INSTALL_RUNSTATEDIR ${CMAKE_INSTALL_LOCALSTATEDIR}/run CACHE PATH "Run-time variable data (LOCALSTATEDIR/run)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_LOCALEDIR)
-  set(CMAKE_INSTALL_LOCALEDIR ${CMAKE_INSTALL_DATAROOTDIR}/locale CACHE PATH "Locale-dependent data (DATAROOTDIR/locale)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_DOCDIR)
-  set(CMAKE_INSTALL_DOCDIR ${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME} CACHE PATH "Documentation root (DATAROOTDIR/doc/PROJECT_NAME)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_INFODIR)
-  set(CMAKE_INSTALL_INFODIR ${CMAKE_INSTALL_DATAROOTDIR}/info CACHE PATH "Info documentation (DATAROOTDIR/info)")
-endif ()
-if (NOT DEFINED CMAKE_INSTALL_MANDIR)
-  set(CMAKE_INSTALL_MANDIR ${CMAKE_INSTALL_DATAROOTDIR}/man CACHE PATH "Man documentation (DATAROOTDIR/man)")
-endif ()
-# get access to helper functions for creating config files
-include(GNUInstallDirs)
+set_install_dirs()
 
+# Ensure a valid build type is set
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  if (${PROJECT_NAME_UPPER}_MASTER_PROJECT)
+    set(DEFAULT_BUILD_TYPE Release)
+  else ()
+    message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
+  endif ()
+  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
+  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif ()
 
 
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." ON)
@@ -219,6 +183,27 @@ add_library(${PROJECT_NAME} SHARED)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
+
+# Set target output file properties.
+set_target_properties(${PROJECT_NAME}
+PROPERTIES
+  CXX_STANDARD 11
+  CXX_STANDARD_REQUIRED TRUE
+  RUNTIME_OUTPUT_DIRECTORY bin
+  LIBRARY_OUTPUT_DIRECTORY lib
+  ARCHIVE_OUTPUT_DIRECTORY lib
+  PDB_OUTPUT_DIRECTORY bin
+  PREFIX ""
+  SUFFIX ".node"
+  DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
+  # Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
+  COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR
+  INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
+  SOURCES ${CMAKE_CURRENT_LIST_DIR}/src
+  # PUBLIC_HEADER ${PROJECT_NAME_LOWER}_HEADERS
+  # PRIVATE_HEADER ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
+)
+
 target_sources(${PROJECT_NAME}
   PRIVATE
     package.json
@@ -263,6 +248,7 @@ if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
         ${${PROJECT_NAME_UPPER}_PRIVATE_INC_FILES}
   )
 endif ()
+
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
@@ -271,24 +257,6 @@ target_include_directories(${PROJECT_NAME}
     ${PROJECT_BINARY_DIR}
     ${CMAKE_JS_INC}
     ${NODE_ADDON_API_DIR}
-)
-# Set target output file properties.
-set_target_properties(${PROJECT_NAME}
-PROPERTIES
-  CXX_STANDARD 11
-  CXX_STANDARD_REQUIRED TRUE
-  RUNTIME_OUTPUT_DIRECTORY bin
-  LIBRARY_OUTPUT_DIRECTORY lib
-  ARCHIVE_OUTPUT_DIRECTORY lib
-  PDB_OUTPUT_DIRECTORY bin
-  PREFIX ""
-  SUFFIX ".node"
-  DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
-  # Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
-  COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR
-  INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
-  # PUBLIC_HEADER ${PROJECT_NAME_LOWER}_HEADERS
-  # PRIVATE_HEADER ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
 )
 
 source_group("${PROJECT_NAME}" FILES ${${PROJECT_NAME_UPPER}_INC_FILES} ${${PROJECT_NAME_UPPER}_SRC_FILES})
@@ -341,11 +309,13 @@ if (MSVC)
   # Generate node.lib
     execute_process(COMMAND ${CMAKE_AR} /def:${CMAKE_JS_NODELIB_DEF} /out:${CMAKE_JS_NODELIB_TARGET} ${CMAKE_STATIC_LINKER_FLAGS})
   endif ()
+
   if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(${CMAKE_INSTALL_DEBUG_LIBRARIES} TRUE)
   endif ()
 endif ()
 include(InstallRequiredSystemLibraries)
+
 if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
   set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C++)")
   set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
@@ -367,11 +337,10 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 #     set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
 #   endif ()
 # endif ()
-# set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-# # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
-# target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
+set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
+# Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
+target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
 # If ERROR option is set, apply the globbed ERROR compile options
-add_node_defines()
 if (${PROJECT_NAME_UPPER}_WERROR)
   target_compile_options(${PROJECT_NAME} PUBLIC ${WERROR_FLAG})
 endif ()
