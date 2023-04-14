@@ -17,48 +17,9 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/support/cmake
 )
 include("support/cmake/ModuleInit.cmake")
-# Single-threaded build-runs only for compatible behaviour
-set(CMAKE_BUILD_PARALLEL_LEVEL 1)
-# Set the host architecture to build with
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(USE_X64 TRUE)
-else ()
-  set(USE_X64 FALSE)
-endif ()
-set(CMAKE_INSTALL_MODE SYMLINK_OR_COPY)
-set(CMAKE_INSTALL_MESSAGE ALWAYS)
-set(CMAKE_INCLUDE_CURRENT_DIR OFF)
-set(BUILD_SHARED_LIBS ON)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Copyright 2020 Jan Tojnar (MIT)
-# https://github.com/jtojnar/cmake-snips
-function(join_paths joined_path first_path_segment)
-  set(temp_path "${first_path_segment}")
-  foreach(current_segment IN LISTS ARGN)
-    if (NOT ("${current_segment}" STREQUAL ""))
-      if (IS_ABSOLUTE "${current_segment}")
-        set(temp_path "${current_segment}")
-      else ()
-        set(temp_path "${temp_path}/${current_segment}")
-      endif ()
-    endif ()
-  endforeach()
-  set(${joined_path} "${temp_path}" PARENT_SCOPE)
-endfunction()
+init_module()
 
-
-# Ensure a valid build type is set
-if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  if (${PROJECT_NAME_UPPER}_MASTER_PROJECT)
-    set(DEFAULT_BUILD_TYPE Release)
-  else ()
-    message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
-  endif ()
-  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
-  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif ()
 # Collect Node Addon-API headers into NODE_ADDON_API_DIR
 execute_process(
   COMMAND node -p "require('node-addon-api').include"
@@ -179,22 +140,22 @@ option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS libr
 
 
 ## Configure directories.
-set(${PROJECT_NAME_UPPER}_DIR                  ${CMAKE_BINARY_DIR}                           CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_BINARY_DIR}/bin                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_BINARY_DIR}/lib                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_INC_DIR              ${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+# set(${PROJECT_NAME_UPPER}_DIR                  ${CMAKE_BINARY_DIR}                           CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+# set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_BINARY_DIR}/bin                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+# set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_BINARY_DIR}/lib                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+# set(${PROJECT_NAME_UPPER}_INC_DIR              ${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+# set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
+# set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
 
 ## Configure files.
-set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
-set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
-set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
-set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
-set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
-set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
-set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
-set(TARGETS_EXPORT_NAME  							         ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
+# set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
+# set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
+# set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
+# set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
+# set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
+# set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
+# set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
+# set(TARGETS_EXPORT_NAME  							         ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
 
 
 # create config header
@@ -303,9 +264,9 @@ if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
   )
 endif ()
 target_include_directories(${PROJECT_NAME}
-  # PUBLIC
-  #   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   PRIVATE
     ${PROJECT_BINARY_DIR}
     ${CMAKE_JS_INC}
@@ -424,7 +385,7 @@ endif ()
 
 export(
   TARGETS ${PROJECT_NAME}
-  FILE ${PROJECT_BINARY_DIR}/share/${TARGETS_EXPORT_NAME}.cmake
+  FILE ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Targets.cmake
   NAMESPACE ${PROJECT_NAME}::
 )
 
@@ -471,6 +432,10 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     /.github
     /.vs
     /.vscode
+    /bin
+    /lib
+    /share
+    /etc
     /build
     /downloads
     /installed
@@ -489,7 +454,7 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   # Install the library and headers.
   install(
     TARGETS ${PROJECT_NAME}
-    EXPORT ${TARGETS_EXPORT_NAME}
+    EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -502,24 +467,24 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   )
 
   install(
-    EXPORT ${TARGETS_EXPORT_NAME}
-    DESTINATION ${${PROJECT_NAME_UPPER}_CMAKE_DIR}
+    EXPORT ${PROJECT_NAME}Targets
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
     NAMESPACE ${PROJECT_NAME}::
   )
 
   install(
     FILES
-      ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}
-      ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}
+      ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake
+      ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake
     DESTINATION
-      ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}
+      ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
   )
 
   install(
     FILES
-      ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}
+      ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc
     DESTINATION
-      ${${PROJECT_NAME_UPPER}_PKGCONFIG_DIR}
+      ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   )
 
   # # To install other/non-system 3rd party required libraries:
