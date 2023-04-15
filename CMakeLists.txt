@@ -123,15 +123,15 @@ option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS libr
 
 
 # create config header
-message(STATUS "Creating config header file...")
+# message(STATUS "Creating config header file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.h.in
   ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}Config.h
 )
-message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
+# message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
 
 # create config file
-message(STATUS "Creating project config file...")
+# message(STATUS "Creating project config file...")
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.cmake.in
@@ -139,42 +139,42 @@ configure_package_config_file(
   INSTALL_DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
-message(STATUS "Created project config file at ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}\n")
+# message(STATUS "Created project config file at ${${PROJECT_NAME_UPPER}_PROJECT_CONFIG}\n")
 
 # create version config file
-message(STATUS "Creating the version file for the config file...")
+# message(STATUS "Creating the version file for the config file...")
 write_basic_package_version_file(
   ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake
   VERSION ${${PROJECT_NAME}_VERSION}
   COMPATIBILITY AnyNewerVersion
 )
-message(STATUS "Created version file for the config file at ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}\n")
+# message(STATUS "Created version file for the config file at ${${PROJECT_NAME_UPPER}_VERSION_CONFIG}\n")
 
 
 if (${${PROJECT_NAME_UPPER}_VCPKG})
   # create vcpkg manifest file
-  message(STATUS "Creating vcpkg manifest...")
+  # message(STATUS "Creating vcpkg manifest...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg.in.json
     ${PROJECT_BINARY_DIR}/vcpkg.json
   )
-  message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
+  # message(STATUS "Created vcpkg manifest at ${${PROJECT_NAME_UPPER}_VCPKG_MNFST}\n")
 
   # create vcpkg configuration file
-  message(STATUS "Creating vcpkg configuration...")
+  # message(STATUS "Creating vcpkg configuration...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/vcpkg/vcpkg-configuration.in.json
     ${PROJECT_BINARY_DIR}/vcpkg-configuration.json
   )
-  message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
+  # message(STATUS "Created vcpkg configuration at ${${PROJECT_NAME_UPPER}_VCPKG_CONFIG}\n")
 
   # create vcpkg portfile
-  message(STATUS "Creating vcpkg portfile...")
+  # message(STATUS "Creating vcpkg portfile...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/vcpkg/portfile.in.cmake
     ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake
   )
-  message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
+  # message(STATUS "Created vcpkg portfile at ${${PROJECT_NAME_UPPER}_PORT_FILE}\n")
 endif ()
 
 
@@ -378,13 +378,13 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   join_paths(libdir_for_pc_file "\${exec_prefix}" "${CMAKE_INSTALL_LIBDIR}")
   join_paths(includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 
-  message(STATUS "Creating pkgconfig file...")
+  # message(STATUS "Creating pkgconfig file...")
   configure_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmodule.pc.in
     ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc
     @ONLY
   )
-  message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
+  # message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
 
   # Configure CPack
   set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
