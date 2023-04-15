@@ -91,7 +91,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# Build with Address Sanitizer
 option(${PROJECT_NAME_UPPER}_ASAN_ENABLED "Build with Address Sanitizer" OFF)
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
 option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
@@ -374,6 +373,8 @@ endif ()
 if (APPLE)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
+      -DUNICODE
+      -D_UNICODE
       -DAPPLE=1
       -DNAPI_VERSION=8
       -DBUILDING_NODE_EXTENSION
@@ -387,10 +388,6 @@ if (APPLE)
   )
 endif ()
 
-
-# set(NODE_MODULE_FLAGS -DNAPI_VERSION=8 -DBUILDING_NODE_EXTENSION)
-# # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
-# target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
 # If ERROR option is set, apply the globbed ERROR compile options
 if (${PROJECT_NAME_UPPER}_WERROR)
   target_compile_options(${PROJECT_NAME} PUBLIC ${WERROR_FLAG})
