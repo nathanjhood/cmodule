@@ -383,7 +383,7 @@ if (APPLE)
   )
   target_link_options(${PROJECT_NAME}
     PUBLIC
-      dynamic_lookup
+      -undefined dynamic_lookup
   )
 endif ()
 
