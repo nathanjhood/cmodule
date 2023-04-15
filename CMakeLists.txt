@@ -80,18 +80,19 @@ endif ()
 set_install_dirs()
 
 # Ensure a valid build type is set
-if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  if (${PROJECT_NAME_UPPER}_MASTER_PROJECT)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  if(PROJECT_IS_TOP_LEVEL)
     set(DEFAULT_BUILD_TYPE Release)
-  else ()
+  else()
     message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
-  endif ()
+  endif()
   message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
   set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif ()
+endif()
 
-
+# Build with Address Sanitizer
+option(${PROJECT_NAME_UPPER}_ASAN_ENABLED "Build with Address Sanitizer" OFF)
 option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
 option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
 # Options that control generation of various targets.
@@ -99,7 +100,7 @@ option(${PROJECT_NAME_UPPER}_DOC "Generate the doc target." OFF)
 option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
 option(${PROJECT_NAME_UPPER}_VCPKG "Integrate vcpkg for c++ packages." OFF)
 option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ON)
-option(${PROJECT_NAME_UPPER}_INC_NODE_HEADERS "Include Node API headers in build project" ON)
+option(${PROJECT_NAME_UPPER}_INC_NODE_HEADERS "Include Node API headers in build project" OFF)
 option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS library." OFF)
 
 
@@ -316,6 +317,16 @@ if (MSVC)
 endif ()
 include(InstallRequiredSystemLibraries)
 
+# Address sanitizer
+if(${PROJECT_NAME_UPPER}_ASAN_ENABLED)
+  if(MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC /fsanitize=address)
+  else()
+    target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
+    target_link_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
+  endif()
+endif()
+
 if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
   set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols (C++)")
   set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
@@ -325,21 +336,61 @@ if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
 endif ()
 # Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+
+# # Debug definitions:
+# if (${CMAKE_BUILD_TYPE} MATCHES Debug OR RelWithDebInfo)
+#   add_compile_definitions(_DEBUG=1)
+# else ()
+#   add_compile_definitions(NDEBUG=1)
+# endif ()
+
 # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
-# if (WIN32)
-#   set(CMAKE_SHARED_LINKER_FLAGS /DELAYLOAD:NODE.EXE)
-#   set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-# endif ()
-# if (UNIX)
-#   set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-#   if (APPLE)
-#     set(NODE_MODULE_FLAGS ${NODE_MODULE_FLAGS} -D_DARWIN_USE_64_BIT_INODE=1 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 ${CMAKE_CXX_FLAGS})
-#     set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
-#   endif ()
-# endif ()
-set(NODE_MODULE_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-# Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
-target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
+if (WIN32)
+  target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+      -DUNICODE
+      -D_UNICODE
+      -DWINDOWS=1
+      -DNAPI_VERSION=8
+      -DBUILDING_NODE_EXTENSION
+  )
+  target_link_options(${PROJECT_NAME}
+    PUBLIC
+      /DELAYLOAD:NODE.EXE
+  )
+endif ()
+
+if (UNIX AND NOT APPLE)
+  target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+      -DUNICODE
+      -D_UNICODE
+      -DLINUX=1
+      -DNAPI_VERSION=8
+      -DBUILDING_NODE_EXTENSION
+  )
+endif ()
+
+if (APPLE)
+  target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+      -DAPPLE=1
+      -DNAPI_VERSION=8
+      -DBUILDING_NODE_EXTENSION
+      -D_DARWIN_USE_64_BIT_INODE=1
+      -D_LARGEFILE_SOURCE
+      -D_FILE_OFFSET_BITS=64
+  )
+  target_link_options(${PROJECT_NAME}
+    PUBLIC
+      dynamic_lookup
+  )
+endif ()
+
+
+# set(NODE_MODULE_FLAGS -DNAPI_VERSION=8 -DBUILDING_NODE_EXTENSION)
+# # Apply the pre-processor defines, PUBLIC to affect both the lib and the interface
+# target_compile_definitions(${PROJECT_NAME} PUBLIC ${NODE_MODULE_FLAGS})
 # If ERROR option is set, apply the globbed ERROR compile options
 if (${PROJECT_NAME_UPPER}_WERROR)
   target_compile_options(${PROJECT_NAME} PUBLIC ${WERROR_FLAG})

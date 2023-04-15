@@ -129,57 +129,83 @@ function(enable_module target)
   set_source_files_properties(${BMI} PROPERTIES GENERATED ON)
 endfunction()
 
-function(add_node_defines)
-  add_compile_definitions(UNICODE)
-  add_compile_definitions(_UNICODE)
+# function(add_node_defines)
+#   add_compile_definitions(UNICODE)
+#   add_compile_definitions(_UNICODE)
 
-  # Host handling:
-  if(WIN32)
-    add_compile_definitions(WINDOWS=1)
-    message(STATUS "Setting Compile Definition WINDOWS=1")
-  endif ()
+#   # Host handling:
+#   if(WIN32)
+#     add_compile_definitions(WINDOWS=1)
+#     message(STATUS "Setting Compile Definition WINDOWS=1")
+#   endif ()
 
-  if (UNIX AND NOT APPLE)
-    add_compile_definitions(LINUX=1)
-    message(STATUS "Setting Compile Definition LINUX=1")
-  endif ()
+#   if (UNIX AND NOT APPLE)
+#     add_compile_definitions(LINUX=1)
+#     message(STATUS "Setting Compile Definition LINUX=1")
+#   endif ()
 
-  if (APPLE)
-    add_compile_definitions(APPLE=1)
-    message(STATUS "Setting Compile Definition APPLE=1")
-  endif ()
+#   if (APPLE)
+#     add_compile_definitions(APPLE=1)
+#     message(STATUS "Setting Compile Definition APPLE=1")
+#   endif ()
 
-  # Debug definitions:
-  if (${CMAKE_BUILD_TYPE} MATCHES Debug OR RelWithDebInfo)
-    add_compile_definitions(_DEBUG=1)
-    message(STATUS "Setting Compile Definition _DEBUG=1")
-  else ()
-    add_compile_definitions(NDEBUG=1)
-    message(STATUS "Setting Compile Definition NDEBUG=1")
-  endif ()
+#   # Debug definitions:
+#   if (${CMAKE_BUILD_TYPE} MATCHES Debug OR RelWithDebInfo)
+#     add_compile_definitions(_DEBUG=1)
+#     message(STATUS "Setting Compile Definition _DEBUG=1")
+#   else ()
+#     add_compile_definitions(NDEBUG=1)
+#     message(STATUS "Setting Compile Definition NDEBUG=1")
+#   endif ()
 
-  # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
-  if (WIN32)
-    set(CMAKE_CXX_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-    # add_compile_definitions(NAPI_VERSION=${napi_build_version})
-    # add_compile_definitions(BUILDING_NODE_EXTENSION)
-    set(CMAKE_SHARED_LINKER_FLAGS /DELAYLOAD:NODE.EXE)
-  endif ()
+#   # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
+#   if (WIN32)
+#     set(CMAKE_CXX_FLAGS -DNAPI_VERSION=8 -DBUILDING_NODE_EXTENSION)
+#     # add_compile_definitions(NAPI_VERSION=${napi_build_version})
+#     # add_compile_definitions(BUILDING_NODE_EXTENSION)
+#     target_compile_definitions(${PROJECT_NAME}
+#       PUBLIC
+#         -DNAPI_VERSION=8
+#         -DBUILDING_NODE_EXTENSION
+#     )
+#     target_link_options(${PROJECT_NAME}
+#       PUBLIC
+#         /DELAYLOAD:NODE.EXE
+#     )
+#     set(CMAKE_SHARED_LINKER_FLAGS /DELAYLOAD:NODE.EXE)
+#   endif ()
 
-  if (UNIX AND NOT APPLE)
-    set(CMAKE_CXX_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION)
-    # add_compile_definitions(NAPI_VERSION=${napi_build_version})
-    # add_compile_definitions(BUILDING_NODE_EXTENSION)
-  endif ()
+#   if (UNIX AND NOT APPLE)
+#     set(CMAKE_CXX_FLAGS -DNAPI_VERSION=8 -DBUILDING_NODE_EXTENSION)
+#     # add_compile_definitions(NAPI_VERSION=${napi_build_version})
+#     # add_compile_definitions(BUILDING_NODE_EXTENSION)
+#     target_compile_definitions(${PROJECT_NAME}
+#       PUBLIC
+#         -DNAPI_VERSION=8
+#         -DBUILDING_NODE_EXTENSION
+#     )
+#   endif ()
 
-  if (APPLE)
-    set(CMAKE_CXX_FLAGS -DNAPI_VERSION=5 -DBUILDING_NODE_EXTENSION -D_DARWIN_USE_64_BIT_INODE=1 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 ${CMAKE_CXX_FLAGS})
-    # add_compile_definitions(NAPI_VERSION=${napi_build_version})
-    # add_compile_definitions(BUILDING_NODE_EXTENSION)
-    # add_compile_definitions(_DARWIN_USE_64_BIT_INODE=1)
-    # add_compile_definitions(_LARGEFILE_SOURCE)
-    # add_compile_definitions(_FILE_OFFSET_BITS=64)
-    set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
-  endif ()
+#   if (APPLE)
+#     set(CMAKE_CXX_FLAGS -DNAPI_VERSION=8 -DBUILDING_NODE_EXTENSION -D_DARWIN_USE_64_BIT_INODE=1 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 ${CMAKE_CXX_FLAGS})
+#     # add_compile_definitions(NAPI_VERSION=${napi_build_version})
+#     # add_compile_definitions(BUILDING_NODE_EXTENSION)
+#     # add_compile_definitions(_DARWIN_USE_64_BIT_INODE=1)
+#     # add_compile_definitions(_LARGEFILE_SOURCE)
+#     # add_compile_definitions(_FILE_OFFSET_BITS=64)
+#     set(CMAKE_SHARED_LINKER_FLAGS dynamic_lookup)
+#     target_compile_definitions(${PROJECT_NAME}
+#       PUBLIC
+#         -DNAPI_VERSION=8
+#         -DBUILDING_NODE_EXTENSION
+#         -D_DARWIN_USE_64_BIT_INODE=1
+#         -D_LARGEFILE_SOURCE
+#         -D_FILE_OFFSET_BITS=64
+#     )
+#     target_link_options(${PROJECT_NAME}
+#       PUBLIC
+#         dynamic_lookup
+#     )
+#   endif ()
 
-endfunction()
+# endfunction()
