@@ -24,7 +24,7 @@
     "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin && rm -rvf ./share",
     "wipe": "yarn clean && rm -rvf ./node_modules",
     "help": "cmake-js --help",
-    "test": "node ./test/run.js"
+    "test": "node ./test/hello.js && node ./test/add.js"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {
