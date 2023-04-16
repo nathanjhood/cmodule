@@ -17,5 +17,7 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
   exports.Set(Napi::String::New(env, "hello"), Napi::Function::New(env, Method));
 
+  exports.Set(Napi::String::New(env, "calculate"), Napi::Function::New(env, Calc));
+
   return exports;
 }
