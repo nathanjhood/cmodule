@@ -25,5 +25,5 @@
 //Value Computed by CMake
 #cmakedefine @PROJECT_NAME_UPPER@_SOURCE_DIR @@PROJECT_NAME_UPPER@_SOURCE_DIR@
 
-
+#cmakedefine NODE_ENV @NODE_ENV@
 #endif // INCLUDE_@PROJECT_NAME_UPPER@_CONFIG_H_
