@@ -413,7 +413,8 @@ if (PROJECT_IS_TOP_LEVEL)
   #---------------
   # Configure CTest
   enable_testing()
-  add_test(NAME Runs COMMAND node "${PROJECT_SOURCE_DIR}/test/run.js")
+  add_test(NAME Hello COMMAND node "${PROJECT_SOURCE_DIR}/test/hello.js")
+  add_test(NAME Add COMMAND node "${PROJECT_SOURCE_DIR}/test/add.js")
   # include(CTest)
 # endif ()
 endif ()
