@@ -45,7 +45,15 @@ jobs:
     - run: yarn clean
 
   configure:
-      runs-on: ${{ matrix.os }}
+    strategy:
+    matrix:
+      os: [windows-latest, ubuntu-latest, macos-latest]
+      arch: [x64, x86]
+      build: [Debug, Release]
+      nodev: [ latest, lts/* ]
+
+    runs-on: ${{ matrix.os }}
+    
       steps:
       - name: CMake Configure
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -62,7 +70,15 @@ jobs:
         run: cmake --build '.' --config ${{matrix.build}}
 
   test:
-      runs-on: ${{ matrix.os }}
+    strategy:
+    matrix:
+      os: [windows-latest, ubuntu-latest, macos-latest]
+      arch: [x64, x86]
+      build: [Debug, Release]
+      nodev: [ latest, lts/* ]
+
+    runs-on: ${{ matrix.os }}
+    
       steps:
       - name: CTest Tests
         # Execute tests defined by the CMake configuration.
@@ -71,7 +87,15 @@ jobs:
         run: ctest -C ${{matrix.build}}
 
   install:
-      runs-on: ${{ matrix.os }}
+    strategy:
+    matrix:
+      os: [windows-latest, ubuntu-latest, macos-latest]
+      arch: [x64, x86]
+      build: [Debug, Release]
+      nodev: [ latest, lts/* ]
+
+    runs-on: ${{ matrix.os }}
+    
       steps:
       - name: CPack Source (TGZ)
         # Build your program with the given configuration
