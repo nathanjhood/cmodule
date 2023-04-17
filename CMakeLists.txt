@@ -107,7 +107,8 @@ option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS libr
 # message(STATUS "Creating config header file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleUserConfig.h.in
-  ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}UserConfig.h
+  ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}UserConfig.h
+  @ONLY
 )
 # message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
 
