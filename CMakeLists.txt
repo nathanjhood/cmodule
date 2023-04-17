@@ -55,7 +55,8 @@ if (NOT DEFINED CMAKE_JS_INC)
 endif ()
 
 
-
+## Name the project vendor (or intended namespace)
+set(PROJECT_VENDOR "StoneyDSP")
 ## Create Project
 project("cmodule"
   VERSION "1.0.0.0"
@@ -66,9 +67,14 @@ project("cmodule"
 
 # set(PROJECT_BINARY_DIR ${PROJECT_SOURCE_DIR})
 
+# Parse the vendor name into vars
+string(TOUPPER ${PROJECT_VENDOR} PROJECT_VENDOR_UPPER)
+string(TOLOWER ${PROJECT_VENDOR} PROJECT_VENDOR_LOWER)
+
 # Parse the project name into vars
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+
 # Set DEBUG_POSTFIX and LIB_NAME for output files.
 set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
@@ -162,7 +168,7 @@ endif ()
 
 # Add the library as an output target
 add_library(${PROJECT_NAME} SHARED)
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(${PROJECT_VENDOR}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
 
@@ -179,11 +185,11 @@ PROPERTIES
   SUFFIX ".node"
   DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
   # Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
-  COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR
+  COMPATIBLE_INTERFACE_STRING INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR
   INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
-  SOURCES ${CMAKE_CURRENT_LIST_DIR}/src
-  # PUBLIC_HEADER ${PROJECT_NAME_LOWER}_HEADERS
-  # PRIVATE_HEADER ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
+  # SOURCES
+  # PUBLIC_HEADER
+  # PRIVATE_HEADER
 )
 
 target_sources(${PROJECT_NAME}
@@ -232,11 +238,11 @@ if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
 endif ()
 
 target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  # PUBLIC
+  #   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   PRIVATE
-    ${PROJECT_BINARY_DIR}
+    # ${PROJECT_BINARY_DIR}
     ${CMAKE_JS_INC}
     ${NODE_ADDON_API_DIR}
 )
@@ -382,7 +388,7 @@ endif ()
 export(
   TARGETS ${PROJECT_NAME}
   FILE ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Targets.cmake
-  NAMESPACE ${PROJECT_NAME}::
+  NAMESPACE ${PROJECT_VENDOR}::
 )
 
 if (PROJECT_IS_TOP_LEVEL)
@@ -478,6 +484,9 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
   install(
     EXPORT ${PROJECT_NAME}Targets
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+    NAMESPACE ${PROJECT_VENDOR}::
+  )
 
   install(
     FILES
@@ -512,8 +521,8 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
 endif ()
 
-get_target_property(_aliased ${PROJECT_NAME}::${PROJECT_NAME} ALIASED_TARGET)
+get_target_property(_aliased ${PROJECT_VENDOR}::${PROJECT_NAME} ALIASED_TARGET)
 if(_aliased)
-  message(STATUS "The name '${PROJECT_NAME}::${PROJECT_NAME}' is an ALIAS for ${_aliased}.")
-  message(STATUS "This package can be found by importing (or requiring) '@${PROJECT_NAME}/${PROJECT_NAME}' in a local Javascript project.")
+  message(STATUS "The name '${PROJECT_VENDOR}::${PROJECT_NAME}' is an ALIAS for ${_aliased}.")
+  message(STATUS "This package can be found by importing (or requiring) '@${PROJECT_VENDOR}/${PROJECT_NAME}' in a local Javascript project.")
 endif()
