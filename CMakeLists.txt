@@ -333,25 +333,30 @@ endif ()
 if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
 endif ()
+
 # Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 
 # # Debug definitions:
 # if (${CMAKE_BUILD_TYPE} MATCHES Debug OR RelWithDebInfo)
-#   add_compile_definitions(_DEBUG=1)
+#   target_compile_definitions(${PROJECT_NAME} PRIVATE -D_DEBUG)
 # else ()
-#   add_compile_definitions(NDEBUG=1)
+#   target_compile_definitions(${PROJECT_NAME} PRIVATE -DNDEBUG)
 # endif ()
+
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    -DUNICODE
+    -D_UNICODE
+    -DNAPI_VERSION=8
+    -DBUILDING_NODE_EXTENSION
+)
 
 # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
 if (WIN32)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      -DUNICODE
-      -D_UNICODE
-      -DWINDOWS=1
-      -DNAPI_VERSION=8
-      -DBUILDING_NODE_EXTENSION
+      -DWINDOWS
   )
   target_link_options(${PROJECT_NAME}
     PUBLIC
@@ -362,22 +367,14 @@ endif ()
 if (UNIX AND NOT APPLE)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      -DUNICODE
-      -D_UNICODE
-      -DLINUX=1
-      -DNAPI_VERSION=8
-      -DBUILDING_NODE_EXTENSION
+      -DLINUX
   )
 endif ()
 
 if (APPLE)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      -DUNICODE
-      -D_UNICODE
-      -DAPPLE=1
-      -DNAPI_VERSION=8
-      -DBUILDING_NODE_EXTENSION
+      -DAPPLE
       -D_DARWIN_USE_64_BIT_INODE=1
       -D_LARGEFILE_SOURCE
       -D_FILE_OFFSET_BITS=64
