@@ -459,11 +459,17 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     /share
     /etc
     /build
+    /Release
+    /Debug
+    /MinSizeRel
+    /RelWithDebInfo
     /downloads
     /installed
     /node_modules
     /vcpkg
     /.*build.*
+    /package-lock.json
+    /yarn.lock
     /\\\\.DS_Store
   )
   include(CPack)
@@ -490,8 +496,12 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
   install(
     EXPORT ${PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-    NAMESPACE ${PROJECT_NAME}::
+
+  install(
+    FILES
+      ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}UserConfig.h
+    DESTINATION
+      ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
   )
 
   install(
