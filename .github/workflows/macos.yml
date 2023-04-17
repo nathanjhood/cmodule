@@ -18,11 +18,11 @@ jobs:
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: macos-latest
-    
+
     steps:
     - name: Checkout Project
       uses: actions/checkout@v3
-      
+
     - name: CMake Setup
       uses: jwlawson/actions-setup-cmake@v1.13
       with:
@@ -32,7 +32,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        
+
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
@@ -45,9 +45,12 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
-        
-    - run: npm install -g npm@latest
+
     - run: npm install -g yarn@latest
+    - run: yarn global add npm@latest
     - run: yarn global add cmake-js@latest
     - run: yarn install
     - run: yarn test
+    - run: yarn clean
+    - run: yarn pkg:src
+    - run: yarn pkg:bin
