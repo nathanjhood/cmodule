@@ -40,6 +40,7 @@ jobs:
     - run: npm install -g yarn@latest
     - run: yarn global add npm@latest
     - run: yarn global add cmake-js@latest
+    - run: yarn install
     - run: yarn clean
 
     - name: CMake Configure
