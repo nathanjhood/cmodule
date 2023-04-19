@@ -1,8 +1,6 @@
 name: linux
 
 on:
-  push:
-    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -53,4 +51,3 @@ jobs:
     - run: yarn clean
     - run: yarn pkg:src
     - run: yarn pkg:bin
-

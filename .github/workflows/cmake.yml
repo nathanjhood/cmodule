@@ -50,14 +50,14 @@ jobs:
 
     - name: CMake Build
       # Build your program with the given configuration
-      working-directory: ${{github.workspace}}/build
-      run: cmake --build '.' --config ${{matrix.build}}
+      working-directory: ${{github.workspace}}
+      run: cmake --build './build' --config ${{matrix.build}}
 
     - name: CTest Tests
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{matrix.build}}
+      working-directory: ${{github.workspace}}
+      run: ctest --test-dir ./build --output-on-failure --config ${{matrix.build}}
 
     - name: CPack Source (TGZ)
       # Build your program with the given configuration
