@@ -117,7 +117,6 @@ configure_file(
   @ONLY
 )
 
-
 # create config file
 # message(STATUS "Creating project config file...")
 include(CMakePackageConfigHelpers)
