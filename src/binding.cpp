@@ -1,4 +1,4 @@
-#include "cmodule.h"
+#include "binding.h"
 
 static Napi::String Method(const Napi::CallbackInfo& info)
 {
