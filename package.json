@@ -23,8 +23,9 @@
     "install": "cmake-js compile",
     "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin && rm -rvf ./share",
     "wipe": "yarn clean && rm -rvf ./node_modules",
-    "help": "cmake-js --help",
-    "test": "node ./test/hello.js && node ./test/add.js"
+    "test": "ctest --test-dir ./build --output-on-failure",
+    "pkg:bin": "cmake-js build -d '.' --target package",
+    "pkg:src": "cmake-js build -d '.' --target package_source"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {

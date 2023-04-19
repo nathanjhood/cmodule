@@ -55,7 +55,8 @@ if (NOT DEFINED CMAKE_JS_INC)
 endif ()
 
 
-
+## Name the project vendor (or intended namespace)
+set(PROJECT_VENDOR "StoneyDSP")
 ## Create Project
 project("cmodule"
   VERSION "1.0.0.0"
@@ -66,9 +67,14 @@ project("cmodule"
 
 # set(PROJECT_BINARY_DIR ${PROJECT_SOURCE_DIR})
 
+# Parse the vendor name into vars
+string(TOUPPER ${PROJECT_VENDOR} PROJECT_VENDOR_UPPER)
+string(TOLOWER ${PROJECT_VENDOR} PROJECT_VENDOR_LOWER)
+
 # Parse the project name into vars
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+
 # Set DEBUG_POSTFIX and LIB_NAME for output files.
 set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
@@ -103,30 +109,12 @@ option(${PROJECT_NAME_UPPER}_INC_NODE_HEADERS "Include Node API headers in build
 option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS library." OFF)
 
 
-## Configure directories.
-# set(${PROJECT_NAME_UPPER}_DIR                  ${CMAKE_BINARY_DIR}                           CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-# set(${PROJECT_NAME_UPPER}_BIN_DIR              ${CMAKE_BINARY_DIR}/bin                       CACHE PATH "Installation directory for binaries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-# set(${PROJECT_NAME_UPPER}_LIB_DIR              ${CMAKE_BINARY_DIR}/lib                       CACHE PATH "Installation directory for libraries, a relative path that will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-# set(${PROJECT_NAME_UPPER}_INC_DIR              ${CMAKE_BINARY_DIR}/include/${PROJECT_NAME}   CACHE PATH "Installation directory for include files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-# set(${PROJECT_NAME_UPPER}_CMAKE_DIR            ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME} CACHE PATH "Installation directory for CMake (.cmake) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-# set(${PROJECT_NAME_UPPER}_PKGCONFIG_DIR   		 ${CMAKE_INSTALL_LIBDIR}/pkgconfig             CACHE PATH "Installation directory for pkgconfig (.pc) files, a relative path that will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute path.")
-
-## Configure files.
-# set(${PROJECT_NAME_UPPER}_VERSION_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake CACHE STRING "Location of generated <project_name>ConfigVersion.cmake file")
-# set(${PROJECT_NAME_UPPER}_PROJECT_CONFIG       ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake CACHE STRING "Location of generated <project_name>Config.cmake file")
-# set(${PROJECT_NAME_UPPER}_PACKAGE_CONFIG       ${PROJECT_BINARY_DIR}/lib/pkgconfig/${PROJECT_NAME_LOWER}.pc CACHE STRING "Location of generated <project_name>.pc file")
-# set(${PROJECT_NAME_UPPER}_CM_VARS_CONFIG       ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}Config.h CACHE STRING "Location of generated <project_name>Config.h file")
-# set(${PROJECT_NAME_UPPER}_VCPKG_MNFST          ${PROJECT_BINARY_DIR}/vcpkg.json CACHE STRING "Location of generated vcpkg.json file")
-# set(${PROJECT_NAME_UPPER}_VCPKG_CONFIG         ${PROJECT_BINARY_DIR}/vcpkg-configuration.json CACHE STRING "Location of generated vcpkg-configuration.json file")
-# set(${PROJECT_NAME_UPPER}_PORT_FILE            ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWER}-portfile.cmake CACHE STRING "Location of generated <project_name>-portfile.cmake file")
-# set(TARGETS_EXPORT_NAME  							         ${PROJECT_NAME}Targets CACHE STRING "Name generated <project_name>Targets variable")
-
-
 # create config header
 # message(STATUS "Creating config header file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleUserConfig.h.in
-  ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}UserConfig.h
+  ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}UserConfig.h
+  @ONLY
 )
 # message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
 
@@ -180,7 +168,7 @@ endif ()
 
 # Add the library as an output target
 add_library(${PROJECT_NAME} SHARED)
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(${PROJECT_VENDOR}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
 
@@ -197,11 +185,11 @@ PROPERTIES
   SUFFIX ".node"
   DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
   # Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
-  COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR
+  COMPATIBLE_INTERFACE_STRING INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR
   INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
-  SOURCES ${CMAKE_CURRENT_LIST_DIR}/src
-  # PUBLIC_HEADER ${PROJECT_NAME_LOWER}_HEADERS
-  # PRIVATE_HEADER ${PROJECT_NAME_LOWER}_PRIVATE_HEADERS
+  # SOURCES
+  # PUBLIC_HEADER
+  # PRIVATE_HEADER
 )
 
 target_sources(${PROJECT_NAME}
@@ -250,11 +238,11 @@ if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
 endif ()
 
 target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  # PUBLIC
+  #   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   PRIVATE
-    ${PROJECT_BINARY_DIR}
+    # ${PROJECT_BINARY_DIR}
     ${CMAKE_JS_INC}
     ${NODE_ADDON_API_DIR}
 )
@@ -333,25 +321,30 @@ endif ()
 if (PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
 endif ()
+
 # Set the std lib standard to c++11, PUBLIC to affect both the lib and the interface
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 
 # # Debug definitions:
 # if (${CMAKE_BUILD_TYPE} MATCHES Debug OR RelWithDebInfo)
-#   add_compile_definitions(_DEBUG=1)
+#   target_compile_definitions(${PROJECT_NAME} PRIVATE -D_DEBUG)
 # else ()
-#   add_compile_definitions(NDEBUG=1)
+#   target_compile_definitions(${PROJECT_NAME} PRIVATE -DNDEBUG)
 # endif ()
+
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    -DUNICODE
+    -D_UNICODE
+    -DNAPI_VERSION=8
+    -DBUILDING_NODE_EXTENSION
+)
 
 # Set the require pre-processor defines for NAPI_VERSION and BUILDING_NODE_EXTENSION
 if (WIN32)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      -DUNICODE
-      -D_UNICODE
-      -DWINDOWS=1
-      -DNAPI_VERSION=8
-      -DBUILDING_NODE_EXTENSION
+      -DWINDOWS
   )
   target_link_options(${PROJECT_NAME}
     PUBLIC
@@ -362,22 +355,14 @@ endif ()
 if (UNIX AND NOT APPLE)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      -DUNICODE
-      -D_UNICODE
-      -DLINUX=1
-      -DNAPI_VERSION=8
-      -DBUILDING_NODE_EXTENSION
+      -DLINUX
   )
 endif ()
 
 if (APPLE)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      -DUNICODE
-      -D_UNICODE
-      -DAPPLE=1
-      -DNAPI_VERSION=8
-      -DBUILDING_NODE_EXTENSION
+      -DAPPLE
       -D_DARWIN_USE_64_BIT_INODE=1
       -D_LARGEFILE_SOURCE
       -D_FILE_OFFSET_BITS=64
@@ -403,7 +388,7 @@ endif ()
 export(
   TARGETS ${PROJECT_NAME}
   FILE ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Targets.cmake
-  NAMESPACE ${PROJECT_NAME}::
+  NAMESPACE ${PROJECT_VENDOR}::
 )
 
 if (PROJECT_IS_TOP_LEVEL)
@@ -436,7 +421,11 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   # message(STATUS "Created pkgconfig file at ${${PROJECT_NAME_UPPER}_PACKAGE_CONFIG}\n")
 
   # Configure CPack
-  set(CPACK_SOURCE_PACKAGE_FILE_NAME ${${PROJECT_NAME}-${PROJECT_VERSION}})
+  set(CPACK_PACKAGE_VENDOR ${PROJECT_VENDOR})
+  set(CPACK_PACKAGE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
+  set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}") # Compiled binary distribution
+  set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-Source") # No system spec as this is un-compiled source file distribution
+  # set(CPACK_PACKAGE_CHECKSUM "${PROJECT_VENDOR}-${PROJECT_NAME}-${PROJECT_VERSION}")
   set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
   set(CPACK_PACKAGE_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR})
   set(CPACK_PACKAGE_VERSION_MINOR ${${PROJECT_NAME}_VERSION_MINOR})
@@ -444,6 +433,9 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   set(CPACK_PACKAGE_VERSION_TWEAK ${${PROJECT_NAME}_VERSION_TWEAK})
   set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/LICENSE)
   set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/README.rst)
+  set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+  set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+  # set(CPACK_PACKAGE_DIRECTORY )
   set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
   set(CPACK_SOURCE_IGNORE_FILES
     /.git/*
@@ -455,11 +447,17 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     /share
     /etc
     /build
+    /Release
+    /Debug
+    /MinSizeRel
+    /RelWithDebInfo
     /downloads
     /installed
     /node_modules
     /vcpkg
     /.*build.*
+    /package-lock.json
+    /yarn.lock
     /\\\\.DS_Store
   )
   include(CPack)
@@ -486,8 +484,15 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
   install(
     EXPORT ${PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-    NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+    NAMESPACE ${PROJECT_VENDOR}::
+  )
+
+  install(
+    FILES
+      ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}UserConfig.h
+    DESTINATION
+      ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
   )
 
   install(
@@ -516,8 +521,8 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
 endif ()
 
-get_target_property(_aliased ${PROJECT_NAME}::${PROJECT_NAME} ALIASED_TARGET)
+get_target_property(_aliased ${PROJECT_VENDOR}::${PROJECT_NAME} ALIASED_TARGET)
 if(_aliased)
-  message(STATUS "The name '${PROJECT_NAME}::${PROJECT_NAME}' is an ALIAS for ${_aliased}.")
-  message(STATUS "This package can be found by importing (or requiring) '@${PROJECT_NAME}/${PROJECT_NAME}' in a local Javascript project.")
+  message(STATUS "The name '${PROJECT_VENDOR}::${PROJECT_NAME}' is an ALIAS for ${_aliased}.")
+  message(STATUS "This package can be found by importing (or requiring) '@${PROJECT_VENDOR}/${PROJECT_NAME}' in a local Javascript project.")
 endif()
