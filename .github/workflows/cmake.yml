@@ -1,8 +1,6 @@
 name: CMake
 
 on:
-  push:
-    branches: [ "development", "cli" ]
   pull_request:
     branches: [ "main", "development" ]
 
