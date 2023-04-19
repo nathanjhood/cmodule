@@ -236,6 +236,7 @@ if (${PROJECT_NAME_UPPER}_INC_NODE_HEADERS)
   )
 endif ()
 
+
 target_include_directories(${PROJECT_NAME}
   # PUBLIC
   #   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
@@ -508,15 +509,6 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     DESTINATION
       ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   )
-
-  # # To install other/non-system 3rd party required libraries:
-  # configure_file(
-  #   ${PROJECT_SOURCE_DIR}/support/cmake/FixBundle.cmake.in
-  #   ${PROJECT_BINARY_DIR}/FixBundle.cmake
-  #   @ONLY
-  # )
-
-  # install(SCRIPT ${CMAKE_BINARY_DIR}/FixBundle.cmake)
 
 endif ()
 
