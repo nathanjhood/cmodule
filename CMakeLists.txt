@@ -116,7 +116,7 @@ configure_file(
   ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}UserConfig.h
   @ONLY
 )
-# message(STATUS "Created config header file at ${${PROJECT_NAME_UPPER}_CM_VARS_CONFIG}\n")
+
 
 # create config file
 # message(STATUS "Creating project config file...")
