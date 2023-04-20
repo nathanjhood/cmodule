@@ -140,7 +140,7 @@ If you stay with the provided paradigm of placing your to-be-linked public heade
 
 This means you can just focus on the C++ and Javascript development files contained therein, and should have a working, multi-platform, multi-arch, multi-OS library for NodeJs straight from the box every time (please see the 'tests' tab of this repo for more info).
 
-How to publish and consume your C++ package for NodeJS;
+How to publish and consume your C++ package with NodeJS;
 -------------------------------------------------------
 
 Set a valid name and version number in package.json! You should probably change these fields;
