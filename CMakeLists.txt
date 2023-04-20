@@ -487,12 +487,12 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     NAMESPACE ${PROJECT_VENDOR}::
   )
 
-  install(
-    FILES
-      ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}UserConfig.h
-    DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-  )
+  # install(
+  #   FILES
+  #     ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}UserConfig.h
+  #   DESTINATION
+  #     ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  # )
 
   install(
     FILES
