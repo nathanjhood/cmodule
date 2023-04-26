@@ -24,6 +24,11 @@
   "C_Cpp.default.intelliSenseMode": "",
   "C_Cpp.default.mergeConfigurations": true,
   "C_Cpp.default.enableConfigurationSquiggles": true,
+  "C_Cpp.default.windowsSdkVersion": "10.0.22000.0",
+  "C_Cpp.default.macFrameworkPath": [
+    "/System/Library/Frameworks",
+    "/Library/Frameworks"
+  ],
   "C_Cpp.default.forcedInclude": [
     "${workspaceFolder}/node_modules/node-api-headers/include/node_api.h",
     "${workspaceFolder}/node_modules/node-api-headers/include/node_api_types.h",
@@ -281,6 +286,5 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true
-  },
-  "esbonio.sphinx.confDir": ""
+  }
 }
