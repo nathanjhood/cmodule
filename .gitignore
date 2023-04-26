@@ -148,7 +148,16 @@ web_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.deployment.local
 .env.local
+
+# ...but keep the templates
+!/support/environment/.env
+!/support/environment/.env.development.local
+!/support/environment/.env.test.local
+!/support/environment/.env.production.local
+!/support/environment/.env.deployment.local
+!/support/environment/.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .parcel-cache
