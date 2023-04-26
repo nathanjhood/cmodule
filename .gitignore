@@ -1,3 +1,10 @@
+*UserConfig.h
+*.node
+*.pc
+*Config.cmake
+*ConfigVersion.cmake
+*Targets.cmake
+
 ## CMake
 
 CMakeLists.txt.user
