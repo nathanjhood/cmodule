@@ -2,8 +2,6 @@
   "name": "@stoneydsp/cmodule",
   "version": "1.0.1",
   "description": "My cmake-js module",
-  "main": "index.js",
-  "type": "commonjs",
   "license": "MIT",
   "author": "Nathan J. Hood <nathanjhood@googlemail.com> (http://stoneydsp.com)",
   "homepage": "https://github.io/StoneyDSP/cmodule",
@@ -17,14 +15,14 @@
   "scripts": {
     "configure": "cmake-js configure",
     "reconfigure": "cmake-js reconfigure",
-    "build": "cmake-js build",
-    "rebuild": "cmake-js rebuild ",
+    "build": "cmake-js build -O './build'",
+    "rebuild": "cmake-js rebuild",
     "compile": "cmake-js compile",
-    "install": "cmake-js compile",
+    "install": "cmake-js compile -O './build'",
     "start": "NODE_PATH=/ node test/hello.js",
-    "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./installed",
-    "wipe": "yarn clean && rm -rvf ./node_modules",
-    "test": "ctest --test-dir ./build --output-on-failure -C Debug",
+    "clean": "cmake-js clean && rm -rvf ./bin ./lib ./share ./build ./installed ./CMakeFiles ./CMakeCache.txt ./cmake_install.cmake ./Testing ./CTest* ./CPack*",
+    "wipe": "yarn clean && rm -rvf ./node_modules ./yarn.lock ./package-lock.json",
+    "test": "ctest --test-dir ./build --output-on-failure",
     "pkg:bin": "cmake-js build -d '.' --target package",
     "pkg:src": "cmake-js build -d '.' --target package_source",
     "rm:ninja": "rm -rvf ./*ninja ./.ninja_deps ./.ninja_log",
@@ -45,7 +43,28 @@
     "cmake-js": "^7.2.1",
     "node-addon-api": "^6.0.0"
   },
-  "cmake-js": {
-    "runtime": "node"
-  }
+  "sponsor": {
+    "url": "https:www.patreon.com/StoneyDSP"
+  },
+  "funding":[
+    "https:www.patreon.com/StoneyDSP"
+  ],
+  "directories": {
+    "doc": "/doc",
+    "lib": "/build/lib",
+    "test": "/test"
+  },
+  "main": "./index.js",
+  "exports": {
+
+    "default": "./index.js",
+
+    "node": {
+      "import": "./index.mjs",
+      "require": "./index.cjs",
+      "default": "./index.js"
+    }
+
+  },
+  "type": "commonjs"
 }
