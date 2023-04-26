@@ -107,6 +107,7 @@ bower_components
 build/Release
 build/Debug
 build/MinSizeRel
+build/RelWithDebInfo
 
 # Dependency directories
 node_modules/
@@ -230,7 +231,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
-[Ll]ib/
+# [Ll]ib/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
@@ -580,6 +581,7 @@ FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
 .vscode/*
+!.vscode/c_cpp_properties.json
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
