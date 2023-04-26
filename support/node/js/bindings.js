@@ -63,6 +63,18 @@ var fs = require('fs'),
       ['module_root', 'build/bin', 'bindings'],
       ['module_root', 'build/lib', 'bindings'],
       ['module_root', 'build/share', 'bindings'],
+
+      ['module_root', 'build/bin/Release', 'bindings'],
+      ['module_root', 'build/bin/Debug', 'bindings'],
+      ['module_root', 'build/bin/MinSizeRel', 'bindings'],
+      ['module_root', 'build/bin/RelWithDebInfo', 'bindings'],
+
+      ['module_root', 'build/lib/Release', 'bindings'],
+      ['module_root', 'build/lib/Debug', 'bindings'],
+      ['module_root', 'build/lib/MinSizeRel', 'bindings'],
+      ['module_root', 'build/lib/RelWithDebInfo', 'bindings'],
+
+
       ['module_root', 'bin', 'bindings'],
       ['module_root', 'lib', 'bindings'],
       ['module_root', 'share', 'bindings'],
