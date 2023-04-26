@@ -17,7 +17,7 @@
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/x64-linux/.config/**",
+        "${workspaceFolder}/build/x64-linux/include/**",
         "${vcpkgRoot}/x64-linux/include/**"
       ],
       "forcedInclude": [
@@ -46,7 +46,7 @@
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/x86-linux/.config/**",
+        "${workspaceFolder}/build/x86-linux/include/**",
         "${vcpkgRoot}/x86-linux/include/**"
       ],
       "forcedInclude": [
@@ -75,7 +75,7 @@
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/arm64-linux/.config/**",
+        "${workspaceFolder}/build/arm64-linux/include/**",
         "${vcpkgRoot}/arm64-linux/include/**"
       ],
       "forcedInclude": [
@@ -107,7 +107,7 @@
       ],
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/arm-linux/.config/**",
+        "${workspaceFolder}/build/arm-linux/include/**",
         "${vcpkgRoot}/arm-linux/include/**"
       ],
       "defines": [
@@ -136,7 +136,7 @@
       ],
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/x64-linux/.config/**",
+        "${workspaceFolder}/build/x64-linux/include/**",
         "${vcpkgRoot}/x64-linux/include/**"
       ],
       "defines": [
@@ -162,7 +162,7 @@
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/x86-linux/.config/**",
+        "${workspaceFolder}/build/x86-linux/include/**",
         "${vcpkgRoot}/x86-linux/include/**"
       ],
       "forcedInclude": [
@@ -191,7 +191,7 @@
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/arm-linux/.config/**",
+        "${workspaceFolder}/build/arm-linux/include/**",
         "${vcpkgRoot}/arm-linux/include/**"
       ],
       "forcedInclude": [
@@ -220,7 +220,7 @@
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/build/arm64-linux/.config/**",
+        "${workspaceFolder}/build/arm64-linux/include/**",
         "${vcpkgRoot}/arm64-linux/include/**"
       ],
       "forcedInclude": [
