@@ -13,15 +13,14 @@
       "binaryDir": "${sourceDir}/build/${presetName}",
       "installDir": "${sourceDir}/installed/${presetName}"
     },
-
-
-
     {
       "name": "ninja",
       "displayName": "Ninja",
       "description": "Generates build.ninja files.",
       "generator": "Ninja",
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -29,7 +28,9 @@
       "displayName": "Ninja Multi-Config",
       "description": "Generates build-<Config>.ninja files.",
       "generator": "Ninja Multi-Config",
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -37,7 +38,19 @@
       "displayName": "Unix Makefiles",
       "description": "Generates standard UNIX makefiles.",
       "generator": "Unix Makefiles",
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "xcode",
+      "displayName": "Xcode",
+      "description": "Generate Xcode project files.",
+      "generator": "Xcode",
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -45,7 +58,9 @@
       "displayName": "Visual Studio 17 2022",
       "description": "Sets Visual Studio 17 2022 generator",
       "generator": "Visual Studio 17 2022",
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -53,7 +68,9 @@
       "displayName": "Sublime Text 2 - Ninja",
       "description": "Generates Sublime Text 2 project files.",
       "generator": "Sublime Text 2 - Ninja",
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -61,31 +78,36 @@
       "displayName": "Sublime Text 2 - Unix Makefiles",
       "description": "Generates Sublime Text 2 project files.",
       "generator": "Sublime Text 2 - Unix Makefiles",
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
       "name": "toolchain",
       "displayName": "Configure preset using toolchain file",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-      "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": {"type": "STRING", "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"}
-      },
+      "cacheVariables": { "CMAKE_TOOLCHAIN_FILE": { "type": "STRING", "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" } },
       "inherits": [ "default" ],
       "hidden": true
     },
-
-
-
     {
       "name": "gcc",
       "displayName": "GCC 11.3.0 x86_64-linux-gnu",
       "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/gcc"},
-        "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/g++"}
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/gcc"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/g++"
+        }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -93,35 +115,48 @@
       "displayName": "Clang 14.0.0 x86_64-pc-linux-gnu",
       "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/clang"},
-        "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/clang++"}
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/clang"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "/usr/bin/clang++"
+        }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
       "name": "msvc",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "cl.exe"},
-        "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "cl.exe"}
+        "CMAKE_C_COMPILER": {
+          "type": "FILEPATH",
+          "value": "cl.exe"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "FILEPATH",
+          "value": "cl.exe"
+        }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
-
-
-
     {
       "name": "x86",
       "displayName": "x86",
       "description": "Target 32-bit architecture.",
       "toolset": {
-          "value": "x86",
-          "strategy": "external"
+        "value": "x86",
+        "strategy": "external"
       },
       "architecture": {
-          "value": "x86",
-          "strategy": "external"
+        "value": "x86",
+        "strategy": "external"
       },
       "cacheVariables": {
         "NODE_ARCH": {
@@ -129,7 +164,9 @@
           "value": "x86"
         }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -137,12 +174,12 @@
       "displayName": "x64",
       "description": "Target 64-bit architecture.",
       "toolset": {
-          "value": "x64",
-          "strategy": "external"
+        "value": "x64",
+        "strategy": "external"
       },
       "architecture": {
-          "value": "x64",
-          "strategy": "external"
+        "value": "x64",
+        "strategy": "external"
       },
       "cacheVariables": {
         "NODE_ARCH": {
@@ -150,7 +187,9 @@
           "value": "x64"
         }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -158,12 +197,12 @@
       "displayName": "arm",
       "description": "Target 32-bit ARM architecture.",
       "toolset": {
-          "value": "arm",
-          "strategy": "external"
+        "value": "arm",
+        "strategy": "external"
       },
       "architecture": {
-          "value": "arm",
-          "strategy": "external"
+        "value": "arm",
+        "strategy": "external"
       },
       "cacheVariables": {
         "NODE_ARCH": {
@@ -171,7 +210,9 @@
           "value": "arm"
         }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -179,12 +220,12 @@
       "displayName": "arm64",
       "description": "Target 64-bit ARM architecture.",
       "toolset": {
-          "value": "arm64",
-          "strategy": "external"
+        "value": "arm64",
+        "strategy": "external"
       },
       "architecture": {
-          "value": "arm64",
-          "strategy": "external"
+        "value": "arm64",
+        "strategy": "external"
       },
       "cacheVariables": {
         "NODE_ARCH": {
@@ -192,12 +233,11 @@
           "value": "arm64"
         }
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
-
-
-
     {
       "name": "debug",
       "displayName": "Debug",
@@ -206,7 +246,9 @@
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CONFIG_TYPE": "Debug"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -217,7 +259,9 @@
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CONFIG_TYPE": "Release"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -231,7 +275,9 @@
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "CMAKE_CONFIG_TYPE": "RelWithDebInfo"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -242,12 +288,11 @@
         "CMAKE_BUILD_TYPE": "MinSizeRel",
         "CMAKE_CONFIG_TYPE": "MinSizeRel"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
-
-
-
     {
       "name": "test",
       "displayName": "test",
@@ -255,7 +300,9 @@
       "cacheVariables": {
         "NODE_ENV": "test"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -265,7 +312,9 @@
       "cacheVariables": {
         "NODE_ENV": "development"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -275,7 +324,9 @@
       "cacheVariables": {
         "NODE_ENV": "production"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -285,12 +336,11 @@
       "cacheVariables": {
         "NODE_ENV": "deployment"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
-
-
-
     {
       "name": "windows",
       "displayName": "Windows-only configuration",
@@ -304,7 +354,9 @@
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
-      "inherits": [ "default" ]
+      "inherits": [
+        "default"
+      ]
     },
     {
       "name": "linux",
@@ -322,7 +374,9 @@
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
       },
-      "inherits": [ "default" ],
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
@@ -339,19 +393,24 @@
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
-        "rhs": "Apple"
+        "rhs": "Darwin"
       },
-      "inherits": [ "default" ]
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
     },
-
-
     {
       "name": "x86-linux",
       "displayName": "Linux x86",
       "inherits": [
         "default",
+        "ninja-multi",
+        "toolchain",
         "linux",
-        "x86"
+        "x86",
+        "debug",
+        "test"
       ],
       "hidden": false
     },
@@ -360,7 +419,7 @@
       "displayName": "Linux x64",
       "inherits": [
         "default",
-        "unix-makefiles",
+        "ninja-multi",
         "toolchain",
         "linux",
         "x64",
@@ -375,7 +434,11 @@
       "inherits": [
         "default",
         "linux",
-        "arm"
+        "ninja-multi",
+        "toolchain",
+        "arm",
+        "debug",
+        "test"
       ],
       "hidden": false
     },
@@ -384,18 +447,77 @@
       "displayName": "Linux ARM x64",
       "inherits": [
         "default",
+        "ninja-multi",
+        "toolchain",
         "linux",
-        "arm64"
+        "arm64",
+        "debug",
+        "test"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "x86-macos",
+      "displayName": "MacOS x86",
+      "inherits": [
+        "default",
+        "ninja-multi",
+        "toolchain",
+        "macos",
+        "x86",
+        "debug",
+        "test"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "x64-macos",
+      "displayName": "MacOS x64",
+      "inherits": [
+        "default",
+        "ninja-multi",
+        "toolchain",
+        "macos",
+        "x64",
+        "debug",
+        "test"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "arm-macos",
+      "displayName": "MacOS ARM x86",
+      "inherits": [
+        "default",
+        "ninja-multi",
+        "toolchain",
+        "macos",
+        "arm",
+        "debug",
+        "test"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "arm64-macos",
+      "displayName": "MacOS ARM x64",
+      "inherits": [
+        "default",
+        "ninja-multi",
+        "toolchain",
+        "macos",
+        "arm64",
+        "debug",
+        "test"
       ],
       "hidden": false
     }
-
   ],
   "buildPresets": [
     {
       "hidden": true,
       "name": "target-list",
-      "targets":[
+      "targets": [
         "all",
         "help",
         "clean",
@@ -420,10 +542,43 @@
         "CMAKE_BUILD_TYPE": "Debug",
         "VCPKG_BUILD_TYPE": "Debug"
       },
-      "inherits":[
+      "inherits": [
         "target-list"
       ],
       "hidden": false
+    },
+    {
+      "name": "x64-macos-debug-test",
+      "displayName": "Build: 'Debug'; Env: 'test'",
+      "description": "Disable optimizations - include debug information.",
+      "configurePreset": "x64-macos",
+      "configuration": "Debug",
+      "inheritConfigureEnvironment": true,
+      "verbose": false,
+      "environment": {
+        "VCPKG_TARGET_TRIPLET": "x64-macos",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_BUILD_TYPE": "Debug"
+      },
+      "inherits": [
+        "target-list"
+      ],
+      "hidden": false
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-macos-x64",
+      "description": "",
+      "displayName": "MacOS x64",
+      "configurePreset": "x64-macos"
+    },
+    {
+      "name": "test-linux-x64",
+      "description": "",
+      "displayName": "Linux x64",
+      "configurePreset": "x64-linux"
     }
   ]
 }
