@@ -1,6 +1,288 @@
 {
   "configurations": [
     {
+      "name": "MacOS Clang x64",
+      "compilerPath": "/usr/bin/clang",
+      "intelliSenseMode": "macos-clang-x64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x64-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x64-macos/include/**",
+        "${vcpkgRoot}/x64-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=x64"
+      ]
+    },
+    {
+      "name": "MacOS Clang x86",
+      "compilerPath": "/usr/bin/clang",
+      "intelliSenseMode": "macos-clang-x86",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x86-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x86-macos/include/**",
+        "${vcpkgRoot}/x86-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=x86"
+      ]
+    },
+    {
+      "name": "MacOS Clang arm",
+      "compilerPath": "/usr/bin/clang",
+      "intelliSenseMode": "macos-clang-arm",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm-macos/include/**",
+        "${vcpkgRoot}/arm-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=arm"
+      ]
+    },
+    {
+      "name": "MacOS Clang arm64",
+      "compilerPath": "/usr/bin/clang",
+      "intelliSenseMode": "macos-clang-arm64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm64-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm64-macos/include/**",
+        "${vcpkgRoot}/arm64-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=arm64"
+      ]
+    },
+
+    {
+      "name": "MacOS GNU x64",
+      "compilerPath": "/usr/bin/gcc",
+      "intelliSenseMode": "macos-gcc-x64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x64-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x64-macos/include/**",
+        "${vcpkgRoot}/x64-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=x64"
+      ]
+    },
+    {
+      "name": "MacOS GNU x86",
+      "compilerPath": "/usr/bin/gcc",
+      "intelliSenseMode": "macos-gcc-x86",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x86-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x86-macos/include/**",
+        "${vcpkgRoot}/x86-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=x86"
+      ]
+    },
+    {
+      "name": "MacOS GCC arm",
+      "compilerPath": "/usr/bin/gcc",
+      "intelliSenseMode": "macos-gcc-arm",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm-macos/include/**",
+        "${vcpkgRoot}/arm-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=arm"
+      ]
+    },
+    {
+      "name": "MacOS GCC arm64",
+      "compilerPath": "/usr/bin/gcc",
+      "intelliSenseMode": "macos-gcc-arm64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "macFrameworkPath": [
+        "${default}"
+      ],
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm64-macos"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm64-macos/include/**",
+        "${vcpkgRoot}/arm64-macos/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "UNIX",
+        "DARWIN",
+        "APPLE",
+        "MACOS",
+        "NODE_ARCH=arm64"
+      ]
+    },
+
+    {
       "name": "Linux Clang x64",
       "compilerPath": "/usr/bin/clang",
       "intelliSenseMode": "linux-clang-x64",
@@ -25,6 +307,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=x64"
       ]
@@ -54,6 +337,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=x86"
       ]
@@ -83,6 +367,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=arm64"
       ]
@@ -112,6 +397,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=arm"
       ]
@@ -141,6 +427,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=x64"
       ]
@@ -170,6 +457,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=x86"
       ]
@@ -199,6 +487,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=arm"
       ]
@@ -228,6 +517,7 @@
       ],
       "defines": [
         "${default}",
+        "UNIX",
         "LINUX",
         "NODE_ARCH=arm64"
       ]
