@@ -1,0 +1,384 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 26,
+    "patch": 3
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "default",
+      "description": "For more information: http://aka.ms/cmakepresetsvs",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "installDir": "${sourceDir}/installed/${presetName}",
+      "generator": "Ninja"
+    },
+    {
+      "name": "ninja-multi",
+      "displayName": "Ninja Multi-Config",
+      "description": "Sets Ninja Multi-Config generator",
+      "generator": "Ninja Multi-Config",
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "unix-makefiles",
+      "displayName": "Unix Makefiles",
+      "description": "Sets Unix Makefiles generator",
+      "generator": "Unix Makefiles",
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "toolchain",
+      "displayName": "Configure preset using toolchain file",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {"type": "STRING", "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"}
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+
+
+
+    {
+      "name": "gcc",
+      "displayName": "GCC 11.3.0 x86_64-linux-gnu",
+      "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/gcc"},
+        "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/g++"}
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "clang",
+      "displayName": "Clang 14.0.0 x86_64-pc-linux-gnu",
+      "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/clang"},
+        "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/clang++"}
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+
+
+
+    {
+      "name": "x86",
+      "displayName": "x86",
+      "description": "Target 32-bit architecture.",
+      "toolset": {
+          "value": "x86",
+          "strategy": "external"
+      },
+      "architecture": {
+          "value": "x86",
+          "strategy": "external"
+      },
+      "cacheVariables": {
+        "NODE_ARCH": {
+          "type": "STRING",
+          "value": "x86"
+        }
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "x64",
+      "displayName": "x64",
+      "description": "Target 64-bit architecture.",
+      "toolset": {
+          "value": "x64",
+          "strategy": "external"
+      },
+      "architecture": {
+          "value": "x64",
+          "strategy": "external"
+      },
+      "cacheVariables": {
+        "NODE_ARCH": {
+          "type": "STRING",
+          "value": "x64"
+        }
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "arm",
+      "displayName": "arm",
+      "description": "Target 32-bit ARM architecture.",
+      "toolset": {
+          "value": "arm",
+          "strategy": "external"
+      },
+      "architecture": {
+          "value": "arm",
+          "strategy": "external"
+      },
+      "cacheVariables": {
+        "NODE_ARCH": {
+          "type": "STRING",
+          "value": "arm"
+        }
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "arm64",
+      "displayName": "arm64",
+      "description": "Target 64-bit ARM architecture.",
+      "toolset": {
+          "value": "arm64",
+          "strategy": "external"
+      },
+      "architecture": {
+          "value": "arm64",
+          "strategy": "external"
+      },
+      "cacheVariables": {
+        "NODE_ARCH": {
+          "type": "STRING",
+          "value": "arm64"
+        }
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+
+
+
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "description": "Confgure CMake in 'Debug' mode.",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CONFIG_TYPE": "Debug"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Configure CMake in 'Release' mode.",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CONFIG_TYPE": "Release"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "description": "Configure CMake in 'RelWithDebInfo' mode.",
+      "environment": {
+        "CMAKE_CONFIG_TYPE": "RelWithDebInfo"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CONFIG_TYPE": "RelWithDebInfo"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "minsizerel",
+      "displayName": "MinSizeRel",
+      "description": "Configure CMake in 'MinSizeRel' mode.",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "CMAKE_CONFIG_TYPE": "MinSizeRel"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+
+
+
+    {
+      "name": "test",
+      "displayName": "test",
+      "description": "Configure NodeJS using '.env.test'.",
+      "cacheVariables": {
+        "NODE_ENV": "test"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "development",
+      "displayName": "development",
+      "description": "Configure NodeJS using '.env.development'.",
+      "cacheVariables": {
+        "NODE_ENV": "development"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "production",
+      "displayName": "production",
+      "description": "Configure NodeJS using '.env.production'.",
+      "cacheVariables": {
+        "NODE_ENV": "production"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "deployment",
+      "displayName": "deployment",
+      "description": "Configure NodeJS using '.env'.",
+      "cacheVariables": {
+        "NODE_ENV": "deployment"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+
+
+
+    {
+      "name": "windows",
+      "displayName": "Windows-only configuration",
+      "description": "This build is only available on Windows",
+      "cacheVariables": {
+        "WIN32": true,
+        "CMAKE_CXX_FLAGS": "-DBUILDING_NODE_EXTENSION"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "inherits": [ "default" ]
+    },
+    {
+      "name": "linux",
+      "displayName": "Linux-only configuration",
+      "description": "This build is only available on Linux",
+      "cacheVariables": {
+        "LINUX": true,
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "-DBUILDING_NODE_EXTENSION"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "macos",
+      "displayName": "MacOS-only configuration",
+      "description": "This build is only available on MacOS",
+      "cacheVariables": {
+        "MACOS": true,
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "-DBUILDING_NODE_EXTENSION;-D_FILE_OFFSET_BITS=64;-D_LARGEFILE_SOURCE;-D_DARWIN_USE_64_BIT_INODE=1;"
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Apple"
+      },
+      "inherits": [ "default" ]
+    },
+
+
+    {
+      "name": "x86-linux",
+      "displayName": "Linux x86",
+      "inherits": [
+        "default",
+        "linux",
+        "x86"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "x64-linux",
+      "displayName": "Linux x64",
+      "inherits": [
+        "default",
+        "linux",
+        "x64",
+        "debug",
+        "test"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "arm-linux",
+      "displayName": "Linux ARM x86",
+      "inherits": [
+        "default",
+        "linux",
+        "arm"
+      ],
+      "hidden": false
+    },
+    {
+      "name": "arm64-linux",
+      "displayName": "Linux ARM x64",
+      "inherits": [
+        "default",
+        "linux",
+        "arm64"
+      ],
+      "hidden": false
+    }
+
+  ],
+  "buildPresets": [
+    {
+      "hidden": true,
+      "name": "target-list",
+      "targets":[
+        "all",
+        "help",
+        "clean",
+        "test",
+        "install",
+        "package",
+        "package_source",
+        "cmodule"
+      ]
+    },
+    {
+      "name": "x64-linux-debug-test",
+      "displayName": "Build: 'Debug'; Env: 'test'",
+      "description": "Disable optimizations - include debug information.",
+      "configurePreset": "x64-linux",
+      "configuration": "Debug",
+      "inheritConfigureEnvironment": true,
+      "verbose": false,
+      "environment": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_BUILD_TYPE": "Debug"
+      },
+      "inherits":[
+        "target-list"
+      ],
+      "hidden": false
+    }
+  ]
+}
