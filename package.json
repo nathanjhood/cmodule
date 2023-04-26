@@ -21,7 +21,7 @@
     "rebuild": "cmake-js rebuild ",
     "compile": "cmake-js compile",
     "install": "cmake-js compile",
-    "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin && rm -rvf ./share",
+    "start": "NODE_PATH=/ node test/hello.js",
     "wipe": "yarn clean && rm -rvf ./node_modules",
     "test": "ctest --test-dir ./build --output-on-failure",
     "pkg:bin": "cmake-js build -d '.' --target package",
