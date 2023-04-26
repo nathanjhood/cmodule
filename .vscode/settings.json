@@ -18,7 +18,8 @@
   "C_Cpp.default.cppStandard": "c++11",
   "C_Cpp.dimInactiveRegions": true,
   "C_Cpp.enhancedColorization": "enabled",
-  "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
+  "C_Cpp.caseSensitiveFileSupport": "default",
+  "C_Cpp.commentContinuationPatterns": [ "/**" ],
   "C_Cpp.autoAddFileAssociations": true,
   "C_Cpp.default.intelliSenseMode": "",
   "C_Cpp.default.mergeConfigurations": true,
@@ -52,9 +53,13 @@
     "NAPI_EXPERIMENTAL",
     "_UNICODE"
   ],
+  "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
   "C_Cpp.files.exclude": {
     "**/.vscode": true,
-    "**/.vs": true
+    "**/.vs": true,
+    "**/node_modules": true,
+    "**/node_modules/node-addon-api": false,
+    "**/node_modules/node-api-headers/include": false
   },
 
   "[cpp]": {
@@ -73,10 +78,6 @@
   "cmake.configureOnEdit": false,
   "cmake.skipConfigureIfCachePresent": true,
   "cmake.parallelJobs": 1,
-  "cmake.preferredGenerators": [
-    "Ninja",
-    "Ninja Multi-Config"
-  ],
   "cmake.format.spaceInParentheses": true,
   "cmake.saveBeforeBuild": true,
   "cmake.allowUnsupportedPresetsVersions": true,
@@ -115,6 +116,31 @@
   "[cmake-cache]": {},
   "[cmake-documentation]": {},
 
+  "javascript.format.enable": true,
+  "javascript.validate.enable": true,
+  "javascript.suggest.enabled": true,
+  "javascript.suggest.autoImports": true,
+  "javascript.preferences.autoImportFileExcludePatterns": [],
+  "javascript.updateImportsOnFileMove.enabled": "prompt",
+  "[javascript]": {
+    "editor.maxTokenizationLineLength": 2500
+  },
+
+  "typescript.check.npmIsInstalled": true,
+  "typescript.format.enable": true,
+  "typescript.validate.enable": true,
+  "typescript.suggest.enabled": true,
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.autoImportFileExcludePatterns": [],
+  "typescript.updateImportsOnFileMove.enabled": "prompt",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.disableAutomaticTypeAcquisition": false,
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.tsc.autoDetect": "on",
+  "[typescript]": {
+    "editor.maxTokenizationLineLength": 2500
+  },
+
   "json.format.enable": true,
   "json.schemaDownload.enable": true,
   "json.validate.enable": true,
@@ -140,20 +166,20 @@
     "editor.suggest.insertMode": "replace"
   },
 
-  "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
-  "files.trimTrailingWhitespace": true,
-
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": true,
 
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+
   "files.associations": {
+
     "**.bash**": "shellscript",
     "**.cmake": "cmake",
-    ".editorconfig": "editorconfig",
     "*.h.in": "cpp",
-
+    ".editorconfig": "editorconfig",
 
     "atomic": "cpp",
     "bit": "cpp",
@@ -255,5 +281,6 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true
-  }
+  },
+  "esbonio.sphinx.confDir": ""
 }
