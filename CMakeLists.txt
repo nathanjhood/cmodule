@@ -102,7 +102,7 @@ option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS libr
 # message(STATUS "Creating config header file...")
 configure_file(
   ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleUserConfig.h.in
-  ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}UserConfig.h
+  ${PROJECT_BINARY_DIR}/.config/${PROJECT_NAME}/${PROJECT_NAME}UserConfig.h
   @ONLY
 )
 
@@ -111,7 +111,7 @@ configure_file(
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/support/cmake/cmoduleConfig.cmake.in
-    ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake
+    ${PROJECT_BINARY_DIR}/.local/share/${PROJECT_NAME}Config.cmake
   INSTALL_DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
@@ -120,7 +120,7 @@ configure_package_config_file(
 # create version config file
 # message(STATUS "Creating the version file for the config file...")
 write_basic_package_version_file(
-  ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake
+  ${PROJECT_BINARY_DIR}/.local/share/${PROJECT_NAME}ConfigVersion.cmake
   VERSION ${${PROJECT_NAME}_VERSION}
   COMPATIBILITY AnyNewerVersion
 )
@@ -227,9 +227,9 @@ endif ()
 
 
 target_include_directories(${PROJECT_NAME}
-  # PUBLIC
-  #   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
-  #   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
   PRIVATE
     # ${PROJECT_BINARY_DIR}
     ${CMAKE_JS_INC}
@@ -376,7 +376,7 @@ endif ()
 
 export(
   TARGETS ${PROJECT_NAME}
-  FILE ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Targets.cmake
+  FILE ${PROJECT_BINARY_DIR}/.local/share/${PROJECT_NAME}Targets.cmake
   NAMESPACE ${PROJECT_VENDOR}::
 )
 
@@ -489,8 +489,8 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
   install(
     FILES
-      ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}Config.cmake
-      ${PROJECT_BINARY_DIR}/share/${PROJECT_NAME}ConfigVersion.cmake
+      ${PROJECT_BINARY_DIR}/.local/share/${PROJECT_NAME}Config.cmake
+      ${PROJECT_BINARY_DIR}/.local/share/${PROJECT_NAME}ConfigVersion.cmake
     DESTINATION
       ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
   )
