@@ -24,7 +24,7 @@
     "start": "NODE_PATH=/ node test/hello.js",
     "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./installed",
     "wipe": "yarn clean && rm -rvf ./node_modules",
-    "test": "ctest --test-dir ./build --output-on-failure",
+    "test": "ctest --test-dir ./build --output-on-failure -C Debug",
     "pkg:bin": "cmake-js build -d '.' --target package",
     "pkg:src": "cmake-js build -d '.' --target package_source"
   },
@@ -35,7 +35,6 @@
     "node-addon-api": "^6.0.0"
   },
   "cmake-js": {
-    "runtime": "node",
-    "arch": "x64"
+    "runtime": "node"
   }
 }
