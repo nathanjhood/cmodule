@@ -11,25 +11,22 @@
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/x64-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/x64-linux/.config/**",
         "${vcpkgRoot}/x64-linux/include/**"
       ],
+      "forcedInclude": [
+        "${default}"
+      ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=x64",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=x64"
       ]
     },
     {
@@ -43,25 +40,22 @@
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/x86-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/browse.VC.db"
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/x86-linux/.config/**",
         "${vcpkgRoot}/x86-linux/include/**"
       ],
+      "forcedInclude": [
+        "${default}"
+      ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=x86",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=x86"
       ]
     },
     {
@@ -75,25 +69,22 @@
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/arm64-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/arm64-linux/.config/**",
         "${vcpkgRoot}/arm64-linux/include/**"
       ],
+      "forcedInclude": [
+        "${default}"
+      ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=arm64",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=arm64"
       ]
     },
     {
@@ -107,25 +98,22 @@
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/arm-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/browse.VC.db"
       },
+      "forcedInclude": [
+        "${default}"
+      ],
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/arm-linux/.config/**",
         "${vcpkgRoot}/arm-linux/include/**"
       ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=arm",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=arm"
       ]
     },
     {
@@ -134,30 +122,27 @@
       "intelliSenseMode": "linux-gcc-x64",
       "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true,
-      "cStandard": "${default}",
-      "cppStandard": "${default}",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++11",
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/x64-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
       },
+      "forcedInclude": [
+        "${default}"
+      ],
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/x64-linux/.config/**",
         "${vcpkgRoot}/x64-linux/include/**"
       ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=x64",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=x64"
       ]
     },
     {
@@ -166,30 +151,27 @@
       "intelliSenseMode": "linux-gcc-x86",
       "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true,
-      "cStandard": "${default}",
-      "cppStandard": "${default}",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++11",
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/x86-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/browse.VC.db"
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/x86-linux/.config/**",
         "${vcpkgRoot}/x86-linux/include/**"
       ],
+      "forcedInclude": [
+        "${default}"
+      ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=x86",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=x86"
       ]
     },
     {
@@ -198,30 +180,27 @@
       "intelliSenseMode": "linux-gcc-arm",
       "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true,
-      "cStandard": "${default}",
-      "cppStandard": "${default}",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++11",
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/arm-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/arm-linux/.config/**",
         "${vcpkgRoot}/arm-linux/include/**"
       ],
+      "forcedInclude": [
+        "${default}"
+      ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=arm",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=arm"
       ]
     },
     {
@@ -230,30 +209,27 @@
       "intelliSenseMode": "linux-gcc-arm64",
       "configurationProvider": "ms-vscode.cmake-tools",
       "mergeConfigurations": true,
-      "cStandard": "${default}",
-      "cppStandard": "${default}",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++11",
       "browse": {
         "path": [
           "${default}",
-          "${workspaceFolder}/.vscode/browse",
-          "${workspaceFolder}/src"
+          "${workspaceFolder}/build/arm64-linux"
         ],
         "databaseFilename": "${workspaceFolder}/.vscode/browse/browse.VC.db"
       },
       "includePath": [
         "${default}",
-        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/build/arm64-linux/.config/**",
         "${vcpkgRoot}/arm64-linux/include/**"
       ],
+      "forcedInclude": [
+        "${default}"
+      ],
       "defines": [
-        "UNICODE",
+        "${default}",
         "LINUX",
-        "NODE_RUNTIME=node",
-        "NODE_ARCH=arm64",
-        "BUILDING_NODE_EXTENSION",
-        "NAPI_VERSION=8",
-        "NAPI_EXPERIMENTAL",
-        "_UNICODE"
+        "NODE_ARCH=arm64"
       ]
     }
   ],
