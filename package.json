@@ -26,7 +26,18 @@
     "wipe": "yarn clean && rm -rvf ./node_modules",
     "test": "ctest --test-dir ./build --output-on-failure -C Debug",
     "pkg:bin": "cmake-js build -d '.' --target package",
-    "pkg:src": "cmake-js build -d '.' --target package_source"
+    "pkg:src": "cmake-js build -d '.' --target package_source",
+    "rm:ninja": "rm -rvf ./*ninja ./.ninja_deps ./.ninja_log",
+    "rm:msvc": "rm -rvf ./*sln ./*Proj",
+    "rm:make": "rm -rvf ./Makefile ./install_manifest.txt",
+    "rm:cpack": "rm -rvf ./CPack*",
+    "rm:ctest": "rm -rvf ./CTest* ./Testing",
+    "rm:cmake": "rm -rvf ./CMakeFiles ./Testing ./cmake_install.cmake",
+    "rm:cache": "rm -rvf ./CMakeCache.txt",
+    "rm:ipch": "rm -rvf ./.vscode/browse/ipch",
+    "rm:browse": "rm -rvf ./.vscode/browse/.browse*",
+    "rm:build": "rm -rvf ./bin ./lib ./share ./build",
+    "rm:install": "rm -rvf ./bin ./lib ./share ./install"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {
