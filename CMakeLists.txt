@@ -85,20 +85,10 @@ set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
 
 set_install_dirs()
 
-# Ensure a valid build type is set
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  if(PROJECT_IS_TOP_LEVEL)
-    set(DEFAULT_BUILD_TYPE Release)
-  else()
-    message(WARNING "Default build type is not set (CMAKE_BUILD_TYPE)")
-  endif()
-  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' as none was specified.")
-  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the type of build." FORCE)
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+env_defaults()
 
 option(${PROJECT_NAME_UPPER}_ASAN_ENABLED "Build with Address Sanitizer" OFF)
-option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests." OFF)
+option(${PROJECT_NAME_UPPER}_PEDANTIC "Enable extra warnings and expensive tests.")
 option(${PROJECT_NAME_UPPER}_WERROR "Halt the compilation with an error on compiler warnings." OFF)
 # Options that control generation of various targets.
 option(${PROJECT_NAME_UPPER}_INSTALL "Generate the install target." ON)
@@ -183,7 +173,7 @@ PROPERTIES
   SUFFIX ".node"
   # DEBUG_POSTFIX ${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}
   # Add an interface compatibility check, to check linkage against (increasing VERSION_MAJOR is by definition a 'breaking change')
-  COMPATIBLE_INTERFACE_STRING INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR
+  COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME_UPPER}_VERSION_MAJOR
   INTERFACE_${PROJECT_NAME_UPPER}_VERSION_MAJOR ${${PROJECT_NAME}_VERSION_MAJOR}
   # SOURCES
   # PUBLIC_HEADER
@@ -441,6 +431,9 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
     /.github
     /.vs
     /.vscode
+    /.cache
+    /.config
+    /.local
     /bin
     /lib
     /share
