@@ -4,9 +4,6 @@
     "ms-vscode.cmake-tools",
     "ms-vscode.cpptools",
     "ms-vscode.cpptools-extension-pack",
-    "lextudio.restructuredtext",
-    "lextudio.restructuredtext-pack",
-    "trond-snekvik.simple-rst",
     "EditorConfig.EditorConfig"
   ],
   "unwantedRecommendations": [
