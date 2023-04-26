@@ -11,13 +11,23 @@
       "displayName": "default",
       "description": "For more information: http://aka.ms/cmakepresetsvs",
       "binaryDir": "${sourceDir}/build/${presetName}",
-      "installDir": "${sourceDir}/installed/${presetName}",
-      "generator": "Ninja"
+      "installDir": "${sourceDir}/installed/${presetName}"
+    },
+
+
+
+    {
+      "name": "ninja",
+      "displayName": "Ninja",
+      "description": "Generates build.ninja files.",
+      "generator": "Ninja",
+      "inherits": [ "default" ],
+      "hidden": true
     },
     {
       "name": "ninja-multi",
       "displayName": "Ninja Multi-Config",
-      "description": "Sets Ninja Multi-Config generator",
+      "description": "Generates build-<Config>.ninja files.",
       "generator": "Ninja Multi-Config",
       "inherits": [ "default" ],
       "hidden": true
@@ -25,8 +35,32 @@
     {
       "name": "unix-makefiles",
       "displayName": "Unix Makefiles",
-      "description": "Sets Unix Makefiles generator",
+      "description": "Generates standard UNIX makefiles.",
       "generator": "Unix Makefiles",
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "msvc-2017",
+      "displayName": "Visual Studio 17 2022",
+      "description": "Sets Visual Studio 17 2022 generator",
+      "generator": "Visual Studio 17 2022",
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "sublime-ninja",
+      "displayName": "Sublime Text 2 - Ninja",
+      "description": "Generates Sublime Text 2 project files.",
+      "generator": "Sublime Text 2 - Ninja",
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "sublime-unix-makefiles",
+      "displayName": "Sublime Text 2 - Unix Makefiles",
+      "description": "Generates Sublime Text 2 project files.",
+      "generator": "Sublime Text 2 - Unix Makefiles",
       "inherits": [ "default" ],
       "hidden": true
     },
@@ -61,6 +95,15 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/clang"},
         "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "/usr/bin/clang++"}
+      },
+      "inherits": [ "default" ],
+      "hidden": true
+    },
+    {
+      "name": "msvc",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": {"type": "FILEPATH", "value": "cl.exe"},
+        "CMAKE_CXX_COMPILER": {"type": "FILEPATH", "value": "cl.exe"}
       },
       "inherits": [ "default" ],
       "hidden": true
@@ -317,6 +360,8 @@
       "displayName": "Linux x64",
       "inherits": [
         "default",
+        "unix-makefiles",
+        "toolchain",
         "linux",
         "x64",
         "debug",
