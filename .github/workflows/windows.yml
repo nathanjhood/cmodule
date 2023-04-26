@@ -48,7 +48,7 @@ jobs:
     - run: yarn global add npm@latest
     - run: yarn global add cmake-js@latest
     - run: yarn install
-    - run: yarn test
+    - run: ctest --test-dir ./build --output-on-failure -C Debug
     - run: yarn clean
     - run: yarn pkg:src
     - run: yarn pkg:bin
