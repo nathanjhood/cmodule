@@ -54,10 +54,40 @@
       "hidden": true
     },
     {
-      "name": "msvc-2017",
+      "name": "msvc-2022",
       "displayName": "Visual Studio 17 2022",
-      "description": "Sets Visual Studio 17 2022 generator",
+      "description": "Generates Visual Studio 2022 project files. Use -A option to specify architecture.",
       "generator": "Visual Studio 17 2022",
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "msvc-2019",
+      "displayName": "Visual Studio 16 2019",
+      "description": "Generates Visual Studio 2019 project files. Use -A option to specify architecture.",
+      "generator": "Visual Studio 16 2019",
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "msvc-2017",
+      "displayName": "Visual Studio 15 2017",
+      "description": "Generates Visual Studio 2019 project files. Optional [arch] can be 'Win64' or 'ARM'.",
+      "generator": "Visual Studio 15 2017",
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "msvc-2015",
+      "displayName": "Visual Studio 14 2015",
+      "description": "Generates Visual Studio 2015 project files. Optional [arch] can be 'Win64' or 'ARM'.",
+      "generator": "Visual Studio 14 2015",
       "inherits": [
         "default"
       ],
@@ -78,6 +108,26 @@
       "displayName": "Sublime Text 2 - Unix Makefiles",
       "description": "Generates Sublime Text 2 project files.",
       "generator": "Sublime Text 2 - Unix Makefiles",
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "sublime-mingw-makefiles",
+      "displayName": "Sublime Text 2 - MinGW Makefiles",
+      "description": "Generates Sublime Text 2 project files.",
+      "generator": "Sublime Text 2 - MinGW Makefiles",
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "sublime-nmake-makefiles",
+      "displayName": "Sublime Text 2 - NMake Makefiles",
+      "description": "Generates Sublime Text 2 project files.",
+      "generator": "Sublime Text 2 - NMake Makefiles",
       "inherits": [
         "default"
       ],
