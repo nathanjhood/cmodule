@@ -238,6 +238,54 @@
       ],
       "hidden": true
     },
+
+    {
+      "name": "x64-x86",
+      "displayName": "x64_x86",
+      "description": "Target 32-bit architecture from a 64-bit host.",
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "external"
+      },
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "NODE_ARCH": {
+          "type": "STRING",
+          "value": "x86"
+        }
+      },
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+    {
+      "name": "x86-x64",
+      "displayName": "x86_x64",
+      "description": "Target 64-bit architecture from a 32-bit host.",
+      "toolset": {
+        "value": "host=x86",
+        "strategy": "external"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "NODE_ARCH": {
+          "type": "STRING",
+          "value": "x64"
+        }
+      },
+      "inherits": [
+        "default"
+      ],
+      "hidden": true
+    },
+
     {
       "name": "debug",
       "displayName": "Debug",
