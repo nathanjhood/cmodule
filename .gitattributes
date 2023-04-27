@@ -3,10 +3,21 @@
 
 # All source files should have unix line-endings in the repository,
 # but convert to native line-endings on checkout
+*.c text
 *.cc text
 *.cpp text
 *.h text
+*.hh text
 *.hpp text
+*.js text
+*.mjs text
+*.cjs text
+*.ts text
+*.d.ts text
+*.rst text
+*.md text
+*.json text
+*.txt text
 
 # Windows specific files should retain windows line-endings
 *.{sln,[sS][lL][nN]} text eol=crlf
@@ -16,12 +27,15 @@
 # Keep executable scripts with LFs so they can be run after being
 # checked out on Windows
 *.py text eol=lf
+test/*.js text eol=lf
+CMakeLists.txt text eol=lf
 
 # Keep the include header(s) with LFs to make sure it is uploaded,
 # hashed etc with LF
 include/**/*.h eol=lf
+include/**/*.hh eol=lf
 include/**/*.hpp eol=lf
 
 # Keep the LICENCE file with LFs to make sure it is uploaded,
 # hashed etc with LF
-LICENCE.txt eol=lf
+LICENCE eol=lf
