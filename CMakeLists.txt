@@ -428,12 +428,14 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
   set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
   set(CPACK_SOURCE_IGNORE_FILES
     /.git/*
+    /.cmake
     /.github
     /.vs
     /.vscode
     /.cache
     /.config
     /.local
+    /.editorconfig
     /bin
     /lib
     /share
