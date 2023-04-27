@@ -1,6 +1,370 @@
 {
   "configurations": [
     {
+      "name": "Windows Clang x64",
+      "compilerPath": "clang-cl.exe",
+      "intelliSenseMode": "windows-clang-x64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x64-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x64-windows/include/**",
+        "${vcpkgRoot}/x64-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "CLANG",
+        "NODE_ARCH=x64"
+      ]
+    },
+    {
+      "name": "Windows Clang x86",
+      "compilerPath": "clang-cl.exe",
+      "intelliSenseMode": "windows-clang-x86",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x86-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x86-windows/include/**",
+        "${vcpkgRoot}/x86-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "CLANG",
+        "NODE_ARCH=x86"
+      ]
+    },
+    {
+      "name": "Windows Clang arm",
+      "compilerPath": "clang-cl.exe",
+      "intelliSenseMode": "windows-clang-arm",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm-windows/include/**",
+        "${vcpkgRoot}/arm-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "CLANG",
+        "NODE_ARCH=arm"
+      ]
+    },
+    {
+      "name": "Windows Clang arm64",
+      "compilerPath": "clang-cl.exe",
+      "intelliSenseMode": "windows-clang-arm64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm64-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm64-windows/include/**",
+        "${vcpkgRoot}/arm64-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "CLANG",
+        "NODE_ARCH=arm"
+      ]
+    },
+
+    {
+      "name": "Windows GNU x64",
+      "compilerPath": "gcc.exe",
+      "intelliSenseMode": "windows-gcc-x64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x64-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x64-windows/include/**",
+        "${vcpkgRoot}/x64-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "GNU",
+        "NODE_ARCH=x64"
+      ]
+    },
+    {
+      "name": "Windows GNU x86",
+      "compilerPath": "gcc.exe",
+      "intelliSenseMode": "windows-gcc-x86",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x86-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x86-windows/include/**",
+        "${vcpkgRoot}/x86-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "GNU",
+        "NODE_ARCH=x86"
+      ]
+    },
+    {
+      "name": "Windows GNU arm",
+      "compilerPath": "gcc.exe",
+      "intelliSenseMode": "windows-gcc-arm",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm-windows/include/**",
+        "${vcpkgRoot}/arm-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "GNU",
+        "NODE_ARCH=arm"
+      ]
+    },
+    {
+      "name": "Windows GNU arm64",
+      "compilerPath": "gcc.exe",
+      "intelliSenseMode": "windows-gcc-arm64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm64-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm64-windows/include/**",
+        "${vcpkgRoot}/arm64-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "GNU",
+        "NODE_ARCH=arm"
+      ]
+    },
+
+
+
+    {
+      "name": "Windows MSVC x64",
+      "compilerPath": "cl.exe",
+      "intelliSenseMode": "windows-msvc-x64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x64-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x64-windows/include/**",
+        "${vcpkgRoot}/x64-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "MSVC",
+        "NODE_ARCH=x64"
+      ]
+    },
+    {
+      "name": "Windows MSVC x86",
+      "compilerPath": "cl.exe",
+      "intelliSenseMode": "windows-msvc-x86",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/x86-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/x86-windows/include/**",
+        "${vcpkgRoot}/x86-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "MSVC",
+        "NODE_ARCH=x86"
+      ]
+    },
+    {
+      "name": "Windows MSVC arm",
+      "compilerPath": "cl.exe",
+      "intelliSenseMode": "windows-msvc-arm",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm-windows/include/**",
+        "${vcpkgRoot}/arm-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "MSVC",
+        "NODE_ARCH=arm"
+      ]
+    },
+    {
+      "name": "Windows MSVC arm64",
+      "compilerPath": "cl.exe",
+      "intelliSenseMode": "windows-msvc-arm64",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "mergeConfigurations": true,
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "browse": {
+        "path": [
+          "${default}",
+          "${workspaceFolder}/build/arm64-windows"
+        ],
+        "databaseFilename": "${workspaceFolder}/.vscode/browse/.browse.VC.db"
+      },
+      "includePath": [
+        "${default}",
+        "${workspaceFolder}/build/arm64-windows/include/**",
+        "${vcpkgRoot}/arm64-windows/include/**"
+      ],
+      "forcedInclude": [
+        "${default}"
+      ],
+      "defines": [
+        "${default}",
+        "WIN32",
+        "MSVC",
+        "NODE_ARCH=arm"
+      ]
+    },
+    {
       "name": "MacOS Clang x64",
       "compilerPath": "/usr/bin/clang",
       "intelliSenseMode": "macos-clang-x64",
