@@ -5,6 +5,43 @@
 *ConfigVersion.cmake
 *Targets.cmake
 
+## Archives
+_CPack_Packages
+
+# It's better to unpack these files and commit the raw source because
+# git has its own built in compression methods.
+*.7z
+*.jar
+*.rar
+*.zip
+*.gz
+*.gzip
+*.tgz
+*.bzip
+*.bzip2
+*.bz2
+*.xz
+*.lzma
+*.cab
+*.xar
+
+# Packing-only formats
+*.iso
+*.tar
+*.tar.Z
+
+# Package management formats
+*.dmg
+*.xpi
+*.gem
+*.egg
+*.deb
+*.rpm
+*.msi
+*.msm
+*.msp
+*.txz
+
 ## CMake
 
 CMakeLists.txt.user
@@ -240,6 +277,8 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Rr]el[Ww]ith[Dd]eb[Ii]nfo/
+[Mm]in[Ss]ize[Rr]el/
 x64/
 x86/
 [Ww][Ii][Nn]32/
@@ -247,10 +286,34 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
-# [Ll]ib/
+[Ll]ib/
+[Ss]rc/
+[Ee]tc/
+[Dd]oc/
+[Cc]om/
+[Mm]an/
+[Rr]un/
+[Vv]ar/
+[Oo]pt/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+[Ss]hare/
+[Ii]nclude/
+[Ss][Bb]in/
+
+# ...but not the root folder...
+!./[Ii]nclude/
+# ...nor the source folder
+!./[Ss]rc/
+
+!./[Dd]oc
+
+*.sh
+*.pwsh
+*.[sS][lL][nN]
+*.[cC][mM][dD]
+*.[bB][aA][tT]
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
