@@ -1,7 +1,7 @@
 CModule
 -------
 
-Multi-platform, multi-architecture C/C++ modules that compile into '<*>.node' files, which can be imported as JS modules, for example to run in the NodeJS runtime environment as NPM packages.
+Multi-platform, multi-architecture C/C++ modules that compile into '<*>.node' files, which can be imported as JS modules; for example, to run in the NodeJS runtime environment as NPM packages.
 
 .. image:: https://github.com/StoneyDSP/cmodule/workflows/linux/badge.svg
    :target: https://github.com/StoneyDSP/cmodule/actions?query=workflow%3Alinux
