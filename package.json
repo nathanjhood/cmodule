@@ -13,6 +13,7 @@
     "url": "https://github.com/StoneyDSP/cmodule/issues"
   },
   "scripts": {
+    "repl": "node --interactive",
     "configure": "cmake-js configure",
     "reconfigure": "cmake-js reconfigure",
     "build": "cmake-js build",
