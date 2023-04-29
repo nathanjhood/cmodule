@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
-module.exports = require("./support/node/js/bindings")("cmodule");
+const cmodule = require("./support/node/js/bindings")("cmodule");
+module.exports = cmodule;

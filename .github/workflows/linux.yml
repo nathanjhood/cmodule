@@ -1,8 +1,6 @@
 name: linux
 
 on:
-  push:
-    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -21,7 +19,7 @@ jobs:
     steps:
     - name: Checkout Project
       uses: actions/checkout@v3
-      
+
     - name: CMake Setup
       uses: jwlawson/actions-setup-cmake@v1.13
       with:
@@ -31,7 +29,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        
+
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
@@ -44,9 +42,12 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
-        
-    - run: npm install -g npm@latest
+
     - run: npm install -g yarn@latest
+    - run: yarn global add npm@latest
     - run: yarn global add cmake-js@latest
     - run: yarn install
     - run: yarn test
+    - run: yarn clean
+    - run: yarn pkg:src
+    - run: yarn pkg:bin

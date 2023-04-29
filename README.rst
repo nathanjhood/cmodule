@@ -110,23 +110,25 @@ Where to place your C++ development files for CMake to correctly compile, build,
 
 We have two project-local directories of key importance in C++ project development;
 
-* the "./src" directory, and,
+* the "./src" directory, where 'source' files are kept, and,
 
-* the "./include/<project_name>" directory
+* the "./include/<project_name>" directory, where 'header' files are kept
 
 Both specified relative to the project's root folder.
 
-Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 96 - 102, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
+Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 58 - 66, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
 
 .. code::
 
-    96  ## Create Project
-    97  project("cmodule"
-    98    VERSION 1.0.0.0
-    99    DESCRIPTION "NodeJS module written in C++"
-    100   HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
-    101   LANGUAGES CXX
-    102 )
+    58  ## Name the project vendor (or intended namespace)
+    59  set(PROJECT_VENDOR "StoneyDSP")
+    60  ## Create Project
+    61  project("cmodule"
+    62    VERSION 1.0.0.0
+    63    DESCRIPTION "NodeJS module written in C++"
+    64    HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
+    65    LANGUAGES CXX
+    66 )
 
 *Note* - I will possibly abstract the above CMake interaction away, and have everything defined centrally in the root package.json file. CMake has good tools for parsing JSON with, but I haven't much experience with these just yet. Stay tuned!
 
@@ -138,7 +140,7 @@ If you stay with the provided paradigm of placing your to-be-linked public heade
 
 This means you can just focus on the C++ and Javascript development files contained therein, and should have a working, multi-platform, multi-arch, multi-OS library for NodeJs straight from the box every time (please see the 'tests' tab of this repo for more info).
 
-How to publish and consume your C++ package for NodeJS;
+How to publish and consume your C++ package with NodeJS;
 -------------------------------------------------------
 
 Set a valid name and version number in package.json! You should probably change these fields;

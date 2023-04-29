@@ -1,9 +1,7 @@
 {
   "name": "@stoneydsp/cmodule",
-  "version": "1.0.1",
+  "version": "1.0.0-1",
   "description": "My cmake-js module",
-  "main": "index.js",
-  "type": "commonjs",
   "license": "MIT",
   "author": "Nathan J. Hood <nathanjhood@googlemail.com> (http://stoneydsp.com)",
   "homepage": "https://github.io/StoneyDSP/cmodule",
@@ -15,16 +13,30 @@
     "url": "https://github.com/StoneyDSP/cmodule/issues"
   },
   "scripts": {
+    "repl": "node --interactive",
     "configure": "cmake-js configure",
     "reconfigure": "cmake-js reconfigure",
     "build": "cmake-js build",
-    "rebuild": "cmake-js rebuild ",
+    "rebuild": "cmake-js rebuild",
     "compile": "cmake-js compile",
     "install": "cmake-js compile",
-    "clean": "cmake-js clean && rm -rvf ./build && rm -rvf ./lib && rm -rvf ./bin && rm -rvf ./share",
-    "wipe": "yarn clean && rm -rvf ./node_modules",
-    "help": "cmake-js --help",
-    "test": "node ./test/run.js"
+    "start": "NODE_PATH=/ node test/hello.js",
+    "clean": "cmake-js clean && rm -rvf ./bin ./lib ./share ./build ./installed ./CMakeFiles ./CMakeCache.txt ./cmake_install.cmake ./Testing ./CTest* ./CPack*",
+    "wipe": "yarn clean && rm -rvf ./node_modules ./yarn.lock ./package-lock.json",
+    "test": "ctest --test-dir ./build --output-on-failure",
+    "pkg:bin": "cmake-js build -d . --target package",
+    "pkg:src": "cmake-js build -d . --target package_source",
+    "rm:ninja": "rm -rvf ./*ninja ./.ninja_deps ./.ninja_log",
+    "rm:msvc": "rm -rvf ./*sln ./*Proj",
+    "rm:make": "rm -rvf ./Makefile ./install_manifest.txt",
+    "rm:cpack": "rm -rvf ./CPack*",
+    "rm:ctest": "rm -rvf ./CTest* ./Testing",
+    "rm:cmake": "rm -rvf ./CMakeFiles ./Testing ./cmake_install.cmake",
+    "rm:cache": "rm -rvf ./CMakeCache.txt",
+    "rm:ipch": "rm -rvf ./.vscode/browse/ipch",
+    "rm:browse": "rm -rvf ./.vscode/browse/.browse*",
+    "rm:build": "rm -rvf ./bin ./lib ./share ./build",
+    "rm:install": "rm -rvf ./bin ./lib ./share ./install"
   },
   "packageManager": "yarn@1.22.19",
   "dependencies": {
@@ -32,8 +44,28 @@
     "cmake-js": "^7.2.1",
     "node-addon-api": "^6.0.0"
   },
-  "cmake-js": {
-    "runtime": "node",
-    "arch": "x64"
-  }
+  "sponsor": {
+    "url": "https:www.patreon.com/StoneyDSP"
+  },
+  "funding":[
+    "https:www.patreon.com/StoneyDSP"
+  ],
+  "directories": {
+    "doc": "/doc",
+    "lib": "/build/lib",
+    "test": "/test"
+  },
+  "main": "./index.js",
+  "exports": {
+
+    "default": "./index.js",
+
+    "node": {
+      "import": "./index.mjs",
+      "require": "./index.cjs",
+      "default": "./index.js"
+    }
+
+  },
+  "type": "commonjs"
 }

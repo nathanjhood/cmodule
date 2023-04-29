@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-var cmodule = require("../");
+const cmodule = require("..");
 
 console.log(cmodule.hello());

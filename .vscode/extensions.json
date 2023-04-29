@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "josetr.cmake-language-support-vscode",
+    "ms-vscode.cmake-tools",
+    "ms-vscode.cpptools",
+    "ms-vscode.cpptools-extension-pack",
+    "EditorConfig.EditorConfig"
+  ],
+  "unwantedRecommendations": [
+    "twxs.cmake"
+  ]
+}
