@@ -547,7 +547,7 @@ if (${${PROJECT_NAME_UPPER}_INSTALL})
 
     install(
         FILES
-        ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}UserConfig.h
+        ${PROJECT_BINARY_DIR}/.config/${PROJECT_NAME}UserConfig.h
         DESTINATION
         ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
     )
