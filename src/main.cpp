@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 
 #endif // USE_WCHAR
 
-	int e_code = {0};
+  int e_code = {0};
 
   std::cout << "Program name is: " << argv[0] << std::endl;
 

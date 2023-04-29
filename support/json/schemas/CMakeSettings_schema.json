@@ -1,0 +1,468 @@
+{
+  "type": "object",
+  "properties": {
+    "environments": {
+      "type": "array",
+      "description": "A list of “environment” groups that contain key value pairs defining variables that are applied to each configuration in a the CMakeSettings.json.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "A way to categorize a list of “environment” groups. Allows it to be referenced later. Example: ‘env’ which would be referenced later as ‘env.variablename’. Default is ‘env’ if not specified."
+          },
+          "environment": {
+            "type": "string",
+            "description": "A unique identifier for this group of variables. Allows the group to be inherited later in an 'inheritEnvironments' entry."
+          },
+          "groupPriority": {
+            "type": "integer",
+            "description": "The priority of these variables when evaluating them. Higher number items are evaluated first."
+          },
+          "inheritEnvironments": {
+            "type": "array",
+            "description": "_A set of environments that are inherited by this group.\r\nAny custom environment can be used, or these predefined environments:\r\nclang_cl_arm64: Target ARM64 Windows with the Clang-cl compiler.\r\nclang_cl_arm64_x64: Target ARM64 Windows with the 64-bit Clang-cl compiler.\r\nclang_cl_x64: Target x64 Windows with the Clang-cl compiler.\r\nclang_cl_x64_x64: Target x64 Windows with the 64-bit Clang-cl compiler.\r\nclang_cl_x86: Target x86 Windows with the Clang-cl compiler.\r\nclang_cl_x86_x64: Target x86 Windows with the 64-bit Clang-cl compiler.\r\ngcc-arm: Target ARM Windows with the gcc compiler.\r\nlinux_arm: Target ARM Linux remotely.\r\nlinux_clang_x64: Target x64 Linux remotely with clang.\r\nlinux_x64: Target x64 Linux remotely.\r\nlinux_x86: Target x86 Linux remotely.\r\nmsvc_arm: Target ARM Windows with the MSVC compiler.\r\nmsvc_arm_x64: Target ARM Windows with the 64-bit MSVC compiler.\r\nmsvc_arm64: Target ARM64 Windows with the MSVC compiler.\r\nmsvc_arm64_x64: Target ARM64 Windows with the 64-bit MSVC compiler.\r\nmsvc_arm64ec: Target ARM64EC Windows with the MSVC compiler.\r\nmsvc_arm64ec_x64: Target ARM64EC Windows with the 64-bit MSVC compiler.\r\nmsvc_x64: Target x64 Windows with the MSVC compiler.\r\nmsvc_x64_x64: Target x64 Windows with the 64-bit MSVC compiler.\r\nmsvc_x86: Target x86 Windows with the MSVC compiler.\r\nmsvc_x86_x64: Target x86 Windows with the 64-bit MSVC compiler.",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "clang_cl_arm64",
+                    "clang_cl_arm64_x64",
+                    "clang_cl_x64",
+                    "clang_cl_x64_x64",
+                    "clang_cl_x86",
+                    "clang_cl_x86_x64",
+                    "gcc-arm",
+                    "linux_arm",
+                    "linux_clang_x64",
+                    "linux_x64",
+                    "linux_x86",
+                    "msvc_arm",
+                    "msvc_arm_x64",
+                    "msvc_arm64",
+                    "msvc_arm64_x64",
+                    "msvc_arm64ec",
+                    "msvc_arm64ec_x64",
+                    "msvc_x64",
+                    "msvc_x64_x64",
+                    "msvc_x86",
+                    "msvc_x86_x64"
+                  ]
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "configurations": {
+      "type": "array",
+      "description": "A list of CMake configurations that apply to the CMakeLists.txt file in the same folder.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The configuration name."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of this configuration"
+          },
+          "generator": {
+            "type": "string",
+            "description": "The CMake generator name. Example: Visual Studio 15 2017.",
+            "enum": [
+              "Visual Studio 17 2022",
+              "Visual Studio 17 2022 Win64",
+              "Visual Studio 17 2022 ARM64",
+              "Visual Studio 17 2022 ARM64EC",
+              "Visual Studio 17 2022 ARM",
+              "Visual Studio 16 2019",
+              "Visual Studio 16 2019 Win64",
+              "Visual Studio 16 2019 ARM64",
+              "Visual Studio 16 2019 ARM64EC",
+              "Visual Studio 16 2019 ARM",
+              "Visual Studio 15 2017",
+              "Visual Studio 15 2017 Win64",
+              "Visual Studio 15 2017 ARM64",
+              "Visual Studio 15 2017 ARM",
+              "Visual Studio 14 2015",
+              "Visual Studio 14 2015 Win64",
+              "Visual Studio 14 2015 ARM",
+              "Unix Makefiles",
+              "Ninja",
+              "Ninja Multi-Config"
+            ]
+          },
+          "configurationType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Specifies build type configuration for the selected generator.",
+                "enum": [
+                  "Debug",
+                  "Release",
+                  "MinSizeRel",
+                  "RelWithDebInfo"
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Specifies build type configuration for the selected generator."
+          },
+          "inheritEnvironments": {
+            "type": "array",
+            "description": "_The environments this configuration depends on.\r\nAny custom environment can be used, or these predefined environments:\r\nclang_cl_arm64: Target ARM64 Windows with the Clang-cl compiler.\r\nclang_cl_arm64_x64: Target ARM64 Windows with the 64-bit Clang-cl compiler.\r\nclang_cl_x64: Target x64 Windows with the Clang-cl compiler.\r\nclang_cl_x64_x64: Target x64 Windows with the 64-bit Clang-cl compiler.\r\nclang_cl_x86: Target x86 Windows with the Clang-cl compiler.\r\nclang_cl_x86_x64: Target x86 Windows with the 64-bit Clang-cl compiler.\r\ngcc-arm: Target ARM Windows with the gcc compiler.\r\nlinux_arm: Target ARM Linux remotely.\r\nlinux_clang_x64: Target x64 Linux remotely with clang.\r\nlinux_x64: Target x64 Linux remotely.\r\nlinux_x86: Target x86 Linux remotely.\r\nmsvc_arm: Target ARM Windows with the MSVC compiler.\r\nmsvc_arm_x64: Target ARM Windows with the 64-bit MSVC compiler.\r\nmsvc_arm64: Target ARM64 Windows with the MSVC compiler.\r\nmsvc_arm64_x64: Target ARM64 Windows with the 64-bit MSVC compiler.\r\nmsvc_arm64ec: Target ARM64EC Windows with the MSVC compiler.\r\nmsvc_arm64ec_x64: Target ARM64EC Windows with the 64-bit MSVC compiler.\r\nmsvc_x64: Target x64 Windows with the MSVC compiler.\r\nmsvc_x64_x64: Target x64 Windows with the 64-bit MSVC compiler.\r\nmsvc_x86: Target x86 Windows with the MSVC compiler.\r\nmsvc_x86_x64: Target x86 Windows with the 64-bit MSVC compiler.",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "clang_cl_arm64",
+                    "clang_cl_arm64_x64",
+                    "clang_cl_x64",
+                    "clang_cl_x64_x64",
+                    "clang_cl_x86",
+                    "clang_cl_x86_x64",
+                    "gcc-arm",
+                    "linux_arm",
+                    "linux_clang_x64",
+                    "linux_x64",
+                    "linux_x86",
+                    "msvc_arm",
+                    "msvc_arm_x64",
+                    "msvc_arm64",
+                    "msvc_arm64_x64",
+                    "msvc_arm64ec",
+                    "msvc_arm64ec_x64",
+                    "msvc_x64",
+                    "msvc_x64_x64",
+                    "msvc_x86",
+                    "msvc_x86_x64"
+                  ]
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "buildRoot": {
+            "type": "string",
+            "description": "The directory in which CMake generates build scripts for the chosen generator. Supported macros include ${workspaceRoot}, ${workspaceHash}, ${projectFile}, ${projectDir}, ${thisFile}, ${thisFileDir}, ${name}, ${generator}, ${env.VARIABLE}."
+          },
+          "installRoot": {
+            "type": "string",
+            "description": "The directory in which CMake generates install targets for the chosen generator. Supported macros include ${workspaceRoot}, ${workspaceHash}, ${projectFile}, ${projectDir}, ${thisFile}, ${thisFileDir}, ${name}, ${generator}, ${env.VARIABLE}."
+          },
+          "cmakeCommandArgs": {
+            "type": "string",
+            "description": "Additional command line options passed to CMake when invoked to generate the cache."
+          },
+          "cmakeToolchain": {
+            "type": "string",
+            "description": "The toolchain file. This is passed to CMake using -DCMAKE_TOOLCHAIN_FILE."
+          },
+          "buildCommandArgs": {
+            "type": "string",
+            "description": "Native build switches passed to CMake after --build --."
+          },
+          "ctestCommandArgs": {
+            "type": "string",
+            "description": "Additional command line options passed to CTest when running the tests."
+          },
+          "codeAnalysisRuleset": {
+            "type": "string",
+            "description": "Ruleset to use when running code analysis. This can be a full path or the file name of a ruleset file installed by Visual Studio."
+          },
+          "codeAnalysisExternalRuleset": {
+            "type": "string",
+            "description": "Ruleset to use when running code analysis on external headers. This can be a full path or the file name of a ruleset file installed by Visual Studio."
+          },
+          "clangTidyChecks": {
+            "type": "string",
+            "description": "Comma separated list of warnings which will be passed to clang-tidy; wildcards are allowed and '-' prefix will remove checks."
+          },
+          "enableMicrosoftCodeAnalysis": {
+            "type": "boolean",
+            "description": "Use Microsoft analysis tools when running Code Analysis."
+          },
+          "enableClangTidyCodeAnalysis": {
+            "type": "boolean",
+            "description": "Use clang-tidy analysis tools when running Code Analysis."
+          },
+          "disableExternalAnalysis": {
+            "type": "boolean",
+            "description": "Specify whether code analysis should run on external headers."
+          },
+          "intelliSenseMode": {
+            "type": "string",
+            "description": "Mode used for computing intellisense information",
+            "enum": [
+              "windows-msvc-x86",
+              "windows-msvc-x64",
+              "windows-msvc-arm",
+              "windows-msvc-arm64",
+              "android-clang-x86",
+              "android-clang-x64",
+              "android-clang-arm",
+              "android-clang-arm64",
+              "ios-clang-x86",
+              "ios-clang-x64",
+              "ios-clang-arm",
+              "ios-clang-arm64",
+              "windows-clang-x86",
+              "windows-clang-x64",
+              "windows-clang-arm",
+              "windows-clang-arm64",
+              "linux-gcc-x86",
+              "linux-gcc-x64",
+              "linux-gcc-arm"
+            ]
+          },
+          "cacheRoot": {
+            "type": "string",
+            "description": "The path to a CMake cache. This directory should contain an existing CMakeCache.txt file."
+          },
+          "cacheGenerationCommand": {
+            "type": "string",
+            "description": "By specifying “cacheGenerationCommand” users can specify a command line tool (specified as a command line, program + arguments, e.g. “gencache.bat debug”) to generate the cache. The command will be run from the shell in the configuration’s specified environment when the cache needs to be regenerated. The cache may be regenerated when the user explicitly triggers a cache generation or when a CMakeLists.txt or CMakeSettings.json file has changed."
+          },
+          "cmakeExecutable": {
+            "type": "string",
+            "description": "The full path to the CMake program executable, including the file name and extension."
+          },
+          "addressSanitizerEnabled": {
+            "type": "boolean",
+            "description": "If true compiles program with AddressSanitizer (Experimental on Windows). On linux compile with -fno-omit-frame-pointer and compiler optimization level –Os or -O0 for best results."
+          },
+          "addressSanitizerRuntimeFlags": {
+            "type": "string",
+            "description": "Runtime flags passed to AddressSanitizer via the ASAN_OPTIONS environment variable. Format: flag1=value1:flag2=value2"
+          },
+          "remoteMachineName": {
+            "type": "string",
+            "description": "The remote Linux machine name which hosts CMake, builds and debugging. Please use the Connection Manager for adding new Linux machines. Supported macros include ${defaultRemoteMachineName}."
+          },
+          "remoteCopySourcesOutputVerbosity": {
+            "type": "string",
+            "description": "The verbosity level of the source copying operation to the remote machine.",
+            "enum": [
+              "Normal",
+              "Verbose",
+              "Diagnostic"
+            ]
+          },
+          "remoteCopySourcesConcurrentCopies": {
+            "type": "string",
+            "description": "The number of concurrent copies used during the synchronization of the sources to the remote machine."
+          },
+          "remoteCopySourcesMethod": {
+            "type": "string",
+            "description": "The method to copy files to the remote machine: rsync, sftp.",
+            "enum": [
+              "sftp",
+              "rsync"
+            ]
+          },
+          "remoteCMakeListsRoot": {
+            "type": "string",
+            "description": "The directory on the remote machine which contains the CMake project. Supported macros include ${workspaceRoot}, ${workspaceHash}, ${projectFile}, ${projectDir}, ${thisFile}, ${thisFileDir}, ${name}, ${generator}, ${env.VARIABLE}."
+          },
+          "remoteBuildRoot": {
+            "type": "string",
+            "description": "The directory on the remote machine in which CMake generates build scripts for the chosen generator. Supported macros include ${workspaceRoot}, ${workspaceHash}, ${projectFile}, ${projectDir}, ${thisFile}, ${thisFileDir}, ${name}, ${generator}, ${env.VARIABLE}."
+          },
+          "remoteInstallRoot": {
+            "type": "string",
+            "description": "The directory on the remote machine in which CMake generates install targets for the chosen generator. Supported macros include ${workspaceRoot}, ${workspaceHash}, ${projectFile}, ${projectDir}, ${thisFile}, ${thisFileDir}, ${name}, ${generator}, ${env.VARIABLE}."
+          },
+          "remoteCopySources": {
+            "type": "boolean",
+            "description": "Default true, Visual Studio will copy sources to the remote. Set to false if you manage file synchronization yourself."
+          },
+          "remoteCopyBuildOutput": {
+            "type": "boolean",
+            "description": "Specifies whether to copy the build outputs from the remote system."
+          },
+          "rsyncCommandArgs": {
+            "type": "string",
+            "description": "Set of additional command line options passed to rsync."
+          },
+          "remoteCopySourcesExclusionList": {
+            "type": "array",
+            "description": "A list of paths to be excluded when copying source files: a path can be the name of a file/directory, or a path relative to root of the copy. Wildcards \\\"*\\\" and \\\"?\\\" can be used for glob pattern matching."
+          },
+          "remoteCopyOptimizations": {
+            "type": "object",
+            "description": "Properties for controlling source copy to remote target.",
+            "properties": {
+              "remoteCopyUseOptimizations": {
+                "type": "string",
+                "description": "Select no optimized copy (\"None\"), rsync only optimizations (\"RsyncOnly\"), or use both rsync and sftp (\"RsyncAndSftp\").",
+                "enum": [
+                  "RsyncAndSftp",
+                  "RsyncOnly",
+                  "None"
+                ]
+              },
+              "remoteCopySourcesMaxSmallChange": {
+                "type": "boolean",
+                "description": "Maximum number of files to copy using SFTP instead of rsync."
+              },
+              "rsyncSingleDirectoryCommandArgs": {
+                "type": "string",
+                "description": "When optimizing the sources copies use these rsync arguments copying the contents of a single directory."
+              }
+            }
+          },
+          "remotePreGenerateCommand": {
+            "type": "string",
+            "description": "The command to run before running CMake to parse the CMakeLists.txt."
+          },
+          "remotePrebuildCommand": {
+            "type": "string",
+            "description": "Command to run on remote machine before building."
+          },
+          "remotePostbuildCommand": {
+            "type": "string",
+            "description": "Command to run on remote machine after building."
+          },
+          "wslPath": {
+            "type": "string",
+            "description": "The path to the launcher of an instance of Windows Subsystem for Linux."
+          },
+          "remoteCopyAdditionalIncludeDirectories": {
+            "type": "array",
+            "description": "Array of paths to remote header directories to be copied locally for intellisense. "
+          },
+          "remoteCopyExcludeDirectories": {
+            "type": "array",
+            "description": "Array of paths to remote header directories NOT to be copied locally for intellisense."
+          },
+          "remoteCopyUseCompilerDefaults": {
+            "type": "boolean",
+            "description": "Specifies whether to use the compiler's default defines and include paths for intellisense. Should only be false if the compilers in use do not support gcc-style arguments."
+          },
+          "variables": {
+            "type": "array",
+            "description": "A list of CMake variables. The name value pairs are passed to CMake as -Dname1=value1 -Dname2=value2, etc.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The CMake variable name."
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The CMake variable value."
+                },
+                "type": {
+                  "type": "string",
+                  "description": "The CMake variable type.",
+                  "enum": [
+                    "STRING",
+                    "BOOL",
+                    "PATH",
+                    "FILEPATH",
+                    "INTERNAL"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          },
+          "intellisenseOptions": {
+            "type": "object",
+            "description": "Options to control intellisense.",
+            "properties": {
+              "useCompilerDefaults": {
+                "type": "boolean",
+                "description": "Use compiler to determine language defines and includes."
+              },
+              "additionalCompilerArgs": {
+                "type": "string",
+                "description": "Arguments to pass to the compiler when querying for defines and includes."
+              }
+            }
+          },
+          "environments": {
+            "type": "array",
+            "description": "A list of “environment” groups that contain key value pairs defining variables that are applied to this configuration in the CMakeSettings.json.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "description": "A unique identifier for the set of variables. Allows it to be referenced later. Example: ‘env’ which would be referenced later as ‘env.variablename’. Default is ‘env’ if not specified."
+                },
+                "environment": {
+                  "type": "string",
+                  "description": "A unique identifier for this group of variables. Allows the group to be inherited later in an 'inheritEnvironments' entry."
+                },
+                "groupPriority": {
+                  "type": "integer",
+                  "description": "The priority of these variables when evaluating them. Higher number items are evaluated first."
+                },
+                "inheritEnvironments": {
+                  "type": "array",
+                  "description": "_A set of environments that are inherited by this group.\r\nAny custom environment can be used, or these predefined environments:\r\nclang_cl_arm64: Target ARM64 Windows with the Clang-cl compiler.\r\nclang_cl_arm64_x64: Target ARM64 Windows with the 64-bit Clang-cl compiler.\r\nclang_cl_x64: Target x64 Windows with the Clang-cl compiler.\r\nclang_cl_x64_x64: Target x64 Windows with the 64-bit Clang-cl compiler.\r\nclang_cl_x86: Target x86 Windows with the Clang-cl compiler.\r\nclang_cl_x86_x64: Target x86 Windows with the 64-bit Clang-cl compiler.\r\ngcc-arm: Target ARM Windows with the gcc compiler.\r\nlinux_arm: Target ARM Linux remotely.\r\nlinux_clang_x64: Target x64 Linux remotely with clang.\r\nlinux_x64: Target x64 Linux remotely.\r\nlinux_x86: Target x86 Linux remotely.\r\nmsvc_arm: Target ARM Windows with the MSVC compiler.\r\nmsvc_arm_x64: Target ARM Windows with the 64-bit MSVC compiler.\r\nmsvc_arm64: Target ARM64 Windows with the MSVC compiler.\r\nmsvc_arm64_x64: Target ARM64 Windows with the 64-bit MSVC compiler.\r\nmsvc_arm64ec: Target ARM64EC Windows with the MSVC compiler.\r\nmsvc_arm64ec_x64: Target ARM64EC Windows with the 64-bit MSVC compiler.\r\nmsvc_x64: Target x64 Windows with the MSVC compiler.\r\nmsvc_x64_x64: Target x64 Windows with the 64-bit MSVC compiler.\r\nmsvc_x86: Target x86 Windows with the MSVC compiler.\r\nmsvc_x86_x64: Target x86 Windows with the 64-bit MSVC compiler.",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "clang_cl_arm64",
+                          "clang_cl_arm64_x64",
+                          "clang_cl_x64",
+                          "clang_cl_x64_x64",
+                          "clang_cl_x86",
+                          "clang_cl_x86_x64",
+                          "gcc-arm",
+                          "linux_arm",
+                          "linux_clang_x64",
+                          "linux_x64",
+                          "linux_x86",
+                          "msvc_arm",
+                          "msvc_arm_x64",
+                          "msvc_arm64",
+                          "msvc_arm64_x64",
+                          "msvc_arm64ec",
+                          "msvc_arm64ec_x64",
+                          "msvc_x64",
+                          "msvc_x64_x64",
+                          "msvc_x86",
+                          "msvc_x86_x64"
+                        ]
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              },
+              "additionalProperties": {
+                "type": "string"
+              },
+              "minProperties": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-04/schema#"
+}

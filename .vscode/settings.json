@@ -1,290 +1,335 @@
 {
-  "C_Cpp.vcpkg.enabled": true,
-  "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": false,
-  "C_Cpp.default.browse.databaseFilename": ".browse.VC.db",
-  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-  "C_Cpp.intelliSenseCachePath": "${workspaceFolder}/.vscode/browse",
-  "C_Cpp.intelliSenseCacheSize": 5120,
-  "C_Cpp.intelliSenseEngine": "default",
-  "C_Cpp.intelliSenseEngineFallback": "disabled",
-  "C_Cpp.intelliSenseMemoryLimit": 4096,
-  "C_Cpp.errorSquiggles": "enabled",
-  "C_Cpp.autocomplete": "default",
-  "C_Cpp.autocompleteAddParentheses": true,
-  "C_Cpp.formatting": "default",
-  "C_Cpp.configurationWarnings": "enabled",
-  "C_Cpp.debugShortcut": true,
-  "C_Cpp.default.cStandard": "c11",
-  "C_Cpp.default.cppStandard": "c++11",
-  "C_Cpp.dimInactiveRegions": true,
-  "C_Cpp.enhancedColorization": "enabled",
-  "C_Cpp.caseSensitiveFileSupport": "default",
-  "C_Cpp.commentContinuationPatterns": [ "/**" ],
-  "C_Cpp.autoAddFileAssociations": true,
-  "C_Cpp.default.intelliSenseMode": "",
-  "C_Cpp.default.mergeConfigurations": true,
-  "C_Cpp.default.enableConfigurationSquiggles": true,
-  "C_Cpp.default.windowsSdkVersion": "10.0.22000.0",
-  "C_Cpp.default.macFrameworkPath": [
-    "/System/Library/Frameworks",
-    "/Library/Frameworks"
-  ],
-  "C_Cpp.default.forcedInclude": [
-    "${workspaceFolder}/node_modules/node-api-headers/include/node_api.h",
-    "${workspaceFolder}/node_modules/node-api-headers/include/node_api_types.h",
-    "${workspaceFolder}/node_modules/node-api-headers/include/js_native_api.h",
-    "${workspaceFolder}/node_modules/node-api-headers/include/js_native_api_types.h",
-    "${workspaceFolder}/node_modules/node-addon-api/napi.h",
-    "${workspaceFolder}/node_modules/node-addon-api/napi-inl.h",
-    "${workspaceFolder}/node_modules/node-addon-api/napi-inl.deprecated.h"
-  ],
-  "C_Cpp.default.browse.path": [
-    "${workspaceFolder}/.vscode/browse",
-    "${workspaceFolder}/src",
-    "${workspaceFolder}/build",
-    "${workspaceFolder}/installed"
-  ],
-  "C_Cpp.default.includePath": [
-    "${workspaceFolder}/include/**",
-    "${workspaceFolder}/node_modules/node-addon-api/**",
-    "${workspaceFolder}/node_modules/node-api-headers/include/**",
-  ],
-  "C_Cpp.preferredPathSeparator": "Forward Slash",
-  "C_Cpp.default.defines": [
-    "UNICODE",
-    "NODE_RUNTIME=node",
-    "BUILDING_NODE_EXTENSION",
-    "NAPI_VERSION=8",
-    "NAPI_EXPERIMENTAL",
-    "_UNICODE"
-  ],
-  "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
-  "C_Cpp.files.exclude": {
-    "**/.vscode": true,
-    "**/.vs": true,
-    "**/node_modules": true,
-    "**/node_modules/node-addon-api": false,
-    "**/node_modules/node-api-headers/include": false
-  },
-
-  "[cpp]": {
-    "editor.wordBasedSuggestions": false,
-    "editor.suggest.insertMode": "replace",
-    "editor.semanticHighlighting.enabled": true
-  },
-  "[c]": {
-    "editor.wordBasedSuggestions": false,
-    "editor.suggest.insertMode": "replace",
-    "editor.semanticHighlighting.enabled": true
-  },
-
-  "cmake.useCMakePresets": "auto",
-  "cmake.configureOnOpen": false,
-  "cmake.configureOnEdit": false,
-  "cmake.skipConfigureIfCachePresent": true,
-  "cmake.parallelJobs": 1,
-  "cmake.format.spaceInParentheses": true,
-  "cmake.saveBeforeBuild": true,
-  "cmake.allowUnsupportedPresetsVersions": true,
-  "cmake.sourceDirectory": ["${workspaceFolder}"],
-  "cmake.buildDirectory": "${workspaceFolder}/build",
-  "cmake.installPrefix": "${workspaceFolder}/installed",
-  "cmake.cmakeCommunicationMode": "automatic",
-  "cmake.loadCompileCommands": true,
-  "cmake.exportCompileCommandsFile": true,
-  "cmake.configureSettings": {
-    "CMAKE_TOOLCHAIN_FILE": "${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-  },
-
-  "cmake.debugConfig": {
-    "cwd": "${workspaceFolder}",
-    "symbolSearchPath": "${workspaceFolder}/build",
-    "miDebuggerPath": "/usr/bin/gdb",
-    "MIMode": "gdb",
-    "console": "newExternalWindow",
-    "stopAtEntry": false,
-    "logging": {
-      "engineLogging": false,
-      "exceptions": true,
-      "moduleLoad": true,
-      "trace": false,
-      "traceResponse": false,
-      "programOutput": true
-    }
-  },
-
-  "[cmake]": {
-    "editor.quickSuggestions": {
-      "strings": true
-    }
-  },
-  "[cmake-cache]": {},
-  "[cmake-documentation]": {},
-
-  "javascript.format.enable": true,
-  "javascript.validate.enable": true,
-  "javascript.suggest.enabled": true,
-  "javascript.suggest.autoImports": true,
-  "javascript.preferences.autoImportFileExcludePatterns": [],
-  "javascript.updateImportsOnFileMove.enabled": "prompt",
-  "[javascript]": {
-    "editor.maxTokenizationLineLength": 2500
-  },
-
-  "typescript.check.npmIsInstalled": true,
-  "typescript.format.enable": true,
-  "typescript.validate.enable": true,
-  "typescript.suggest.enabled": true,
-  "typescript.suggest.autoImports": true,
-  "typescript.preferences.autoImportFileExcludePatterns": [],
-  "typescript.updateImportsOnFileMove.enabled": "prompt",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.disableAutomaticTypeAcquisition": false,
-  "typescript.preferences.includePackageJsonAutoImports": "on",
-  "typescript.tsc.autoDetect": "on",
-  "[typescript]": {
-    "editor.maxTokenizationLineLength": 2500
-  },
-
-  "json.format.enable": true,
-  "json.schemaDownload.enable": true,
-  "json.validate.enable": true,
-  "json.trace.server": "messages",
-  "json.schemas": [
-    {
-      "fileMatch": [
-        "CMakePresets.json"
-      ],
-      "url": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json"
-    }
-  ],
-  "[json]": {
-    "editor.quickSuggestions": {
-      "strings": true
+    "C_Cpp.vcpkg.enabled": true,
+    "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": false,
+    "C_Cpp.default.browse.databaseFilename": ".browse.VC.db",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.intelliSenseCachePath": "${workspaceFolder}/.vscode/browse",
+    "C_Cpp.intelliSenseCacheSize": 5120,
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.intelliSenseEngineFallback": "disabled",
+    "C_Cpp.intelliSenseMemoryLimit": 4096,
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.autocomplete": "default",
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.formatting": "default",
+    "C_Cpp.clang_format_style": "file",
+    "C_Cpp.configurationWarnings": "enabled",
+    "C_Cpp.debugShortcut": true,
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.dimInactiveRegions": true,
+    "C_Cpp.enhancedColorization": "enabled",
+    "C_Cpp.caseSensitiveFileSupport": "default",
+    "C_Cpp.commentContinuationPatterns": [ "/**" ],
+    "C_Cpp.autoAddFileAssociations": true,
+    "C_Cpp.default.intelliSenseMode": "",
+    "C_Cpp.default.mergeConfigurations": true,
+    "C_Cpp.default.enableConfigurationSquiggles": true,
+    "C_Cpp.default.windowsSdkVersion": "10.0.22000.0",
+    "C_Cpp.default.macFrameworkPath": [
+      "/System/Library/Frameworks",
+      "/Library/Frameworks"
+    ],
+    "C_Cpp.default.forcedInclude": [
+      "${workspaceFolder}/node_modules/node-api-headers/include/node_api.h",
+      "${workspaceFolder}/node_modules/node-api-headers/include/node_api_types.h",
+      "${workspaceFolder}/node_modules/node-api-headers/include/js_native_api.h",
+      "${workspaceFolder}/node_modules/node-api-headers/include/js_native_api_types.h",
+      "${workspaceFolder}/node_modules/node-addon-api/napi.h",
+      "${workspaceFolder}/node_modules/node-addon-api/napi-inl.h",
+      "${workspaceFolder}/node_modules/node-addon-api/napi-inl.deprecated.h"
+    ],
+    "C_Cpp.default.browse.path": [
+      "${workspaceFolder}/.vscode/browse",
+      "${workspaceFolder}/src",
+      "${workspaceFolder}/build",
+      "${workspaceFolder}/installed"
+    ],
+    "C_Cpp.default.includePath": [
+      "${workspaceFolder}/include/**",
+      "${workspaceFolder}/node_modules/node-addon-api/**",
+      "${workspaceFolder}/node_modules/node-api-headers/include/**",
+    ],
+    "C_Cpp.preferredPathSeparator": "Forward Slash",
+    "C_Cpp.default.defines": [
+      "UNICODE",
+      "NODE_RUNTIME=node",
+      "BUILDING_NODE_EXTENSION",
+      "NAPI_VERSION=8",
+      "NAPI_EXPERIMENTAL",
+      "_UNICODE"
+    ],
+    "C_Cpp.exclusionPolicy": "checkFilesAndFolders",
+    "C_Cpp.files.exclude": {
+      "**/.vscode": true,
+      "**/.vs": true,
+      "**/node_modules": true,
+      "**/node_modules/node-addon-api": false,
+      "**/node_modules/node-api-headers/include": false
     },
-    "editor.suggest.insertMode": "replace"
-  },
-  "[jsonc]": {
-    "editor.quickSuggestions": {
-      "strings": true
+
+    "[cpp]": {
+      "editor.wordBasedSuggestions": false,
+      "editor.suggest.insertMode": "replace",
+      "editor.semanticHighlighting.enabled": true
     },
-    "editor.suggest.insertMode": "replace"
-  },
+    "[c]": {
+      "editor.wordBasedSuggestions": false,
+      "editor.suggest.insertMode": "replace",
+      "editor.semanticHighlighting.enabled": true
+    },
 
-  "editor.insertSpaces": true,
-  "editor.tabSize": 2,
-  "editor.trimAutoWhitespace": true,
+    "cmake.useCMakePresets": "auto",
+    "cmake.configureOnOpen": false,
+    "cmake.configureOnEdit": false,
+    "cmake.skipConfigureIfCachePresent": true,
+    "cmake.parallelJobs": 1,
+    "cmake.format.spaceInParentheses": true,
+    "cmake.saveBeforeBuild": true,
+    "cmake.allowUnsupportedPresetsVersions": true,
+    "cmake.sourceDirectory": ["${workspaceFolder}"],
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.installPrefix": "${workspaceFolder}/installed",
+    "cmake.cmakeCommunicationMode": "automatic",
+    "cmake.loadCompileCommands": true,
+    "cmake.exportCompileCommandsFile": true,
+    "cmake.configureSettings": {
+      "CMAKE_TOOLCHAIN_FILE": "${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
 
-  "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
-  "files.trimTrailingWhitespace": true,
+    "cmake.debugConfig": {
+      "cwd": "${workspaceFolder}",
+      "symbolSearchPath": "${workspaceFolder}/build",
+      "miDebuggerPath": "/usr/bin/gdb",
+      "MIMode": "gdb",
+      "console": "newExternalWindow",
+      "stopAtEntry": false,
+      "logging": {
+        "engineLogging": false,
+        "exceptions": true,
+        "moduleLoad": true,
+        "trace": false,
+        "traceResponse": false,
+        "programOutput": true
+      }
+    },
 
-  "files.associations": {
+    "[cmake]": {
+      "editor.quickSuggestions": {
+        "strings": true
+      }
+    },
+    "[cmake-cache]": {},
+    "[cmake-documentation]": {},
 
-    "**.bash**": "shellscript",
-    "**.cmake": "cmake",
-    "*.h.in": "cpp",
-    ".editorconfig": "editorconfig",
+    "javascript.format.enable": true,
+    "javascript.validate.enable": true,
+    "javascript.suggest.enabled": true,
+    "javascript.suggest.autoImports": true,
+    "javascript.preferences.autoImportFileExcludePatterns": [],
+    "javascript.updateImportsOnFileMove.enabled": "prompt",
+    "[javascript]": {
+      "editor.maxTokenizationLineLength": 2500,
+      "editor.wordBasedSuggestions": false,
+      "editor.wordBasedSuggestionsMode": "matchingDocuments"
+    },
 
-    "atomic": "cpp",
-    "bit": "cpp",
-    "cctype": "cpp",
-    "clocale": "cpp",
-    "cmath": "cpp",
-    "compare": "cpp",
-    "complex": "cpp",
-    "concepts": "cpp",
-    "cstddef": "cpp",
-    "cstdint": "cpp",
-    "cstdio": "cpp",
-    "cstdlib": "cpp",
-    "cstring": "cpp",
-    "ctime": "cpp",
-    "cwchar": "cpp",
-    "exception": "cpp",
-    "initializer_list": "cpp",
-    "ios": "cpp",
-    "iosfwd": "cpp",
-    "istream": "cpp",
-    "iterator": "cpp",
-    "limits": "cpp",
-    "memory": "cpp",
-    "new": "cpp",
-    "ostream": "cpp",
-    "sstream": "cpp",
-    "stdexcept": "cpp",
-    "streambuf": "cpp",
-    "string": "cpp",
-    "system_error": "cpp",
-    "tuple": "cpp",
-    "type_traits": "cpp",
-    "typeinfo": "cpp",
-    "utility": "cpp",
-    "vector": "cpp",
-    "xfacet": "cpp",
-    "xiosbase": "cpp",
-    "xlocale": "cpp",
-    "xlocinfo": "cpp",
-    "xlocnum": "cpp",
-    "xmemory": "cpp",
-    "xstddef": "cpp",
-    "xstring": "cpp",
-    "xtr1common": "cpp",
-    "xutility": "cpp",
-    "algorithm": "cpp",
-    "any": "cpp",
-    "array": "cpp",
-    "charconv": "cpp",
-    "chrono": "cpp",
-    "codecvt": "cpp",
-    "condition_variable": "cpp",
-    "coroutine": "cpp",
-    "csignal": "cpp",
-    "cstdarg": "cpp",
-    "cwctype": "cpp",
-    "deque": "cpp",
-    "filesystem": "cpp",
-    "format": "cpp",
-    "forward_list": "cpp",
-    "fstream": "cpp",
-    "functional": "cpp",
-    "future": "cpp",
-    "iomanip": "cpp",
-    "iostream": "cpp",
-    "list": "cpp",
-    "locale": "cpp",
-    "map": "cpp",
-    "mutex": "cpp",
-    "numeric": "cpp",
-    "optional": "cpp",
-    "queue": "cpp",
-    "random": "cpp",
-    "ratio": "cpp",
-    "regex": "cpp",
-    "set": "cpp",
-    "shared_mutex": "cpp",
-    "source_location": "cpp",
-    "stack": "cpp",
-    "stop_token": "cpp",
-    "strstream": "cpp",
-    "thread": "cpp",
-    "typeindex": "cpp",
-    "unordered_map": "cpp",
-    "unordered_set": "cpp",
-    "variant": "cpp",
-    "xhash": "cpp",
-    "xlocbuf": "cpp",
-    "xlocmes": "cpp",
-    "xlocmon": "cpp",
-    "xloctime": "cpp",
-    "xtree": "cpp"
-  },
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true
-  }
+    "typescript.check.npmIsInstalled": true,
+    "typescript.format.enable": true,
+    "typescript.validate.enable": true,
+    "typescript.suggest.enabled": true,
+    "typescript.suggest.autoImports": true,
+    "typescript.preferences.autoImportFileExcludePatterns": [],
+    "typescript.updateImportsOnFileMove.enabled": "prompt",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.disableAutomaticTypeAcquisition": false,
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "typescript.tsc.autoDetect": "on",
+    "[typescript]": {
+      "editor.maxTokenizationLineLength": 2500
+    },
+
+    "json.format.enable": true,
+    "json.schemaDownload.enable": true,
+    "json.validate.enable": true,
+    "json.trace.server": "messages",
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "CMakePresets.json",
+                "CMakeWindowsPresets.json",
+                "CMakePresets.*.json"
+            ],
+            "url": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json"
+        },
+        {
+            "fileMatch": [
+                "Windows.json",
+                "Linux.json",
+                "WSL.json",
+                "Mingw.json",
+                "Codespace.json"
+            ],
+            "url": "../support/json/schemas/CMakeSettings_schema.json"
+        }
+    ],
+    "[json]": {
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace"
+    },
+    "[jsonc]": {
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace"
+    },
+
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.trimAutoWhitespace": true,
+
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+
+    "files.associations": {
+
+      "**.bash**": "shellscript",
+      "**.cmake": "cmake",
+      "**.cmake.in": "cmake",
+      ".editorconfig": "editorconfig",
+
+      "*.c++": "cpp",
+      "*.cc": "cpp",
+      "*.cpp": "cpp",
+      "*.cppm": "cpp",
+      "*.cxx": "cpp",
+
+      "*.c++.in": "cpp",
+      "*.cc.in": "cpp",
+      "*.cpp.in": "cpp",
+      "*.cppm.in": "cpp",
+      "*.cxx.in": "cpp",
+
+      "*.h": "cpp",
+      "*.h++": "cpp",
+      "*.hh": "cpp",
+      "*.hpp": "cpp",
+      "*.hxx": "cpp",
+
+      "*.h.in": "cpp",
+      "*.h++.in": "cpp",
+      "*.hh.in": "cpp",
+      "*.hpp.in": "cpp",
+      "*.hxx.in": "cpp",
+
+      "*.inl": "cpp",
+      "*.ipp": "cpp",
+      "*.ixx": "cpp",
+      "*.tlh": "cpp",
+      "*.tli": "cpp",
+
+      "atomic": "cpp",
+      "bit": "cpp",
+      "cctype": "cpp",
+      "clocale": "cpp",
+      "cmath": "cpp",
+      "compare": "cpp",
+      "complex": "cpp",
+      "concepts": "cpp",
+      "cstddef": "cpp",
+      "cstdint": "cpp",
+      "cstdio": "cpp",
+      "cstdlib": "cpp",
+      "cstring": "cpp",
+      "ctime": "cpp",
+      "cwchar": "cpp",
+      "exception": "cpp",
+      "initializer_list": "cpp",
+      "ios": "cpp",
+      "iosfwd": "cpp",
+      "istream": "cpp",
+      "iterator": "cpp",
+      "limits": "cpp",
+      "memory": "cpp",
+      "new": "cpp",
+      "ostream": "cpp",
+      "sstream": "cpp",
+      "stdexcept": "cpp",
+      "streambuf": "cpp",
+      "string": "cpp",
+      "system_error": "cpp",
+      "tuple": "cpp",
+      "type_traits": "cpp",
+      "typeinfo": "cpp",
+      "utility": "cpp",
+      "vector": "cpp",
+      "xfacet": "cpp",
+      "xiosbase": "cpp",
+      "xlocale": "cpp",
+      "xlocinfo": "cpp",
+      "xlocnum": "cpp",
+      "xmemory": "cpp",
+      "xstddef": "cpp",
+      "xstring": "cpp",
+      "xtr1common": "cpp",
+      "xutility": "cpp",
+      "algorithm": "cpp",
+      "any": "cpp",
+      "array": "cpp",
+      "charconv": "cpp",
+      "chrono": "cpp",
+      "codecvt": "cpp",
+      "condition_variable": "cpp",
+      "coroutine": "cpp",
+      "csignal": "cpp",
+      "cstdarg": "cpp",
+      "cwctype": "cpp",
+      "deque": "cpp",
+      "filesystem": "cpp",
+      "format": "cpp",
+      "forward_list": "cpp",
+      "fstream": "cpp",
+      "functional": "cpp",
+      "future": "cpp",
+      "iomanip": "cpp",
+      "iostream": "cpp",
+      "list": "cpp",
+      "locale": "cpp",
+      "map": "cpp",
+      "mutex": "cpp",
+      "numeric": "cpp",
+      "optional": "cpp",
+      "queue": "cpp",
+      "random": "cpp",
+      "ratio": "cpp",
+      "regex": "cpp",
+      "set": "cpp",
+      "shared_mutex": "cpp",
+      "source_location": "cpp",
+      "stack": "cpp",
+      "stop_token": "cpp",
+      "strstream": "cpp",
+      "thread": "cpp",
+      "typeindex": "cpp",
+      "unordered_map": "cpp",
+      "unordered_set": "cpp",
+      "variant": "cpp",
+      "xhash": "cpp",
+      "xlocbuf": "cpp",
+      "xlocmes": "cpp",
+      "xlocmon": "cpp",
+      "xloctime": "cpp",
+      "xtree": "cpp"
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    }
 }

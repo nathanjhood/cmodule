@@ -1,57 +1,58 @@
 {
   "version": 6,
   "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 26,
-    "patch": 3
+        "major": 3,
+        "minor": 26,
+        "patch": 3
   },
   "configurePresets": [
     {
-      "name": "default",
-      "displayName": "default",
-      "description": "For more information: http://aka.ms/cmakepresetsvs",
-      "binaryDir": "${sourceDir}/build/${presetName}",
-      "installDir": "${sourceDir}/installed/${presetName}"
+        "name": "default",
+        "displayName": "default",
+        "description": "For more information: http://aka.ms/cmakepresetsvs",
+        "cmakeExecutable": "cmake",
+        "binaryDir": "${sourceDir}/build",
+        "installDir": "${sourceDir}/installed"
     },
     {
-      "name": "ninja",
-      "displayName": "Ninja",
-      "description": "Generates build.ninja files.",
-      "generator": "Ninja",
-      "inherits": [
-        "default"
-      ],
-      "hidden": true
+        "name": "ninja",
+        "displayName": "Ninja",
+        "description": "Generates build.ninja files.",
+        "generator": "Ninja",
+        "inherits": [
+            "default"
+        ],
+        "hidden": true
     },
     {
-      "name": "ninja-multi",
-      "displayName": "Ninja Multi-Config",
-      "description": "Generates build-<Config>.ninja files.",
-      "generator": "Ninja Multi-Config",
-      "inherits": [
-        "default"
-      ],
-      "hidden": true
+        "name": "ninja-multi",
+        "displayName": "Ninja Multi-Config",
+        "description": "Generates build-<Config>.ninja files.",
+        "generator": "Ninja Multi-Config",
+        "inherits": [
+            "default"
+        ],
+        "hidden": true
     },
     {
-      "name": "unix-makefiles",
-      "displayName": "Unix Makefiles",
-      "description": "Generates standard UNIX makefiles.",
-      "generator": "Unix Makefiles",
-      "inherits": [
-        "default"
-      ],
-      "hidden": true
+        "name": "unix-makefiles",
+        "displayName": "Unix Makefiles",
+        "description": "Generates standard UNIX makefiles.",
+        "generator": "Unix Makefiles",
+        "inherits": [
+            "default"
+        ],
+        "hidden": true
     },
     {
-      "name": "xcode",
-      "displayName": "Xcode",
-      "description": "Generate Xcode project files.",
-      "generator": "Xcode",
-      "inherits": [
-        "default"
-      ],
-      "hidden": true
+        "name": "xcode",
+        "displayName": "Xcode",
+        "description": "Generate Xcode project files.",
+        "generator": "Xcode",
+        "inherits": [
+            "default"
+        ],
+        "hidden": true
     },
     {
       "name": "msvc-2022",
@@ -137,22 +138,29 @@
       "name": "toolchain",
       "displayName": "Configure preset using toolchain file",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-      "cacheVariables": { "CMAKE_TOOLCHAIN_FILE": { "type": "STRING", "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" } },
-      "inherits": [ "default" ],
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "type": "STRING",
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        }
+      },
+      "inherits": [
+        "default"
+      ],
       "hidden": true
     },
     {
       "name": "gcc",
-      "displayName": "GCC 11.3.0 x86_64-linux-gnu",
-      "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+      "displayName": "GCC compiler",
+      "description": "Using compilers: C = gcc, CXX = g++",
       "cacheVariables": {
         "CMAKE_C_COMPILER": {
           "type": "FILEPATH",
-          "value": "/usr/bin/gcc"
+          "value": "gcc"
         },
         "CMAKE_CXX_COMPILER": {
           "type": "FILEPATH",
-          "value": "/usr/bin/g++"
+          "value": "g++"
         }
       },
       "inherits": [
@@ -162,8 +170,8 @@
     },
     {
       "name": "clang",
-      "displayName": "Clang 14.0.0 x86_64-pc-linux-gnu",
-      "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+      "displayName": "Clang compiler",
+      "description": "Using compilers: C = clang, CXX = clang++",
       "cacheVariables": {
         "CMAKE_C_COMPILER": {
           "type": "FILEPATH",
@@ -182,14 +190,8 @@
     {
       "name": "msvc",
       "cacheVariables": {
-        "CMAKE_C_COMPILER": {
-          "type": "FILEPATH",
-          "value": "cl.exe"
-        },
-        "CMAKE_CXX_COMPILER": {
-          "type": "FILEPATH",
-          "value": "cl.exe"
-        }
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
       },
       "inherits": [
         "default"
@@ -205,7 +207,7 @@
         "strategy": "external"
       },
       "architecture": {
-        "value": "x86",
+        "value": "host=x86",
         "strategy": "external"
       },
       "cacheVariables": {
@@ -228,7 +230,7 @@
         "strategy": "external"
       },
       "architecture": {
-        "value": "x64",
+        "value": "host=x64",
         "strategy": "external"
       },
       "cacheVariables": {
@@ -251,7 +253,7 @@
         "strategy": "external"
       },
       "architecture": {
-        "value": "arm",
+        "value": "host=arm",
         "strategy": "external"
       },
       "cacheVariables": {
@@ -274,7 +276,7 @@
         "strategy": "external"
       },
       "architecture": {
-        "value": "arm64",
+        "value": "host=arm64",
         "strategy": "external"
       },
       "cacheVariables": {
@@ -288,7 +290,6 @@
       ],
       "hidden": true
     },
-
     {
       "name": "x64-x86",
       "displayName": "x64_x86",
@@ -335,7 +336,6 @@
       ],
       "hidden": true
     },
-
     {
       "name": "debug",
       "displayName": "Debug",
@@ -385,18 +385,6 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "MinSizeRel",
         "CMAKE_CONFIG_TYPE": "MinSizeRel"
-      },
-      "inherits": [
-        "default"
-      ],
-      "hidden": true
-    },
-    {
-      "name": "test",
-      "displayName": "test",
-      "description": "Configure NodeJS using '.env.test'.",
-      "cacheVariables": {
-        "NODE_ENV": "test"
       },
       "inherits": [
         "default"
@@ -507,8 +495,7 @@
         "toolchain",
         "linux",
         "x86",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -521,8 +508,7 @@
         "toolchain",
         "linux",
         "x64",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -535,8 +521,7 @@
         "ninja-multi",
         "toolchain",
         "arm",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -549,8 +534,7 @@
         "toolchain",
         "linux",
         "arm64",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -563,8 +547,7 @@
         "toolchain",
         "macos",
         "x86",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -577,8 +560,7 @@
         "toolchain",
         "macos",
         "x64",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -591,8 +573,7 @@
         "toolchain",
         "macos",
         "arm",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -605,8 +586,7 @@
         "toolchain",
         "macos",
         "arm64",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -615,12 +595,11 @@
       "displayName": "Windows x86",
       "inherits": [
         "default",
-        "ninja-multi",
+        "msvc-2022",
         "toolchain",
         "windows",
         "x86",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -629,12 +608,10 @@
       "displayName": "Windows x64",
       "inherits": [
         "default",
-        "ninja-multi",
-        "toolchain",
+        "msvc",
         "windows",
         "x64",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -643,12 +620,11 @@
       "displayName": "Windows ARM x86",
       "inherits": [
         "default",
-        "ninja-multi",
+        "msvc-2022",
         "toolchain",
         "windows",
         "arm",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     },
@@ -657,12 +633,11 @@
       "displayName": "Windows ARM x64",
       "inherits": [
         "default",
-        "ninja-multi",
+        "msvc-2022",
         "toolchain",
         "windows",
         "arm64",
-        "debug",
-        "test"
+        "debug"
       ],
       "hidden": false
     }
@@ -745,7 +720,9 @@
       "name": "test-windows-x64",
       "description": "",
       "displayName": "Windows x64",
-      "configurePreset": "x64-windows"
+      "configurePreset": "x64-windows",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
     },
     {
       "name": "test-macos-x64",

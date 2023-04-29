@@ -1,6 +1,6 @@
 {
   "name": "@stoneydsp/cmodule",
-  "version": "1.0.1",
+  "version": "1.0.0-1",
   "description": "My cmake-js module",
   "license": "MIT",
   "author": "Nathan J. Hood <nathanjhood@googlemail.com> (http://stoneydsp.com)",
