@@ -49,6 +49,6 @@ jobs:
     - run: yarn global add cmake-js@latest
     - run: yarn install
     - run: yarn test -C Debug
-    # - run: yarn clean
-    - run: yarn pkg:src
+    - run: yarn clean
+    # - run: yarn pkg:src
     - run: yarn pkg:bin
