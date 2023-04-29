@@ -52,16 +52,16 @@ if (NOT DEFINED CMAKE_JS_INC)
     # that our build step depends on (these are predefined when calling via npm/cmake-js).
     message(STATUS "CMake Calling...")
 
-    # Check for cmake-js installations
-    find_program(CMAKE_JS_EXECUTABLE
-        NAMES "cmake-js" "cmake-js.exe"
-        PATHS "$ENV{PATH}" "$ENV{ProgramFiles}/cmake-js"
-        DOC "cmake-js system executable binary"
-        REQUIRED
-    )
-    if (NOT CMAKE_JS_EXECUTABLE)
-        message(FATAL_ERROR "cmake-js system installation not found! Please run 'npm -g install cmake-js@latest' and try again.")
-    endif()
+    # # Check for cmake-js installations
+    # find_program(CMAKE_JS_EXECUTABLE
+    #     NAMES "cmake-js" "cmake-js.exe"
+    #     PATHS "$ENV{PATH}" "$ENV{ProgramFiles}/cmake-js"
+    #     DOC "cmake-js system executable binary"
+    #     REQUIRED
+    # )
+    # if (NOT CMAKE_JS_EXECUTABLE)
+    #     message(FATAL_ERROR "cmake-js system installation not found! Please run 'npm -g install cmake-js@latest' and try again.")
+    # endif()
 
     find_program(CMAKE_JS_NPM_PACKAGE
         NAMES "cmake-js" "cmake-js.exe"
