@@ -9,61 +9,133 @@ cmake_policy(SET CMP0091 NEW)
 cmake_policy(SET CMP0042 NEW)
 # Fallback for using newer policies on CMake < 3.12.
 if(${CMAKE_VERSION} VERSION_LESS 3.12)
-  cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 # Import some custom helpers to set up CMake
 set(CMAKE_MODULE_PATH
-  ${CMAKE_MODULE_PATH}
-  ${CMAKE_CURRENT_SOURCE_DIR}/support/cmake
+    ${CMAKE_MODULE_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/support/cmake/Modules
 )
-include("support/cmake/ModuleInit.cmake")
+include(ModuleInit)
 
 init_module()
 
-# Collect Node Addon-API headers into NODE_ADDON_API_DIR
-execute_process(
-  COMMAND node -p "require('node-addon-api').include"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-  OUTPUT_VARIABLE NODE_ADDON_API_DIR
-)
-string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
-if (NOT DEFINED CMAKE_JS_INC)
-  # Collect cmake-js library into CMAKE_JS_LIB
-  unset(CMAKE_JS_LIB)
-  execute_process(
-    COMMAND cmake-js "print-cmakejs-lib"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    OUTPUT_VARIABLE CMAKE_JS_LIB
-  )
-  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
-  unset(CMAKE_JS_INC)
-  # Collect cmake-js includes into CMAKE_JS_INC
-  execute_process(
-    COMMAND cmake-js "print-cmakejs-include"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    OUTPUT_VARIABLE CMAKE_JS_INC
-  )
-  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
-  unset(CMAKE_JS_SRC)
-  # Collect cmake-js sources into CMAKE_JS_SRC
-  execute_process(
-    COMMAND cmake-js "print-cmakejs-src"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    OUTPUT_VARIABLE CMAKE_JS_SRC
-  )
-  string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
-endif ()
 
 
 ## Name the project vendor (or intended namespace)
 set(PROJECT_VENDOR "StoneyDSP")
 ## Create Project
 project("cmodule"
-  VERSION "1.0.0.0"
-  DESCRIPTION "NodeJS module written in C++"
-  HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
-  LANGUAGES CXX
+    VERSION "1.0.1.20230429"
+    DESCRIPTION "NodeJS module written in C++"
+    HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
+    LANGUAGES CXX
 )
+
+# # Collect Node Addon-API headers into NODE_ADDON_API_DIR
+# execute_process(
+#     COMMAND node -p "require('node-addon-api').include"
+#     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#     OUTPUT_VARIABLE NODE_ADDON_API_DIR
+# )
+# string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
+
+include(FindNode)
+
+
+# CMAKE_JS_INC is defined on all platforms when calling from cmake-js.
+# By checking whether this var is pre-defined, we can determine if we are
+# running from an npm script (via cmake-js), or from CMake directly...
+if (NOT DEFINED CMAKE_JS_INC)
+
+    # ...and if we're calling from CMake directly, we need to set up some vars
+    # that our build step depends on (these are predefined when calling via npm/cmake-js).
+    message(STATUS "CMake Calling...")
+
+    # Check for cmake-js installations
+    find_program(CMAKE_JS_EXECUTABLE
+        NAMES "cmake-js" "cmake-js.exe"
+        PATHS "$ENV{PATH}" "$ENV{ProgramFiles}/cmake-js"
+        DOC "cmake-js system executable binary"
+        REQUIRED
+    )
+    if (NOT CMAKE_JS_EXECUTABLE)
+        message(FATAL_ERROR "cmake-js system installation not found! Please run 'npm -g install cmake-js@latest' and try again.")
+    endif()
+
+    find_program(CMAKE_JS_NPM_PACKAGE
+        NAMES "cmake-js" "cmake-js.exe"
+        PATHS "${CMAKE_CURRENT_LIST_DIR}/node_modules/cmake-js/bin"
+        DOC "cmake-js project-local npm package binary"
+        REQUIRED
+    )
+    if (NOT CMAKE_JS_NPM_PACKAGE)
+        message(FATAL_ERROR "cmake-js project-local npm package not found! Please run 'npm install' and try again.")
+    endif()
+
+    # Create and initialize the vars we need, and store them in the CMakeCache file
+    # set(CMAKE_JS_INC "" CACHE STRING "cmake-js include directory.")
+    # set(CMAKE_JS_SRC "" CACHE STRING "cmake-js source file.")
+    # set(CMAKE_JS_LIB "" CACHE STRING "cmake-js lib file.")
+
+    # Set up some handy defines for some of cmake-js' CLI commands, which can gives us the vars we need...
+    set(CMAKE_JS_PRINT_INC_COMMAND ${NODE_EXECUTABLE} ./node_modules/cmake-js/bin/cmake-js print-cmakejs-include CACHE STRING "Get cmake-js includes here.")
+    set(CMAKE_JS_PRINT_SRC_COMMAND ${NODE_EXECUTABLE} ./node_modules/cmake-js/bin/cmake-js print-cmakejs-src CACHE STRING "Get cmake-js sources here.")
+    set(CMAKE_JS_PRINT_LIB_COMMAND ${NODE_EXECUTABLE} ./node_modules/cmake-js/bin/cmake-js print-cmakejs-lib CACHE STRING "Get cmake-js libs here.")
+
+
+    # Execute the CLI commands we aliased above, and write their outputs into the cached vars
+    # where the remaining build processes expect them to be...
+    execute_process(
+        COMMAND ${CMAKE_JS_PRINT_INC_COMMAND}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE CMAKE_JS_INC
+    )
+
+    execute_process(
+        COMMAND ${CMAKE_JS_PRINT_SRC_COMMAND}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE CMAKE_JS_SRC
+    )
+
+    execute_process(
+        COMMAND ${CMAKE_JS_PRINT_LIB_COMMAND}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+        OUTPUT_VARIABLE CMAKE_JS_LIB
+    )
+
+
+    # Strip the vars of any unusual chars that might break the paths...
+    string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_INC ${CMAKE_JS_INC})
+    string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_SRC ${CMAKE_JS_SRC})
+    string(REGEX REPLACE "[\r\n\"]" "" CMAKE_JS_LIB ${CMAKE_JS_LIB})
+
+    set(CMAKE_JS_INC ${CMAKE_JS_INC} CACHE STRING "cmake-js include directory.")
+    set(CMAKE_JS_SRC ${CMAKE_JS_SRC} CACHE STRING "cmake-js source file.")
+    set(CMAKE_JS_LIB ${CMAKE_JS_LIB} CACHE STRING "cmake-js lib file.")
+
+
+    # Log the vars to the console for sanity...
+    message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+    message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
+    message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
+
+    # At this point, some warnings may occur re: the below (still investigating);
+    # Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
+    #set (NAPI_CPP_EXCEPTIONS TRUE CACHE STRING "Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS")
+    add_definitions(-DNAPI_CPP_EXCEPTIONS) # Also needs /EHsc
+    # add_definitions(-DNAPI_DISABLE_CPP_EXCEPTIONS)
+else ()
+
+    # ... we already are calling via npm/cmake-js, so we should already have all the vars we need!
+    message(STATUS "CMakeJs Calling...")
+
+    # Notwithstanding a quick sanity check, of course.
+    message(STATUS "CMAKE_JS_LIB = ${CMAKE_JS_LIB}")
+    message(STATUS "CMAKE_JS_INC = ${CMAKE_JS_INC}")
+    message(STATUS "CMAKE_JS_SRC = ${CMAKE_JS_SRC}")
+
+endif ()
 
 # set(PROJECT_BINARY_DIR ${PROJECT_SOURCE_DIR})
 
@@ -79,7 +151,7 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 set(${PROJECT_NAME_UPPER}_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
 set(${PROJECT_NAME_UPPER}_LIB_NAME ${PROJECT_NAME_LOWER})
 # if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-#   set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
+#     set(${PROJECT_NAME_UPPER}_LIB_NAME "${${PROJECT_NAME_UPPER}_LIB_NAME}.${${PROJECT_NAME_UPPER}_DEBUG_POSTFIX}")
 # endif ()
 
 
