@@ -97,6 +97,12 @@ option(${PROJECT_NAME_UPPER}_TEST "Generate the test target." ON)
 option(${PROJECT_NAME_UPPER}_INC_NODE_HEADERS "Include Node API headers in build project" OFF)
 option(${PROJECT_NAME_UPPER}_MODULE "Build a C++ module instead of a NodeJS library." OFF)
 
+# compile test program
+configure_file(
+    ${PROJECT_SOURCE_DIR}/support/cmake/helpers/TestDriver.cxx.in
+    ${PROJECT_BINARY_DIR}/.cache/TestDriver.cxx
+    @ONLY
+)
 
 # create config header
 # message(STATUS "Creating config header file...")
