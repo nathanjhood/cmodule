@@ -17,39 +17,39 @@ Multi-platform, multi-architecture C/C++ modules that compile into '\<\*\>.node'
 ## For development of CModules (npm):
 
 ```
-    npm -g install cmake-js@latest
-    // ...will install the required Node API header files for C++ development (only needed once)
+npm -g install cmake-js@latest
+// ...will install the required Node API header files for C++ development (only needed once)
 
-    npm install
-    // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
+npm install
+// ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
 
-    npm run test
-    // ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
+npm run test
+// ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
 
-    npm run clean
-    // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development
+npm run clean
+// ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development
 
-    npm run build
-    // ...will rebuild the files found in 'src/' and 'include/cmodule/'... etc
+npm run build
+// ...will rebuild the files found in 'src/' and 'include/cmodule/'... etc
 ```
 
 ## For development of CModules (yarn):
 
 ```
-    yarn global add cmake-js@latest
-    // ...will install the required Node API header files for C++ development (only needed once)
+yarn global add cmake-js@latest
+// ...will install the required Node API header files for C++ development (only needed once)
 
-    yarn
-    // ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
+yarn
+// ...will compile the prototype "hello world" cmodule from the files found in 'src/' and 'include/cmodule/'
 
-    yarn test
-    // ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
+yarn test
+// ...will run the built prototype using your system node binary - by default, prints "hello world" to the console and exits
 
-    yarn clean
-    // ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development on the project
+yarn clean
+// ...will safely remove everything that was just compiled and built in the last few steps, allowing you to continue development on the project
 
-    yarn rebuild
-    // ...will rebuild your development files found in 'src/' and 'include/cmodule/'... etc
+yarn rebuild
+// ...will rebuild your development files found in 'src/' and 'include/cmodule/'... etc
 ```
 
 Your final module can be tested and packaged up using the built-in CTest and CPack commands, respectively, alongside your usual node-based debugging tools. Once packaged, you might publish a release of your module to the npm registry, which can then easily be consumed by using the typical "npm/yarn install" routines.
@@ -59,37 +59,37 @@ Your final module can be tested and packaged up using the built-in CTest and CPa
 Install the required Node API header files to link with during development (run once only!);
 
 ```
-    yarn global add cmake-js@latest
+yarn global add cmake-js@latest
 ```
 
 Running the standard npm/yarn 'install' command from project root folder will compile the current C/C++ source file(s) as part of it's package installation routine;
 
 ```
-    yarn install
+yarn install
 ```
 
 Serve the compiled C/C++ files(s) using your system node executable, from the entry point of 'index.js'. Prints 'hello, world!' by default - see the 'cmodule.h/cc' source files to specify the behaviour of your module!
 
 ```
-    yarn test
+yarn test
 ```
 
 After tinkering with your project source files, just rebuild them;
 
 ```
-    yarn rebuild
+yarn rebuild
 ```
 
 Completely remove all build files, directories, and artefacts... but *does not destroy any header or source files*;
 
 ```
-    yarn clean
+yarn clean
 ```
 
 The same as the above, but also removes the "node_modules" folder. Useful mostly just before packaging your project for distribution only;
 
 ```
-    yarn wipe
+yarn wipe
 ```
 
 ## Where to place your C++ development files for CMake to correctly compile, build, and link them to the output '\*.node' file;
@@ -105,15 +105,15 @@ Both specified relative to the project's root folder.
 Regarding CMake (which compiles, builds, links etc. the C++ development files into a binary file, using your system's C++ build tools) - the entire configuration is specified in the 'CMakeLists.txt' file in the root folder. Unless you happen to be 'in to' CMake and know it quite well, I'd recommend leaving all of this file very well alone and let it do it's thing, with the *critical* exception of lines 58 - 66, where you should specify a name, version number, homepage, and description for your node module (defaults below - ignore the 'LANGUAGES' field);
 
 ``` 
-    58  ## Name the project vendor (or intended namespace)
-    59  set(PROJECT_VENDOR "StoneyDSP")
-    60  ## Create Project
-    61  project("cmodule"
-    62    VERSION 1.0.0.0
-    63    DESCRIPTION "NodeJS module written in C++"
-    64    HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
-    65    LANGUAGES CXX
-    66 )
+58  ## Name the project vendor (or intended namespace)
+59  set(PROJECT_VENDOR "StoneyDSP")
+60  ## Create Project
+61  project("cmodule"
+62    VERSION 1.0.0.0
+63    DESCRIPTION "NodeJS module written in C++"
+64    HOMEPAGE_URL "https://github.com/StoneyDSP/cmodule"
+65    LANGUAGES CXX
+66 )
 ```
 
 *Note* - I will possibly abstract the above CMake interaction away, and have everything defined centrally in the root package.json file. CMake has good tools for parsing JSON with, but I haven't much experience with these just yet. Stay tuned!
@@ -131,8 +131,8 @@ This means you can just focus on the C++ and Javascript development files contai
 Set a valid name and version number in package.json! You should probably change these fields;
 
 ```
-    "name": "@<team_name>/<project_name>"
-    "version": "0.0.1"
+"name": "@<team_name>/<project_name>"
+"version": "0.0.1"
 ```
 
 Replace the team and project names accordingly. Using the "\@\<team_name\>" part of the name entry helps to avoid naming collisions with the rest of the existing npm registry. PLEASE NOTE that once you publish a package under a certain version number, you are able to "unpublish" and remove this package from npm; however, there appears to be no way to ever reclaim the same combination of \<package name\> with \<version number\> ever again, even if the package itself has been unpublished and removed from the registry.
@@ -140,25 +140,25 @@ Replace the team and project names accordingly. Using the "\@\<team_name\>" part
 To clean the directory before publishing to the npm registry, run;
 
 ```
-    yarn wipe
+yarn wipe
 ```
 
 And to publish it, making it consumable in other npm-based projects publically;
 
 ```
-    npm publish --access=public
+npm publish --access=public
 ```
 
 Then, you can cd into your existing npm-(or yarn-)based project, or create a new one with the usual "init" command. Assuming this environment meets the system requirements (CMake and a C++ build tool installed), then this simple command;
 
 ```
-    npm install '@<team_name>/<package_name>'
+npm install '@<team_name>/<package_name>'
 ```
 
 Or if you prefer yarn;
 
 ```
-    yarn add '@<team_name>/<package_name>'
+yarn add '@<team_name>/<package_name>'
 ```
 
 Running one of the above will make your 'cmodule' available in the receiving project's Javascript (and Typescript!) files, via the usual means;
@@ -166,7 +166,7 @@ Running one of the above will make your 'cmodule' available in the receiving pro
 For 'CommonJs'-style syntax;
 
 ```
-    const <package_name> = require ("@<team_name>/<project_name>");
+const <package_name> = require ("@<team_name>/<project_name>");
 ```
 
 *or*
@@ -174,19 +174,19 @@ For 'CommonJs'-style syntax;
 For 'ES6/Module'-style syntax;
 
 ```
-    import <package_name> from "@<team_name>/<project_name>";
+import <package_name> from "@<team_name>/<project_name>";
 ```
 
 Then, we make an instance of our module;
 
 ```
-    const myImportedModule = <package_name>;
+const myImportedModule = <package_name>;
 ```
 
 Now you can go ahead and call whatever functions, classes, objects etc you have created in your C++ files, for example;
 
 ```
-    console.log(myImportedModule.hello());
+console.log(myImportedModule.hello());
 ```
 
 ## Example;
@@ -194,41 +194,41 @@ Now you can go ahead and call whatever functions, classes, objects etc you have 
 Start a new node-based project;
 
 ```
-    mdkir myProject && cd myProject
-    yarn init
+mdkir myProject && cd myProject
+yarn init
 ```
 
 You can try it out by adding this package to your project the usual way;
 
 ```
-    yarn add @stoneydsp/cmodule
+yarn add @stoneydsp/cmodule
 ```
 
 Make an 'index.js', and either 'require' (for CommonJs) or 'import' (for ES6/Module syntax) the module by placing the below code in the javascript file;
 
 ```
-    const cmodule = require("@stoneydsp/cmodule");
+const cmodule = require("@stoneydsp/cmodule");
 
-    const myImportedModule = cmodule;
+const myImportedModule = cmodule;
 
-    console.log(myImportedModule.hello());
+console.log(myImportedModule.hello());
 ```
 
 *or*
 
 ```
-    import * as cmodule from "@stoneydsp/cmodule"
+import * as cmodule from "@stoneydsp/cmodule"
 
-    const myImportedModule = cmodule;
+const myImportedModule = cmodule;
 
-    console.log(myImportedModule.hello());
+console.log(myImportedModule.hello());
 ```
 
 Back on the command line, you can then ask node to execute the file;
 
 ```
-    node ./index.js
-    // hello, world!
+node ./index.js
+// hello, world!
 ```
 
 You can find everything you need to know about using the Node C/C++ Addon API to create your own modules by checking the official docs;
