@@ -98,7 +98,7 @@ We have two project-local directories of key importance in C++ project developme
 
 * the "./src" directory, where 'source' files are kept, and,
 
-* the "./include/<project_name>" directory, where 'header' files are kept
+* the "./include/\<project_name\>" directory, where 'header' files are kept
 
 Both specified relative to the project's root folder.
 
